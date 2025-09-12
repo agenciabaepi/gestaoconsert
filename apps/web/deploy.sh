@@ -12,7 +12,9 @@ echo "📥 Atualizando código..."
 git pull origin main
 
 echo "🛑 Parando containers..."
+cd apps/web
 docker-compose down
+cd ../..
 
 echo "🧹 Limpando containers e imagens antigas..."
 docker system prune -f
@@ -21,10 +23,10 @@ docker image prune -a -f
 echo "🔨 Construindo nova imagem..."
 cd apps/web
 docker-compose build --no-cache
-cd ../..
 
 echo "🚀 Iniciando containers..."
 docker-compose up -d
+cd ../..
 
 echo "⏳ Aguardando containers iniciarem..."
 sleep 30
