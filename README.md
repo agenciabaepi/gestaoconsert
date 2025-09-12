@@ -1,13 +1,27 @@
 # 🚀 Consert Admin SaaS
 
-Painel administrativo separado para gestão do SaaS Consert.
+Sistema completo de gestão para assistências técnicas com painel administrativo separado.
 
 ## 📋 Sobre o Projeto
 
-Este é um painel administrativo dedicado para gerenciar o SaaS Consert de forma organizada e segura, separado do projeto principal.
+Este é um sistema completo de gestão para assistências técnicas, incluindo:
+- **Sistema Principal** - Gestão de OS, clientes, financeiro
+- **Painel Admin SaaS** - Administração do sistema
+- **App Mobile** - Aplicativo para técnicos
 
-## 🎯 Funcionalidades
+## 🎯 Funcionalidades Principais
 
+### Sistema Web
+- ✅ **Dashboard** com estatísticas completas
+- ✅ **Gestão de Ordens de Serviço** - CRUD completo
+- ✅ **Gestão de Clientes** - Cadastro e histórico
+- ✅ **Financeiro** - Controle de caixa e vendas
+- ✅ **Bancada** - Controle de equipamentos
+- ✅ **Comissões** - Sistema de comissões para técnicos
+- ✅ **WhatsApp** - Integração para notificações
+- ✅ **Relatórios** - Análises e métricas
+
+### Painel Admin SaaS
 - ✅ **Dashboard** com estatísticas do sistema
 - ✅ **Gestão de Empresas** - visualizar todas as empresas
 - ✅ **Gestão de Usuários** - administrar usuários do sistema
@@ -23,7 +37,6 @@ npm install
 ```
 
 ### **2. Configurar Variáveis de Ambiente:**
-Copie o arquivo `.env.local` do projeto principal ou configure:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=sua_url_do_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anonima
@@ -37,7 +50,8 @@ npm run dev
 
 ### **4. Acessar:**
 ```
-URL: http://localhost:3004
+Sistema Principal: http://localhost:3000
+Admin SaaS:        http://localhost:3004
 ```
 
 ## 🔐 Acesso
@@ -48,11 +62,6 @@ Email: admin@consert.com
 Senha: 123456
 ```
 
-### **Verificação de Acesso:**
-- ✅ Usuário logado no Supabase Auth
-- ✅ `nivel: 'admin'` na tabela usuarios
-- ✅ `empresa_id: null` (sem empresa específica)
-
 ## 📊 Dashboard
 
 ### **Estatísticas Exibidas:**
@@ -60,11 +69,6 @@ Senha: 123456
 - 👥 **Total de Usuários** - todos os usuários do sistema
 - 💰 **Receita Mensal** - receita das assinaturas ativas
 - 🎯 **Trials Ativos** - empresas em período de teste
-
-### **Ações Rápidas:**
-- 👁️ **Ver Empresas** - listar todas as empresas
-- 📊 **Relatórios** - análises detalhadas
-- ⚙️ **Configurações** - configurações do sistema
 
 ## 🛡️ Segurança
 
@@ -74,32 +78,20 @@ Senha: 123456
 - ✅ Redirecionamento automático para login
 - ✅ Logs de debug para troubleshooting
 
-### **Distinção de Acesso:**
-- **Super Admin:** `nivel: 'admin'` + `empresa_id: null` (você)
-- **Admin Empresa:** `nivel: 'admin'` + `empresa_id: 'xxx'` (clientes)
-
-## 🎯 URLs do Sistema
-
-```
-Sistema Principal: http://localhost:3002
-Admin SaaS:        http://localhost:3004
-```
-
 ## 📁 Estrutura do Projeto
 
 ```
-admin-saas/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx          # Dashboard principal
-│   │   └── layout.tsx        # Layout base
-│   └── components/           # Componentes reutilizáveis
-├── public/                   # Arquivos estáticos
-├── .env.local               # Variáveis de ambiente
-└── package.json             # Dependências
+Consert/
+├── apps/
+│   ├── web/                 # Sistema principal
+│   ├── mobile/              # App mobile
+│   └── admin-saas/          # Painel administrativo
+├── shared/                  # Código compartilhado
+├── config/                  # Configurações
+└── scripts/                 # Scripts auxiliares
 ```
 
-## 🔧 Tecnologias
+## �� Tecnologias
 
 - **Next.js 15** - Framework React
 - **TypeScript** - Tipagem estática
@@ -108,28 +100,8 @@ admin-saas/
 - **Lucide React** - Ícones
 - **Recharts** - Gráficos
 
-## 🚀 Próximos Passos
-
-1. **Implementar páginas específicas:**
-   - `/empresas` - Lista de empresas
-   - `/usuarios` - Gestão de usuários
-   - `/relatorios` - Relatórios detalhados
-   - `/configuracoes` - Configurações
-
-2. **Adicionar funcionalidades:**
-   - CRUD de empresas
-   - Gestão de assinaturas
-   - Relatórios avançados
-   - Notificações
-
-3. **Melhorar UX:**
-   - Loading states
-   - Error handling
-   - Responsividade
-   - Animações
-
 ---
 
-**🎉 Painel Admin SaaS criado com sucesso!**
+**🎉 Sistema Consert funcionando perfeitamente!**
 
-**Agora você tem um sistema separado e organizado para gerenciar o SaaS Consert!**
+**Sistema completo de gestão para assistências técnicas com todas as funcionalidades implementadas!**

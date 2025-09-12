@@ -1,0 +1,264 @@
+@media print {
+  /* Importante: não ocultar todo o documento por padrão.
+     O comportamento de imprimir somente o cupom agora é OPT-IN
+     usando a classe body.only-cupom. Assim, páginas como /catalogo
+     imprimem normalmente. */
+
+  /* Modo somente cupom (usar adicionando class="only-cupom" no body quando necessário) */
+  body.only-cupom * { visibility: hidden; }
+  body.only-cupom .cupom-impressao,
+  body.only-cupom .cupom-impressao * { visibility: visible; }
+
+  body.only-cupom .cupom-impressao {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    background: white;
+  }
+
+  /* Página de cupom em 80mm */
+  body.only-cupom @page {
+    margin: 0;
+    size: 80mm auto;
+  }
+
+  /* Utilitário genérico */
+  .no-print { display: none !important; }
+
+  /* Configuração A4 para ocupar toda a página */
+  @page { 
+    size: A4; 
+    margin: 10mm;
+  }
+
+  /* Reset completo para impressão */
+  html, body {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 12pt !important;
+  }
+
+  .print-container { 
+    width: 100% !important; 
+    max-width: none !important; 
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+  }
+
+  /* Layout do catálogo de serviços para impressão (duas colunas) */
+  .catalogo-print {
+    column-count: 2;
+    column-gap: 16mm;
+  }
+  .catalogo-cat {
+    break-inside: avoid;
+    margin-bottom: 10mm;
+  }
+  .catalogo-cat .cat-title {
+    font-weight: 700;
+    font-size: 14pt;
+    margin-bottom: 6mm;
+    padding-bottom: 2mm;
+    border-bottom: 2px solid #16a34a; /* verde sutil */
+  }
+  .catalogo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8mm;
+    margin: 0 0 3mm 0;
+  }
+  .catalogo-item .nome {
+    font-size: 11pt;
+    font-weight: 600;
+  }
+  .catalogo-item .preco {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+  .catalogo-item .desc {
+    font-size: 9pt;
+    color: #555;
+    margin-top: 1mm;
+  }
+
+  /* Tabela do catálogo - impressão */
+  .catalogo-box { border: none !important; box-shadow: none !important; }
+  .catalogo-table { width: 100% !important; border-collapse: collapse !important; }
+  .catalogo-table th, .catalogo-table td { border: 1px solid #e5e7eb; padding: 6pt; }
+  .catalogo-cat-row { background: #f0fdf4; font-weight: 700; }
+
+  .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8mm; }
+  .print-header .empresa { font-size: 16pt; font-weight: 800; line-height: 1.1; }
+  .print-header .subtitle { font-size: 10pt; color: #6b7280; }
+  .print-logo { width: 40mm; max-height: 20mm; object-fit: contain; }
+
+  /* Mostrar/ocultar blocos específicos */
+  .print-only { display: block !important; }
+  .screen-only { display: none !important; }
+
+  /* Cabeçalho da empresa seguindo identidade do sistema */
+  .print-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 10mm; 
+    padding-bottom: 6mm;
+    border-bottom: 3px solid #A5D44A;
+    width: 100% !important;
+  }
+  .print-header .empresa { 
+    font-size: 24pt; 
+    font-weight: 900; 
+    line-height: 1.1; 
+    color: #1f2937;
+    text-transform: uppercase;
+    letter-spacing: 0.5pt;
+  }
+  .print-header .subtitle { 
+    font-size: 14pt; 
+    color: #6b7280; 
+    font-weight: 600;
+    margin-top: 3pt;
+  }
+  .print-logo { 
+    width: 50mm; 
+    max-height: 25mm; 
+    object-fit: contain; 
+    border: 1px solid #e5e7eb;
+    border-radius: 4pt;
+    padding: 2mm;
+  }
+
+  /* Layout do catálogo modernizado */
+  .menu-grid { 
+    column-count: 2; 
+    column-gap: 20mm; 
+    margin-top: 8mm;
+    width: 100% !important;
+    font-size: 11pt !important;
+  }
+  
+  .menu-section { 
+    break-inside: avoid; 
+    margin: 0 0 12mm 0; 
+    page-break-inside: avoid;
+  }
+  
+  .menu-section-title {
+    font-weight: 900; 
+    font-size: 16pt; 
+    text-transform: uppercase; 
+    color: #1f2937;
+    background: linear-gradient(135deg, #D1FE6E 0%, #B8E55A 100%);
+    padding: 8pt 12pt; 
+    border-radius: 6pt; 
+    margin: 10pt 0 8pt 0;
+    box-shadow: 0 2pt 4pt rgba(209, 254, 110, 0.3);
+    letter-spacing: 0.5pt;
+  }
+  
+  .menu-item { 
+    display: flex; 
+    align-items: baseline; 
+    gap: 8pt; 
+    margin: 3pt 0; 
+    padding: 2pt 0;
+  }
+  
+  .menu-item-name { 
+    font-weight: 700; 
+    font-size: 13pt; 
+    color: #374151;
+    line-height: 1.3;
+  }
+  
+  .menu-item-fill { 
+    flex: 1; 
+    border-bottom: 2px dotted #9ca3af; 
+    margin: 0 10pt; 
+    transform: translateY(-2pt); 
+    min-width: 30pt;
+  }
+  
+  .menu-item-price { 
+    font-weight: 900; 
+    font-size: 14pt; 
+    color: #1f2937;
+    background: #f9fafb;
+    padding: 2pt 6pt;
+    border-radius: 4pt;
+    border: 1px solid #e5e7eb;
+  }
+  
+  .menu-item-desc { 
+    font-size: 9pt; 
+    color: #6b7280; 
+    margin-left: 4pt;
+    font-style: italic;
+    line-height: 1.2;
+  }
+
+  /* Informações da empresa no rodapé */
+  .print-footer {
+    position: fixed;
+    bottom: 8mm;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9pt;
+    color: #6b7280;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 4mm;
+  }
+
+  /* Data de geração */
+  .print-date {
+    position: fixed;
+    top: 8mm;
+    right: 14mm;
+    font-size: 9pt;
+    color: #6b7280;
+  }
+
+  /* Melhorias gerais */
+  .menu-section:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Forçar ocupação total da página A4 */
+  * {
+    box-sizing: border-box !important;
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    font-family: 'Inter', Arial, sans-serif !important;
+  }
+
+  .print-container {
+    width: 190mm !important;
+    max-width: none !important;
+    margin: 10mm auto !important;
+    padding: 0 !important;
+  }
+
+  /* Remover qualquer limitação de largura */
+  .hidden.print\\:block {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Garantir que o conteúdo ocupe toda a largura disponível */
+  .menu-grid {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}

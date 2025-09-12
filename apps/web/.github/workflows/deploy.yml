@@ -1,0 +1,26 @@
+name: Deploy to VPS
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "🚀 Iniciando deploy automático..."
+            cd /opt/gestaoconsert
+            echo "📥 Baixando código mais recente..."
+            git pull origin main
+            echo "�� Fazendo build..."
+            yarn build
+            echo "🔄 Reiniciando containers..."
+            docker-compose down
+            docker-compose up -d
+            echo "✅ Deploy concluído com sucesso!"

@@ -1,0 +1,470 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS básico para funcionamento temporário */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Configuração da fonte Inter como padrão */
+@layer base {
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
+  }
+  
+  /* Forçar Inter em todos os elementos */
+  * {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  }
+  
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply bg-white text-gray-900;
+  }
+}
+
+:root {
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* Gradientes de texto otimizados - sem animação custosa */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #ffffff 0%, #D1FE6E 50%, #B8E55A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-secondary {
+  background: linear-gradient(135deg, #D1FE6E 0%, #B8E55A 50%, #A5D44A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, #ffffff 0%, #D1FE6E 30%, #B8E55A 70%, #A5D44A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animação de gradiente otimizada - apenas quando necessário */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.text-gradient-animated {
+  background: linear-gradient(135deg, #ffffff 0%, #D1FE6E 25%, #B8E55A 50%, #A5D44A 75%, #ffffff 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 6s ease-in-out infinite;
+}
+
+/* Estilos para o editor TipTap */
+.ProseMirror {
+  min-height: 200px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror ul, .ProseMirror ol {
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror li {
+  margin-bottom: 0.25rem;
+}
+
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.ProseMirror h1 {
+  font-size: 1.5rem;
+}
+
+.ProseMirror h2 {
+  font-size: 1.25rem;
+}
+
+.ProseMirror h3 {
+  font-size: 1.125rem;
+}
+
+.ProseMirror a {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+.ProseMirror a:hover {
+  color: #2563eb;
+}
+
+/* Estilos para o conteúdo renderizado */
+.prose {
+  max-width: none;
+}
+
+.prose p {
+  margin-bottom: 0.75rem;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin-bottom: 0.25rem;
+}
+
+.prose h1, .prose h2, .prose h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.prose h1 {
+  font-size: 1.5rem;
+}
+
+.prose h2 {
+  font-size: 1.25rem;
+}
+
+.prose h3 {
+  font-size: 1.125rem;
+}
+
+/* Animações otimizadas - durações reduzidas */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Animações para a tela de logout - otimizadas */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes progress-bar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-progress-bar {
+  animation: progress-bar 1s ease-in-out;
+}
+
+/* Estilos para botões de status - transição mais rápida */
+.status-button {
+  transition: all 0.15s ease-in-out;
+}
+
+.status-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Estilos para o modal */
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+}
+
+/* Estilos para o editor responsivo */
+@media (max-width: 768px) {
+  .ql-editor {
+    min-height: 150px;
+    font-size: 16px;
+  }
+  
+  .ql-toolbar {
+    padding: 8px;
+  }
+  
+  .ql-toolbar .ql-formats {
+    margin-right: 8px;
+  }
+}
+
+/* ===== ANIMAÇÕES DE SCROLL REVEAL REMOVIDAS ===== */
+/* Removendo apenas as animações de scroll reveal, mantendo animações essenciais */
+
+/* Desabilitar apenas animações de scroll reveal */
+.scroll-reveal,
+.scroll-reveal-fade,
+.scroll-reveal-slide-up,
+.scroll-reveal-scale,
+.hero-reveal,
+.card-reveal,
+.number-reveal,
+.chart-reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  will-change: auto !important;
+}
+
+/* Remover classes de delay de scroll reveal */
+.scroll-reveal-delay-100,
+.scroll-reveal-delay-200,
+.scroll-reveal-delay-300,
+.scroll-reveal-delay-400,
+.scroll-reveal-delay-500 {
+  transition-delay: 0ms !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Manter animações essenciais funcionando */
+.animate-spin,
+.animate-pulse,
+.animate-bounce,
+.animate-ping,
+[class*="animate-"] {
+  animation: revert !important;
+  transition: revert !important;
+}
+
+/* Preservar animações de loading específicas */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Para páginas internas - carregamento normal sem animações de scroll */
+.internal-page .scroll-reveal,
+.internal-page .scroll-reveal-fade,
+.internal-page .scroll-reveal-slide-up,
+.internal-page .scroll-reveal-scale {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* Respeitar preferências de movimento reduzido apenas para scroll reveal */
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal-fade,
+  .scroll-reveal-slide-up,
+  .scroll-reveal-scale {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  /* Manter animações de loading mesmo com movimento reduzido */
+  .animate-spin,
+  .animate-pulse {
+    animation: revert !important;
+  }
+}
+
+/* Performance: reduzir repaints apenas para scroll reveal */
+.scroll-reveal,
+.scroll-reveal-fade,
+.scroll-reveal-slide-up,
+.scroll-reveal-scale {
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Animações habilitadas apenas na landing page */
+body[data-page="landing"] .scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+}
+
+body[data-page="landing"] .scroll-reveal.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+body[data-page="landing"] .fade-in {
+  opacity: 0;
+  transition: opacity 0.6s ease-out;
+}
+
+body[data-page="landing"] .fade-in.animated {
+  opacity: 1;
+}
+
+/* Para páginas internas: sem animações */
+body:not([data-page="landing"]) .scroll-reveal,
+body:not([data-page="landing"]) .fade-in,
+body:not([data-page="landing"]) .animate-fade-in {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .scroll-reveal-fade,
+  .scroll-reveal-slide-up,
+  .scroll-reveal-scale,
+  .fade-in,
+  .animate-fade-in,
+  .status-button {
+    transition: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Performance: reduzir repaints */
+.scroll-reveal,
+.scroll-reveal-fade,
+.scroll-reveal-slide-up,
+.scroll-reveal-scale {
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ✅ CORREÇÃO: Preservar animações essenciais de loading */
+/* Desabilitar apenas animações de scroll reveal, manter animate-spin */
+.scroll-reveal,
+.fade-in,
+.animate-fade-in,
+.slide-up,
+.animate-slide-up {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* ✅ IMPORTANTE: NÃO desabilitar animate-spin para loadings */
+/* .animate-spin deve continuar funcionando */
+
+/* Manter animações de hover para botões */
+button:hover {
+  animation: none !important;
+}
+
+/* Exceção: permitir animações na landing page */
+.landing-page * {
+  animation: revert !important;
+  transition: revert !important;
+}
