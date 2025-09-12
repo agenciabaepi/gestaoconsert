@@ -34,10 +34,10 @@ export default function ProtectedArea({
     let debounceTimeout: NodeJS.Timeout;
     
     const checkAuthAndRedirect = () => {
-      // Verificar se veio de um redirecionamento recente
+      // ✅ MELHORADO: Verificação de redirecionamento recente aumentada
       const lastRedirect = sessionStorage.getItem('protectedRedirect');
       const now = Date.now();
-      if (lastRedirect && (now - parseInt(lastRedirect)) < 10000) { // Aumentar para 10 segundos
+      if (lastRedirect && (now - parseInt(lastRedirect)) < 15000) { // Aumentado para 15 segundos
         console.log('Redirecionamento de área protegida recente detectado, aguardando...');
         return;
       }
@@ -47,15 +47,23 @@ export default function ProtectedArea({
         return;
       }
       
+      // ✅ MELHORADO: Verificação de conectividade antes de redirecionar
+      const isOnline = navigator.onLine;
+      if (!isOnline) {
+        console.log('🌐 Sem conexão com a internet, aguardando...');
+        return;
+      }
+      
       // Se não há usuário autenticado, redirecionar para login
       if (!user || !usuarioData) {
         sessionStorage.setItem('protectedRedirect', now.toString());
         
         timeoutId = setTimeout(() => {
           if (!user || !usuarioData) { // Verificar novamente
+            console.log('🔄 Redirecionando para login após timeout estendido');
             router.replace('/login');
           }
-        }, 1000); // Aumentar delay
+        }, 3000); // Aumentado de 1000ms para 3000ms
         return;
       }
 
@@ -82,8 +90,8 @@ export default function ProtectedArea({
       }
     };
     
-    // Adicionar debounce para evitar múltiplas verificações
-    debounceTimeout = setTimeout(checkAuthAndRedirect, 500);
+    // ✅ MELHORADO: Debounce aumentado para evitar verificações excessivas
+    debounceTimeout = setTimeout(checkAuthAndRedirect, 1000); // Aumentado de 500ms para 1000ms
     
     return () => {
       clearTimeout(debounceTimeout);

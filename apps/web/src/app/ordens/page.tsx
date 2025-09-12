@@ -51,7 +51,7 @@ import { useOSPermissions } from '@/hooks/useOSPermissions';
 
 export default function ListaOrdensPage() {
   const router = useRouter();
-  const { validateCompanyData, getCompanyId } = useOSPermissions();
+  const { validateCompanyData, getCompanyId, loading: authLoading } = useOSPermissions();
   const { addToast } = useToast();
   const { executeWithRetry, manualRetry, state: retryState } = useSupabaseRetry();
 
@@ -243,7 +243,7 @@ export default function ListaOrdensPage() {
   };
 
   const fetchOrdens = async (forceRefresh = false) => {
-    if (!validateCompanyData()) {
+    if (!validateCompanyData(false)) {
       setLoading(false);
       return;
     }
@@ -526,7 +526,7 @@ export default function ListaOrdensPage() {
   };
 
   const fetchTecnicos = async () => {
-    if (!validateCompanyData()) {
+    if (!validateCompanyData(false)) {
       return;
     }
 
@@ -574,7 +574,13 @@ export default function ListaOrdensPage() {
   
   // useEffect para carregar dados
   useEffect(() => {
-    if (!validateCompanyData()) {
+    // Aguardar o carregamento da autenticação antes de validar
+    if (authLoading) {
+      console.log('🔄 Aguardando carregamento da autenticação...');
+      return;
+    }
+    
+    if (!validateCompanyData(false)) {
       console.warn('Dados da empresa não disponíveis - aguardando...');
       return;
     }
@@ -603,7 +609,7 @@ export default function ListaOrdensPage() {
       isMounted = false;
       clearTimeout(timeoutId);
     };
-  }, [validateCompanyData, getCompanyId, addToast]);
+  }, [validateCompanyData, getCompanyId, addToast, authLoading]);
 
 
 

@@ -217,6 +217,81 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [fetchUserData]);
 
+  // ✅ CORRIGIDO: useEffect principal com timeout aumentado e retry melhorado
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    let mounted = true;
+
+    const initializeAuth = async () => {
+      try {
+        setLoading(true);
+        
+        // Aumentar timeout para 3 segundos
+        const timeoutPromise = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            reject(new Error('Timeout na inicialização da autenticação'));
+          }, 3000); // Aumentado de 1500ms para 3000ms
+        });
+
+        const authPromise = (async () => {
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (session?.user && mounted) {
+            // Implementar retry com backoff exponencial
+            let retryCount = 0;
+            const maxRetries = 3;
+            
+            while (retryCount < maxRetries && mounted) {
+              try {
+                await fetchUserData(session.user.id);
+                break;
+              } catch (error) {
+                retryCount++;
+                if (retryCount < maxRetries) {
+                  const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
+                  console.log(`Tentativa ${retryCount} falhou, tentando novamente em ${delay}ms...`);
+                  await new Promise(resolve => setTimeout(resolve, delay));
+                } else {
+                  console.error('Falha após todas as tentativas de retry:', error);
+                  throw error;
+                }
+              }
+            }
+          }
+        })();
+
+        await Promise.race([authPromise, timeoutPromise]);
+        
+      } catch (error) {
+        if (mounted) {
+          console.error('Erro na inicialização da autenticação:', error);
+          // Não limpar a sessão imediatamente em caso de erro de rede
+          if (error.message !== 'Timeout na inicialização da autenticação') {
+            clearSession();
+          }
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      }
+    };
+
+    // Debounce para evitar múltiplas inicializações
+    const debounceTimeout = setTimeout(initializeAuth, 100);
+
+    return () => {
+      mounted = false;
+      clearTimeout(debounceTimeout);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [fetchUserData]);
+
   // ✅ CORRIGIDO: Listener de mudanças de auth com tratamento completo
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
