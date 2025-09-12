@@ -243,7 +243,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             
             while (retryCount < maxRetries && mounted) {
               try {
-                await fetchUserData(session.user.id);
+                await fetchUserData(session.user.id, session);
                 break;
               } catch (error) {
                 retryCount++;
