@@ -47,11 +47,11 @@ import { Select } from '@/components/Select';
 import LaudoProntoAlert from '@/components/LaudoProntoAlert';
 import { useSupabaseRetry } from '@/hooks/useRetry';
 import { OSFullPageSkeleton } from '@/components/OSTableSkeleton';
+import { useOSPermissions } from '@/hooks/useOSPermissions';
 
 export default function ListaOrdensPage() {
   const router = useRouter();
-  const { empresaData } = useAuth();
-  const empresaId = empresaData?.id;
+  const { validateCompanyData, getCompanyId } = useOSPermissions();
   const { addToast } = useToast();
   const { executeWithRetry, manualRetry, state: retryState } = useSupabaseRetry();
 
@@ -243,20 +243,15 @@ export default function ListaOrdensPage() {
   };
 
   const fetchOrdens = async (forceRefresh = false) => {
-    if (!empresaId || !empresaId.trim()) {
+    if (!validateCompanyData()) {
       setLoading(false);
       return;
     }
 
-    // ✅ REFRESH AUTOMÁTICO: Refrescar sessão se houver problemas de conexão
-    try {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData.session) {
-        console.log('🔄 Refrescando sessão automaticamente...');
-        await supabase.auth.refreshSession();
-      }
-    } catch (error) {
-      console.warn('⚠️ Erro ao verificar sessão:', error);
+    const empresaId = getCompanyId();
+    if (!empresaId) {
+      setLoading(false);
+      return;
     }
 
     // Cache simples - evitar buscar dados se já foram buscados recentemente
@@ -277,7 +272,6 @@ export default function ListaOrdensPage() {
     
     try {
       await executeWithRetry(async () => {
-      // ✅ SUPER OTIMIZADA: Query com timeout e limite reduzido
       const { data, error } = await Promise.race([
         supabase
           .from('ordens_servico')
@@ -321,7 +315,6 @@ export default function ListaOrdensPage() {
         setLoadingOrdens(false);
         return;
       } else if (data) {
-
         data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         // Buscar nomes dos técnicos se necessário
         const tecnicoIds = [...new Set(data.filter((item: any) => item.tecnico_id).map((item: any) => item.tecnico_id))];
@@ -341,12 +334,12 @@ export default function ListaOrdensPage() {
           }
         }
 
-        // ✅ OTIMIZADO: Busca de vendas por cliente (contém forma de pagamento real)
+        // Busca de vendas por cliente
         const vendasDict: Record<string, any> = {};
         
         try {
-          const vendasTimeoutPromise =         new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Vendas timeout')), 30000) // 30 segundos - mais tolerante
+          const vendasTimeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Vendas timeout')), 30000)
           );
 
           const vendasQueryPromise = supabase
@@ -364,7 +357,6 @@ export default function ListaOrdensPage() {
           if (errorVendas) {
             console.warn('⚠️ Erro ao buscar vendas:', errorVendas);
           } else if (todasVendas) {
-            // ✅ OTIMIZADO: Processar apenas OSs que realmente precisam de venda
             const osEntregues = data.filter((os: any) => 
               os.valor_faturado > 0 && 
               (os.status === 'ENTREGUE' || os.status_tecnico === 'FINALIZADA')
@@ -501,29 +493,10 @@ export default function ListaOrdensPage() {
       
       if (error instanceof Error) {
         if (error.message.includes('timeout')) {
-          console.warn('⚠️ Timeout detectado - tentando refrescar sessão...');
-          // Tentar refrescar sessão e recarregar automaticamente
-          try {
-            await supabase.auth.refreshSession();
-            console.log('✅ Sessão refrescada, tentando recarregar...');
-            setTimeout(() => {
-              fetchOrdens(true); // Tentar novamente após refresh
-            }, 1000);
-          } catch (refreshError) {
-            console.error('❌ Falha ao refrescar sessão:', refreshError);
-            addToast('error', 'Problema de conexão. Clique em "Tentar novamente" ou recarregue a página.');
-          }
+          console.warn('⚠️ Timeout detectado');
+          addToast('error', 'Dados demorando para carregar. Tente novamente.');
         } else if (error.message.includes('conectar com o servidor')) {
-          addToast('error', 'Problema de conexão com servidor. Verificando...');
-          // Tentar refrescar sessão automaticamente
-          setTimeout(async () => {
-            try {
-              await supabase.auth.refreshSession();
-              fetchOrdens(true);
-            } catch (e) {
-              console.error('Falha na reconexão:', e);
-            }
-          }, 2000);
+          addToast('error', 'Problema de conexão com servidor. Tente novamente.');
         } else {
           addToast('error', 'Erro ao carregar ordens. Tente novamente.');
         }
@@ -553,24 +526,17 @@ export default function ListaOrdensPage() {
   };
 
   const fetchTecnicos = async () => {
-    if (!empresaId || !empresaId.trim()) {
+    if (!validateCompanyData()) {
       return;
     }
 
-    // ✅ REFRESH AUTOMÁTICO: Refrescar sessão se necessário
-    try {
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionData.session) {
-        console.log('🔄 Refrescando sessão para técnicos...');
-        await supabase.auth.refreshSession();
-      }
-    } catch (error) {
-      console.warn('⚠️ Erro ao verificar sessão para técnicos:', error);
+    const empresaId = getCompanyId();
+    if (!empresaId) {
+      return;
     }
 
     setLoadingTecnicos(true);
     try {
-      // ✅ MODO SILENCIOSO: Não mostrar erro se falhar após inatividade
       const { data, error } = await Promise.race([
         supabase
           .from('usuarios')
@@ -584,9 +550,8 @@ export default function ListaOrdensPage() {
       ]);
 
       if (error) {
-        console.warn('⚠️ Falha ao buscar técnicos (modo silencioso):', error);
-        // Não mostrar toast de erro para não incomodar o usuário
-        setTecnicos([]); // Lista vazia como fallback
+        console.warn('⚠️ Falha ao buscar técnicos:', error);
+        setTecnicos([]);
         return;
       }
 
@@ -594,24 +559,23 @@ export default function ListaOrdensPage() {
         setTecnicos(data.map((u: any) => u.nome).filter(Boolean));
       }
     } catch (error) {
-      console.warn('⚠️ Timeout ao carregar técnicos (modo silencioso):', error);
-      // Falha silenciosa - não mostrar erro ao usuário
-      setTecnicos([]); // Lista vazia como fallback
+      console.warn('⚠️ Timeout ao carregar técnicos:', error);
+      setTecnicos([])
     } finally {
       setLoadingTecnicos(false);
     }
   };
 
 
-  // ✅ CORREÇÃO: useEffect para controlar hidratação
+  // useEffect para controlar hidratação
   useEffect(() => {
     setIsMounted(true);
   }, []);
   
-  // ✅ OTIMIZADO: useEffect simplificado para evitar loops
+  // useEffect para carregar dados
   useEffect(() => {
-    if (!empresaId?.trim()) {
-      console.warn('EmpresaId não disponível - aguardando...');
+    if (!validateCompanyData()) {
+      console.warn('Dados da empresa não disponíveis - aguardando...');
       return;
     }
 
@@ -619,6 +583,7 @@ export default function ListaOrdensPage() {
     
     const loadData = async () => {
       try {
+        const empresaId = getCompanyId();
         console.log('🔄 Carregando dados para empresa:', empresaId);
         await Promise.all([
           fetchOrdens(),
@@ -632,29 +597,15 @@ export default function ListaOrdensPage() {
       }
     };
 
-    // Delay pequeno para evitar chamadas múltiplas
     const timeoutId = setTimeout(loadData, 200);
     
     return () => {
       isMounted = false;
       clearTimeout(timeoutId);
     };
-  }, [empresaId, addToast]); // Dependências mínimas
+  }, [validateCompanyData, getCompanyId, addToast]);
 
-  // ✅ TIMEOUT DE SEGURANÇA: Evitar loading infinito
-  useEffect(() => {
-    if (!loading) return;
 
-    const loadingTimeout = setTimeout(() => {
-      console.warn('⚠️ Loading timeout - resetando estados');
-      setLoading(false);
-      setLoadingOrdens(false);
-      setLoadingTecnicos(false);
-      addToast('warning', 'Carregamento demorou muito. Tente atualizar a página.');
-    }, 15000); // 15 segundos - mais conservador
-
-    return () => clearTimeout(loadingTimeout);
-  }, [loading, addToast]);
 
   // Filtros e busca
   const filteredOrdens = useMemo(() => {
@@ -783,6 +734,7 @@ export default function ListaOrdensPage() {
   }, [ordens]);
 
   // ✅ OTIMIZADO: Loading states mais inteligentes
+  const empresaId = getCompanyId();
   if (!empresaId) {
     return (
       <MenuLayout>
@@ -912,7 +864,7 @@ export default function ListaOrdensPage() {
   }
   
   // ✅ OTIMIZADO: Validação com timeout para evitar loops
-  if (!empresaData?.id) {
+  if (!validateCompanyData()) {
     return (
       <MenuLayout>
         <OSFullPageSkeleton />

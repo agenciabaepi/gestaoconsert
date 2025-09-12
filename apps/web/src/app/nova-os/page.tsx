@@ -12,6 +12,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Suspense } from 'react';
 import { useToast } from '@/components/Toast';
+import { useOSPermissions } from '@/hooks/useOSPermissions';
 
 const etapas = ["Cliente", "Aparelho", "Técnico", "Status", "Imagens"];
 
@@ -65,7 +66,8 @@ interface Termo {
 }
 
 function NovaOS2Content() {
-  const { usuarioData, empresaData } = useAuth();
+  const { usuarioData } = useAuth();
+  const { validateOSCreation, getCompanyId, getUserInfo } = useOSPermissions();
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [clienteSelecionado, setClienteSelecionado] = useState<string | null>(null);
@@ -91,14 +93,15 @@ function NovaOS2Content() {
   // Verificar se há técnicos cadastrados
   useEffect(() => {
     async function checkTecnicos() {
-      if (!empresaData?.id) return;
+      const empresaId = getCompanyId();
+      if (!empresaId) return;
       
       try {
         const { data: tecnicos } = await supabase
           .from('usuarios')
           .select('id')
           .eq('nivel', 'tecnico')
-          .eq('empresa_id', empresaData.id);
+          .eq('empresa_id', empresaId);
         
         setHasTecnicos(!!(tecnicos && tecnicos.length > 0));
       } catch (error) {
@@ -110,7 +113,7 @@ function NovaOS2Content() {
     }
     
     checkTecnicos();
-  }, [empresaData?.id]);
+  }, [getCompanyId]);
 
   // Estado para etapa 3 - Técnico Responsável
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
@@ -177,12 +180,14 @@ function NovaOS2Content() {
 
   useEffect(() => {
     async function fetchClientes() {
-      if (!empresaData?.id) return;
+      const empresaId = getCompanyId();
+      if (!empresaId) return;
+      
       setLoadingClientes(true);
       const { data, error } = await supabase
         .from('clientes')
         .select('id, nome, telefone, celular, email, documento, numero_cliente')
-        .eq('empresa_id', empresaData.id);
+        .eq('empresa_id', empresaId);
       if (!error && data) {
         setClientes(data);
         
@@ -195,38 +200,41 @@ function NovaOS2Content() {
       setLoadingClientes(false);
     }
     fetchClientes();
-  }, [empresaData?.id, searchParams]);
+  }, [getCompanyId, searchParams]);
 
   useEffect(() => {
     async function fetchUsuarios() {
-      if (!empresaData?.id) return;
+      const empresaId = getCompanyId();
+      if (!empresaId) return;
+      
       setLoadingUsuarios(true);
       const { data, error } = await supabase
         .from('usuarios')
         .select('id, nome, email, nivel, auth_user_id, tecnico_id')
-        .eq('empresa_id', empresaData.id)
+        .eq('empresa_id', empresaId)
         .order('nome', { ascending: true });
       
       if (!error && data) {
         setUsuarios(data);
-        setTecnicos(data.filter((u: any) => u.nivel === 'tecnico'));
+        const tecnicosData = data.filter(u => u.nivel === 'tecnico');
+        setTecnicos(tecnicosData);
         
-        // Auto-atribuir baseado no usuário logado
-        if (usuarioData) {
-          const usuarioLogado = data.find((u: any) => u.auth_user_id === usuarioData.auth_user_id);
-          if (usuarioLogado && usuarioLogado.nivel === 'tecnico') {
-            setTecnicoResponsavel(usuarioLogado.tecnico_id || usuarioLogado.auth_user_id);
-          }
+        // Auto-selecionar técnico se o usuário logado for técnico
+        const userInfo = getUserInfo();
+        const usuarioLogado = data.find(u => u.auth_user_id === userInfo.authUserId);
+        if (usuarioLogado && usuarioLogado.nivel === 'tecnico') {
+          setTecnicoResponsavel(usuarioLogado.tecnico_id || usuarioLogado.auth_user_id);
         }
       }
       setLoadingUsuarios(false);
     }
     fetchUsuarios();
-  }, [empresaData?.id, usuarioData]);
+  }, [getCompanyId, getUserInfo]);
 
   useEffect(() => {
     async function fetchStatus() {
-      if (!empresaData?.id) return;
+      const empresaId = getCompanyId();
+      if (!empresaId) return;
       
       // Status fixos para criação de OS
       const statusPadrao = [
@@ -250,25 +258,26 @@ function NovaOS2Content() {
       setStatusSelecionado('orcamento'); // Padrão: ORÇAMENTO
     }
     fetchStatus();
-  }, [empresaData?.id]);
+  }, [getCompanyId]);
 
   useEffect(() => {
     fetchProdutosServicos();
-  }, [empresaData?.id]);
+  }, [getCompanyId]);
 
   useEffect(() => {
     fetchTermos();
-  }, [empresaData?.id]);
+  }, [getCompanyId]);
 
   async function fetchProdutosServicos() {
-    if (!empresaData?.id) return;
+    const empresaId = getCompanyId();
+    if (!empresaId) return;
     setLoadingProdutos(true);
     
     const { data, error } = await interceptSupabaseQuery('produtos_servicos', async () => {
       return await supabase
         .from('produtos_servicos')
         .select('id, nome, tipo, preco, unidade, ativo, codigo')
-        .eq('empresa_id', empresaData.id)
+        .eq('empresa_id', empresaId)
         .eq('ativo', true)
         .order('nome', { ascending: true });
     });
@@ -289,13 +298,14 @@ function NovaOS2Content() {
   }
 
   async function fetchTermos() {
-    if (!empresaData?.id) return;
+    const empresaId = getCompanyId();
+    if (!empresaId) return;
     setLoadingTermos(true);
     
     const { data, error } = await supabase
       .from('termos_garantia')
       .select('*')
-      .eq('empresa_id', empresaData.id)
+      .eq('empresa_id', empresaId)
       .eq('ativo', true)
       .order('ordem', { ascending: true });
     
@@ -315,10 +325,11 @@ function NovaOS2Content() {
 
   useEffect(() => {
     fetchProdutosServicos();
-  }, [empresaData?.id]);
+  }, [getCompanyId]);
 
   async function onCadastrarProdutoRapido() {
-    if (!empresaData?.id || !novoProduto.nome || novoProduto.preco <= 0) {
+    const empresaId = getCompanyId();
+    if (!empresaId || !novoProduto.nome || novoProduto.preco <= 0) {
       addToast('error', 'Preencha todos os campos obrigatórios!');
       return;
     }
@@ -327,7 +338,7 @@ function NovaOS2Content() {
 
     try {
       const produtoPayload = {
-        empresa_id: empresaData.id,
+        empresa_id: empresaId,
         nome: novoProduto.nome,
         tipo: novoProduto.tipo,
         preco: novoProduto.preco,
@@ -393,18 +404,18 @@ function NovaOS2Content() {
   }
 
   async function onCadastrarCliente(data: { nome: string; whatsapp: string; cpf: string; numero_reserva?: string; email?: string }) {
-    if (!empresaData?.id) {
-      addToast('error', 'Empresa não encontrada!');
+    if (!validateOSCreation()) {
       return;
     }
 
+    const empresaId = getCompanyId();
     setCadastrando(true);
     
     // Buscar próximo número de cliente
     const { data: maxResult } = await supabase
       .from('clientes')
       .select('numero_cliente')
-      .eq('empresa_id', empresaData.id)
+      .eq('empresa_id', empresaId)
       .order('numero_cliente', { ascending: false })
       .limit(1)
       .single();
@@ -412,7 +423,7 @@ function NovaOS2Content() {
     const proximoNumero = maxResult?.numero_cliente ? maxResult.numero_cliente + 1 : 1;
 
     const clientePayload = {
-      empresa_id: empresaData.id,
+      empresa_id: empresaId,
       nome: data.nome,
       telefone: data.whatsapp,
       celular: data.whatsapp,
@@ -519,7 +530,11 @@ function NovaOS2Content() {
   }
 
   async function finalizarOS() {
-    // Validar se todos os campos obrigatórios estão preenchidos
+    if (!validateOSCreation()) {
+      return;
+    }
+
+    // Validações específicas da OS
     if (!clienteSelecionado) {
       addToast('error', 'Selecione um cliente');
       return;
@@ -540,11 +555,6 @@ function NovaOS2Content() {
       return;
     }
 
-    if (!empresaData?.id) {
-      addToast('error', 'Erro: Dados da empresa não encontrados. Faça login novamente.');
-      return;
-    }
-
     // Se for APROVADO, verificar se há produtos/serviços selecionados COM VALORES
     const validacaoProdutosServicos = validarProdutosServicosAprovados();
     if (!validacaoProdutosServicos.valido) {
@@ -562,20 +572,23 @@ function NovaOS2Content() {
       const statusSelecionadoObj = statusOS.find(s => s.id === statusSelecionado);
       const nomeStatus = statusSelecionadoObj?.nome || 'ABERTA';
 
+      const empresaId = getCompanyId();
+      const userInfo = getUserInfo();
+
       // Preparar dados da OS para salvar no banco
       const dadosOS = {
         cliente_id: clienteSelecionado,
-        tecnico_id: tecnicoResponsavel,  // ✅ Campo correto: tecnico_id (não usuario_id)
+        tecnico_id: tecnicoResponsavel,
         status: nomeStatus,
         categoria: dadosEquipamento.tipo?.toUpperCase() || '',
         marca: dadosEquipamento.marca?.toUpperCase() || '',
         modelo: dadosEquipamento.modelo?.toUpperCase() || '',
         cor: dadosEquipamento.cor?.toUpperCase() || '',
         numero_serie: dadosEquipamento.numero_serie?.toUpperCase() || '',
-        problema_relatado: dadosEquipamento.descricao_problema?.toUpperCase() || '',  // ✅ Campo correto
+        problema_relatado: dadosEquipamento.descricao_problema?.toUpperCase() || '',
         observacao: observacoes?.toUpperCase() || '',
-        empresa_id: empresaData?.id,
-        atendente: usuarioData?.nome?.toUpperCase() || 'ATENDENTE',
+        empresa_id: empresaId,
+        atendente: userInfo.nome?.toUpperCase() || 'ATENDENTE',
         tecnico: tecnicoSelecionado?.nome?.toUpperCase() || 'TÉCNICO',
         acessorios: acessorios?.toUpperCase() || '',
         condicoes_equipamento: condicoesEquipamento?.toUpperCase() || '',
@@ -583,14 +596,12 @@ function NovaOS2Content() {
         os_garantia_id: tipoEntrada === 'garantia' && osGarantiaSelecionada ? osGarantiaSelecionada.id : null,
         termo_garantia_id: termoSelecionado || null,
         tipo: 'Normal',
-        // Adicionar campo de prazo de entrega
         prazo_entrega: prazoEntrega ? new Date(prazoEntrega).toISOString() : (() => {
           // Se não foi definido, criar prazo automático (7 dias)
           const prazoAutomatico = new Date();
           prazoAutomatico.setDate(prazoAutomatico.getDate() + 7);
           return prazoAutomatico.toISOString();
         })()
-        // Agora usando os nomes corretos das colunas da tabela
       };
 
       // Salvar a OS usando a API route (contorna RLS)
@@ -695,6 +706,114 @@ function NovaOS2Content() {
       setSalvando(false);
     }
   }
+  
+  // Função alternativa para salvar a OS
+  async function salvarOS() {
+    if (!validateOSCreation()) {
+      return;
+    }
+    
+    if (!clienteSelecionado) {
+      addToast('error', 'Selecione um cliente');
+      return;
+    }
+    
+    if (!dadosEquipamento.tipo || !dadosEquipamento.marca || !dadosEquipamento.modelo) {
+      addToast('error', 'Preencha os dados do equipamento');
+      return;
+    }
+    
+    if (!tecnicoResponsavel) {
+      addToast('error', 'Selecione um técnico responsável');
+      return;
+    }
+    
+    if (!statusSelecionado) {
+      addToast('error', 'Selecione um status');
+      return;
+    }
+
+    // Se for APROVADO, verificar se há produtos/serviços selecionados COM VALORES
+    const validacaoProdutosServicos = validarProdutosServicosAprovados();
+    if (!validacaoProdutosServicos.valido) {
+      addToast('error', validacaoProdutosServicos.mensagem);
+      return;
+    }
+
+    setSalvando(true);
+
+    try {
+      // Buscar dados do técnico selecionado
+      const tecnicoSelecionado = tecnicos.find(t => t.tecnico_id === tecnicoResponsavel);
+      
+      // Buscar o status selecionado para obter o nome
+      const statusSelecionadoObj = statusOS.find(s => s.id === statusSelecionado);
+      const nomeStatus = statusSelecionadoObj?.nome || 'ABERTA';
+
+      const empresaId = getCompanyId();
+      const userInfo = getUserInfo();
+
+      // Preparar dados da OS para salvar no banco
+      const dadosOS = {
+        cliente_id: clienteSelecionado,
+        tecnico_id: tecnicoResponsavel,
+        status: nomeStatus,
+        categoria: dadosEquipamento.tipo?.toUpperCase() || '',
+        marca: dadosEquipamento.marca?.toUpperCase() || '',
+        modelo: dadosEquipamento.modelo?.toUpperCase() || '',
+        cor: dadosEquipamento.cor?.toUpperCase() || '',
+        numero_serie: dadosEquipamento.numero_serie?.toUpperCase() || '',
+        problema_relatado: dadosEquipamento.descricao_problema?.toUpperCase() || '',
+        observacao: observacoes?.toUpperCase() || '',
+        empresa_id: empresaId,
+        atendente: userInfo.nome?.toUpperCase() || 'ATENDENTE',
+        tecnico: tecnicoSelecionado?.nome?.toUpperCase() || 'TÉCNICO',
+        acessorios: acessorios?.toUpperCase() || '',
+        condicoes_equipamento: condicoesEquipamento?.toUpperCase() || '',
+        data_cadastro: new Date().toISOString(),
+        os_garantia_id: tipoEntrada === 'garantia' && osGarantiaSelecionada ? osGarantiaSelecionada.id : null,
+        termo_garantia_id: termoSelecionado || null,
+        tipo: 'Normal',
+        prazo_entrega: prazoEntrega ? new Date(prazoEntrega).toISOString() : (() => {
+          // Se não foi definido, criar prazo automático (7 dias)
+          const prazoAutomatico = new Date();
+          prazoAutomatico.setDate(prazoAutomatico.getDate() + 7);
+          return prazoAutomatico.toISOString();
+        })()
+      };
+
+      // Salvar a OS usando a API route (contorna RLS)
+      const response = await fetch('/api/ordens/criar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dadosOS)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Erro ao salvar OS:', result.error);
+        addToast('error', 'Erro ao criar a Ordem de Serviço: ' + result.error);
+        return;
+      }
+
+      const osData = result.data;
+
+      // Mostrar toast de sucesso
+      addToast('success', 'Ordem de Serviço salva com sucesso!');
+      
+      // Redirecionar para visualizar a OS criada
+      router.push(`/ordens/${osData.id}`);
+
+    } catch (error) {
+      console.error('Erro geral ao salvar OS:', error);
+      addToast('error', 'Erro inesperado ao criar a Ordem de Serviço');
+    } finally {
+      setSalvando(false);
+    }
+  }
 
   return (
     <MenuLayout>
@@ -779,7 +898,7 @@ function NovaOS2Content() {
                                   const { data: porNumero } = await supabase
                                     .from('ordens_servico')
                                     .select('id, numero_os, cliente_id, modelo, numero_serie, marca, categoria, clientes:cliente_id(nome)')
-                                    .eq('empresa_id', empresaData?.id)
+                                    .eq('empresa_id', getCompanyId())
                                     .eq('numero_os', Number(e.target.value))
                                     .limit(10);
                                   if (porNumero) resultados = [...resultados, ...porNumero];
@@ -789,7 +908,7 @@ function NovaOS2Content() {
                                 const { data: porModelo } = await supabase
                                   .from('ordens_servico')
                                   .select('id, numero_os, cliente_id, modelo, numero_serie, marca, categoria, clientes:cliente_id(nome)')
-                                  .eq('empresa_id', empresaData?.id)
+                                  .eq('empresa_id', getCompanyId())
                                   .ilike('modelo', `%${e.target.value}%`)
                                   .limit(10);
                                 if (porModelo) resultados = [...resultados, ...porModelo];
@@ -798,7 +917,7 @@ function NovaOS2Content() {
                                 const { data: clientesBusca } = await supabase
                                   .from('clientes')
                                   .select('id')
-                                  .eq('empresa_id', empresaData?.id)
+                                  .eq('empresa_id', getCompanyId())
                                   .ilike('nome', `%${e.target.value}%`);
                                 
                                 // 4. Buscar OS pelos IDs dos clientes encontrados
@@ -807,7 +926,7 @@ function NovaOS2Content() {
                                   const { data: porCliente } = await supabase
                                     .from('ordens_servico')
                                     .select('id, numero_os, cliente_id, modelo, numero_serie, marca, categoria, clientes:cliente_id(nome)')
-                                    .eq('empresa_id', empresaData?.id)
+                                    .eq('empresa_id', getCompanyId())
                                     .in('cliente_id', clienteIds)
                                     .limit(10);
                                   if (porCliente) resultados = [...resultados, ...porCliente];
@@ -817,7 +936,7 @@ function NovaOS2Content() {
                                 const { data: porSerie } = await supabase
                                   .from('ordens_servico')
                                   .select('id, numero_os, cliente_id, modelo, numero_serie, marca, categoria, clientes:cliente_id(nome)')
-                                  .eq('empresa_id', empresaData?.id)
+                                  .eq('empresa_id', getCompanyId())
                                   .ilike('numero_serie', `%${e.target.value}%`)
                                   .limit(10);
                                 if (porSerie) resultados = [...resultados, ...porSerie];
@@ -828,7 +947,7 @@ function NovaOS2Content() {
                                   const { data: porId } = await supabase
                                     .from('ordens_servico')
                                     .select('id, numero_os, cliente_id, modelo, numero_serie, marca, categoria, clientes:cliente_id(nome)')
-                                    .eq('empresa_id', empresaData?.id)
+                                    .eq('empresa_id', getCompanyId())
                                     .eq('id', e.target.value)
                                     .limit(1);
                                   if (porId) resultados = [...resultados, ...porId];
@@ -1274,7 +1393,7 @@ function NovaOS2Content() {
                         const { data, error } = await supabase
                           .from('ordens_servico')
                           .select('id, numero_os, cliente_id, modelo, numero_serie, cliente:clientes(nome)')
-                          .eq('empresa_id', empresaData?.id)
+                          .eq('empresa_id', getCompanyId())
                           .neq('status', 'retorno_garantia')
                           .ilike('id', `%${e.target.value}%`)
                           .limit(10);
@@ -1284,7 +1403,7 @@ function NovaOS2Content() {
                           const { data: porCliente } = await supabase
                             .from('ordens_servico')
                             .select('id, numero_os, cliente_id, modelo, numero_serie, cliente:clientes(nome)')
-                            .eq('empresa_id', empresaData?.id)
+                            .eq('empresa_id', getCompanyId())
                             .neq('status', 'retorno_garantia')
                             .ilike('cliente.nome', `%${e.target.value}%`)
                             .limit(10);
