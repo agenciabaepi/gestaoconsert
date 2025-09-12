@@ -242,7 +242,7 @@ export default function MovimentacaoCaixaPage() {
   };
 
   return (
-    <ProtectedArea>
+    <ProtectedArea area="financeiro">
       <MenuLayout>
         <div className="p-6">
           <div className="mb-6">

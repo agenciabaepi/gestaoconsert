@@ -37,7 +37,7 @@ export default function ProtectedArea({
     }
 
     // Verificar nível de usuário
-    if (usuarioData.nivel < requiredLevel) {
+    if (Number(usuarioData.nivel) < requiredLevel) {
       router.push('/acesso-negado');
       return;
     }

@@ -1303,7 +1303,7 @@ function NovaOS2Content() {
                             className={`px-4 py-2 cursor-pointer hover:bg-lime-100 ${osGarantiaSelecionada?.id === os.id ? 'bg-lime-200' : ''}`}
                             onClick={() => setOsGarantiaSelecionada(os)}
                           >
-                            <span className="font-semibold">OS #{os.numero_os || os.id}</span> — {os.cliente?.nome || 'Cliente não encontrado'} — {os.modelo as string}
+                            <span className="font-semibold">OS #{String(os.numero_os || os.id)}</span> — {String((os.cliente as any)?.nome || 'Cliente não encontrado')} — {String(os.modelo || 'N/A')}
                           </li>
                         ))}
                       </ul>

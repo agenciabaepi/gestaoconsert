@@ -4,8 +4,6 @@ const nextConfig = {
   experimental: {
     optimizeCss: false,
     optimizePackageImports: ['@supabase/supabase-js', 'react-icons/fi']
-    // ⚠️ 'experimental.turbo' foi removido no Next 15.
-    // Se quiser usar Turbopack, não precisa declarar aqui.
   },
 
   // Cache estratégico para melhor performance
@@ -81,14 +79,8 @@ const nextConfig = {
     return config
   },
   
-  // Desabilitar prefetch automático e roteamento client-side
-  experimental: {
-    optimizeCss: false,
-    optimizePackageImports: ['@supabase/supabase-js', 'react-icons/fi'],
-    // Forçar navegação server-side
-    appDir: true,
-    serverComponentsExternalPackages: []
-  },
+  // Configurações externas para servidor
+  serverExternalPackages: ['nodemailer'],
 
   // Configurar para sempre fazer full page reload
   async rewrites() {

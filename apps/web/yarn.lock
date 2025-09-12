@@ -6711,10 +6711,10 @@ node-webpmux@3.1.7:
   resolved "https://registry.npmjs.org/node-webpmux/-/node-webpmux-3.1.7.tgz"
   integrity sha512-ySkL4lBCto86OyQ0blAGzylWSECcn5I0lM3bYEhe75T8Zxt/BFUMHa8ktUguR7zwXNdS/Hms31VfSsYKN1383g==
 
-nodemailer@^7.0.5:
-  version "7.0.5"
-  resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-7.0.5.tgz"
-  integrity sha512-nsrh2lO3j4GkLLXoeEksAMgAOqxOv6QumNRVQTJwKH4nuiww6iC2y7GyANs9kRAxCexg3+lTWM3PZ91iLlVjfg==
+nodemailer@^7.0.6:
+  version "7.0.6"
+  resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-7.0.6.tgz"
+  integrity sha512-F44uVzgwo49xboqbFgBGkRaiMgtoBrBEWCVincJPK9+S9Adkzt/wXCLKbf7dxucmxfTI5gHGB+bEmdyzN6QKjw==
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"

@@ -93,9 +93,7 @@ const useIsMobile = () => {
 
 const MenuLayout = React.memo<MenuLayoutProps>(({ children }) => {
   // Tracking de renderizações apenas em desenvolvimento
-  if (process.env.NODE_ENV === 'development') {
-    useRenderTracker('MenuLayout');
-  }
+  useRenderTracker('MenuLayout');
   
   // Obter dados do usuário do contexto de autenticação
   const { usuarioData, loading: authLoading } = useAuth();

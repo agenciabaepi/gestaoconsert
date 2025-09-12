@@ -29,7 +29,7 @@ function LoginClientInner() {
   const auth = useAuth();
   const { addToast } = useToast();
   const confirm = useConfirm();
-
+  
   // Imagens para o carrossel
   const carouselImages = [
     {
@@ -403,11 +403,11 @@ function LoginClientInner() {
     }));
     localStorage.setItem("empresa_id", usuario.empresa_id);
     
-    // Aguardar um pouco para mostrar a mensagem de sucesso
-    setTimeout(() => {
+          // Aguardar um pouco para mostrar a mensagem de sucesso
+      setTimeout(() => {
       // Redirecionar para dashboard principal
       router.push('/dashboard');
-    }, 1500);
+      }, 1500);
     
     // Resetar o estado de loading após o redirecionamento
     setIsSubmitting(false);
@@ -727,61 +727,61 @@ function LoginClientInner() {
               </form>
             ) : (
               // Formulário de login normal
-              <form
-                onSubmit={handleLogin}
+            <form
+              onSubmit={handleLogin}
                 className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
-              >
-                {/* Header */}
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl font-light text-gray-900 mb-3 tracking-tight">
-                    Bem-vindo de volta
-                  </h1>
-                  <p className="text-gray-600 font-light">
-                    Acesse sua conta para continuar
-                  </p>
-                </div>
-                
+            >
+              {/* Header */}
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-light text-gray-900 mb-3 tracking-tight">
+                  Bem-vindo de volta
+                </h1>
+                <p className="text-gray-600 font-light">
+                  Acesse sua conta para continuar
+                </p>
+              </div>
+              
                 <div className="space-y-5">
-                  {/* Email/Username Input */}
+                {/* Email/Username Input */}
                   <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       E-mail ou Usuário
                     </label>
-                    <input
-                      type="text"
+                  <input
+                    type="text"
                       placeholder="Digite seu e-mail ou usuário"
-                      value={loginInput}
-                      onChange={(e) => setLoginInput(e.target.value)}
-                      onFocus={() => setFocusedField('login')}
-                      onBlur={() => setFocusedField(null)}
+                    value={loginInput}
+                    onChange={(e) => setLoginInput(e.target.value)}
+                    onFocus={() => setFocusedField('login')}
+                    onBlur={() => setFocusedField(null)}
                       className={`w-full px-4 py-3 bg-gray-50 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white transition-all duration-200 ${
                         focusedField === 'login' 
                           ? 'border-gray-900 shadow-sm' 
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      required
-                    />
-                  </div>
-                  
-                  {/* Password Input */}
+                    required
+                  />
+                </div>
+                
+                {/* Password Input */}
                   <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Senha
                     </label>
-                    <input
+                  <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Digite sua senha"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      onFocus={() => setFocusedField('password')}
-                      onBlur={() => setFocusedField(null)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
                       className={`w-full px-4 py-3 bg-gray-50 border rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:bg-white transition-all duration-200 pr-12 ${
                         focusedField === 'password' 
                           ? 'border-gray-900 shadow-sm' 
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
-                      required
-                    />
+                    required
+                  />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
@@ -789,13 +789,13 @@ function LoginClientInner() {
                     >
                       {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                     </button>
-                  </div>
-                  
-                  {/* Login Button */}
-                  <button
-                    type="submit"
+                </div>
+                
+                {/* Login Button */}
+                <button
+                  type="submit"
                     className="w-full bg-gray-900 text-white font-medium py-3 rounded-lg hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                    disabled={isSubmitting}
+                  disabled={isSubmitting}
                     onClick={(e) => {
                       // Prevenir múltiplos cliques e validar campos
                       if (isSubmitting || !loginInput.trim() || !password.trim()) {
@@ -815,18 +815,18 @@ function LoginClientInner() {
                       ) : (
                         'Entrar'
                       )}
-                  </button>
-                  
-                  {/* Forgot Password Button */}
-                  <button
-                    type="button"
+                </button>
+                
+                {/* Forgot Password Button */}
+                <button
+                  type="button"
                     className="w-full bg-gray-100 text-gray-700 font-medium py-3 rounded-lg hover:bg-gray-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={handlePasswordReset}
-                    disabled={isRecovering}
-                  >
-                    {isRecovering ? 'Enviando...' : 'Esqueci minha senha'}
-                  </button>
-                </div>
+                  onClick={handlePasswordReset}
+                  disabled={isRecovering}
+                >
+                  {isRecovering ? 'Enviando...' : 'Esqueci minha senha'}
+                </button>
+              </div>
 
                 {/* Link para cadastro */}
                 <div className="text-center mt-6">
@@ -841,7 +841,7 @@ function LoginClientInner() {
                     </button>
                   </p>
                 </div>
-              </form>
+            </form>
             )}
           </div>
 

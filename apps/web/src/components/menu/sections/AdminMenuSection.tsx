@@ -7,7 +7,7 @@ import {
   UserGroupIcon,
   CogIcon,
   ChartBarIcon,
-  DatabaseIcon,
+  CircleStackIcon,
   KeyIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
@@ -54,7 +54,7 @@ const AdminMenuSection: React.FC<AdminMenuSectionProps> = ({
     {
       title: 'Backup & Dados',
       href: '/admin/backup',
-      icon: <DatabaseIcon className="h-4 w-4" />,
+      icon: <CircleStackIcon className="h-4 w-4" />,
       description: 'Gerenciar backups e dados'
     },
     {

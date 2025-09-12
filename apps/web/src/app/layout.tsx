@@ -22,7 +22,7 @@ import StickyOrcamentoPopup from '@/components/StickyOrcamentoPopup';
 // Metadata removida conforme exigência do Next.js para arquivos com "use client"
 
 function AuthContent({ children }: { children: React.ReactNode }) {
-  const { isLoggingOut } = useAuth();
+  const { isLoggingOut, empresaData } = useAuth();
   const [banner, setBanner] = useState<{ texto: string } | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>('');
 
@@ -30,7 +30,7 @@ function AuthContent({ children }: { children: React.ReactNode }) {
     let cancelled = false;
     async function checkVencimento() {
       try {
-        if (!session || !empresaData?.id) return;
+        if (!empresaData?.id) return;
         const params = new URLSearchParams({ empresaId: empresaData.id });
         const res = await fetch(`/api/admin-saas/minha-assinatura?${params.toString()}`, { cache: 'no-store' });
         if (!res.ok) return;

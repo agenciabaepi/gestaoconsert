@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from './useToast';
 import { useSupabaseRetry } from './useRetry';
-import { supabase } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabaseClient';
 
 export interface OrdemTransformada {
   id: string;
@@ -206,7 +206,7 @@ export const useOrdens = (): UseOrdensReturn => {
     } catch (err: any) {
       console.error('❌ Erro ao buscar ordens:', err);
       setError(err);
-      addToast('error', 'Erro ao carregar ordens de serviço');
+      addToast('Erro ao carregar ordens de serviço', 'error');
     } finally {
       setLoading(false);
     }
