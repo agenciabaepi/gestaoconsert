@@ -19,7 +19,9 @@ docker system prune -f
 docker image prune -a -f
 
 echo "🔨 Construindo nova imagem..."
+cd apps/web
 docker-compose build --no-cache
+cd ../..
 
 echo "🚀 Iniciando containers..."
 docker-compose up -d
