@@ -17,6 +17,22 @@ export default function LandingPage() {
   // Hook para animações de scroll reveal
   const { isAnimated } = useScrollReveal();
   
+  // Inicializa a posição do mouse com valores negativos para que o efeito não apareça inicialmente
+  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
+  const [scrollY, setScrollY] = useState(0);
+  // --- Analytics Animation State ---
+  const [showAnalyticsAnimation, setShowAnalyticsAnimation] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const analyticsRef = useRef<HTMLDivElement | null>(null);
+  // Animated numbers
+  const [revenue, setRevenue] = useState(127);
+  const [reduction, setReduction] = useState(45);
+  const [satisfaction, setSatisfaction] = useState(89);
+  const [numbersAnimated, setNumbersAnimated] = useState(false);
+  
+  // Carrossel state
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  
   // Verificar se usuário está logado e redirecionar se necessário
   useEffect(() => {
     const checkUserAndRedirect = async () => {
@@ -49,8 +65,8 @@ export default function LandingPage() {
         ]) as any;
         
         if (session?.user) {
-          // Verificar se já está na página de destino
-          if (window.location.pathname === '/dashboard') {
+          // Se já está na página de destino, não redirecionar
+          if (typeof window !== 'undefined' && window.location.pathname !== '/') {
             setIsCheckingAuth(false);
             return;
           }
@@ -74,18 +90,6 @@ export default function LandingPage() {
     
     checkUserAndRedirect();
   }, [router]);
-  
-  // Mostrar loading apenas durante verificação inicial
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#cffb6d] to-[#e0ffe3] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-          <p className="text-gray-800">Verificando autenticação...</p>
-        </div>
-      </div>
-    );
-  }
 
   // Auto-rotate do carrossel
   useEffect(() => {
@@ -95,32 +99,6 @@ export default function LandingPage() {
     }, 4000);
     return () => clearInterval(interval);
   }, []);
-
-  // Inicializa a posição do mouse com valores negativos para que o efeito não apareça inicialmente
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
-  const [scrollY, setScrollY] = useState(0);
-  // --- Analytics Animation State ---
-  const [showAnalyticsAnimation, setShowAnalyticsAnimation] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const analyticsRef = useRef<HTMLDivElement | null>(null);
-  // Animated numbers
-  const [revenue, setRevenue] = useState(127);
-  const [reduction, setReduction] = useState(45);
-  const [satisfaction, setSatisfaction] = useState(89);
-  const [numbersAnimated, setNumbersAnimated] = useState(false);
-  
-  // Carrossel state
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -214,6 +192,28 @@ export default function LandingPage() {
       setTimeout(animate, 200);
     }
   }, [showAnalyticsAnimation, hasAnimated]);
+
+  // Mostrar loading apenas durante verificação inicial
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#cffb6d] to-[#e0ffe3] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-800">Verificando autenticação...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black">

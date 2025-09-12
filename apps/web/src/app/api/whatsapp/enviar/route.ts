@@ -9,7 +9,6 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Declaração global para clientes ativos
 declare global {
-  // eslint-disable-next-line no-var
   var activeClients: Map<string, Client>;
 }
 

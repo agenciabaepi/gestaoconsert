@@ -548,7 +548,6 @@ export default function LembretesPage() {
     } catch {}
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function SortableNoteCard({ id, children }: { id: string; children: (opts: { isDragging: boolean, attributes: any, listeners: any }) => React.ReactNode }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
     const describedById = useId();

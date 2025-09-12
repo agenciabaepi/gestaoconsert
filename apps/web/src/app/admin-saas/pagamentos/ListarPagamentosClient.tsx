@@ -65,7 +65,6 @@ export default function ListarPagamentosClient() {
 
   useEffect(() => {
     fetchList({ keepPage: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize]);
 
   return (

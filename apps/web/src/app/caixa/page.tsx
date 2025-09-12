@@ -237,7 +237,6 @@ export default function CaixaPage() {
         setSearchTerm('');
       }
     }
-    // eslint-disable-next-line
   }, [searchTerm]);
 
   // Exibir apenas os 9 primeiros produtos

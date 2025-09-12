@@ -71,7 +71,6 @@ export default function EmpresasClient() {
 
   useEffect(() => {
     fetchItems({ keepPage: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize]);
 
   async function patchEmpresa(id: string, payload: Record<string, unknown>) {
