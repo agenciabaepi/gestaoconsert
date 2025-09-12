@@ -15,12 +15,12 @@ export function useOSPermissions() {
   }, [empresaData?.id, addToast]);
 
   const validateUserData = useCallback(() => {
-    if (!usuarioData?.id) {
+    if (!usuarioData?.auth_user_id) {
       addToast('error', 'Erro: Dados do usuário não encontrados. Faça login novamente.');
       return false;
     }
     return true;
-  }, [usuarioData?.id, addToast]);
+  }, [usuarioData?.auth_user_id, addToast]);
 
   const validateOSCreation = useCallback(() => {
     if (!validateCompanyData() || !validateUserData()) {
@@ -35,10 +35,11 @@ export function useOSPermissions() {
 
   const getUserInfo = useCallback(() => {
     return {
-      id: usuarioData?.id,
-      nome: usuarioData?.nome,
       authUserId: usuarioData?.auth_user_id,
-      tecnicoId: usuarioData?.tecnico_id
+      nome: usuarioData?.nome,
+      email: usuarioData?.email,
+      nivel: usuarioData?.nivel,
+      permissoes: usuarioData?.permissoes
     };
   }, [usuarioData]);
 
