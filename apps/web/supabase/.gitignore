@@ -1,0 +1,3 @@
+# Excluir arquivos TypeScript da pasta supabase do build do Next.js
+*.ts
+*.tsx

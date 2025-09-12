@@ -1,0 +1,28 @@
+# =====================================================
+# CONFIGURAÇÃO DE PRODUÇÃO - GESTÃO CONCERT
+# =====================================================
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://nxamrvfusyrtkcshehfm.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54YW1ydmZ1c3lydGtjc2hlZmYiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc0Nzg2MTMxMCwiZXhwIjoyMDYzNDM3MzEwfQ.CWTKEVlWcMeRTv8kHgsPkk-WzoHxypFDb_QSf-DLPAQ
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54YW1ydmZ1c3lydGtjc2hlZmYiLCJyb2xlIjoic2VydmljZV9yb2xlIiwiaWF0IjoxNzQ3ODYxMzEwLCJleHAiOjIwNjM0MzczMTB9.ax2dDACyrsila_Z97fjupFITA7DplPOTXoqyp-bezKc
+
+# Mercado Pago
+MERCADOPAGO_ACCESS_TOKEN=APP_USR-3752420980879882-080316-e6ea366b73ee5fcbcd2f4aeb8049886e-2502171526
+MERCADOPAGO_ENVIRONMENT=sandbox
+
+# Site URL para produção
+NEXT_PUBLIC_SITE_URL=https://gestaoconsert.com.br
+
+# Admin
+PLATFORM_ADMIN_EMAILS=lucas@hotmail.com
+ADMIN_SAAS_ACCESS_CODE=093718
+ADMIN_SAAS_OPEN=1
+
+# =====================================================
+# INSTRUÇÕES DE DEPLOY
+# =====================================================
+# 1. Copie este arquivo para .env no VPS
+# 2. Execute: chmod +x deploy.sh
+# 3. Execute: ./deploy.sh
+# 4. Acesse: https://gestaoconsert.com.br
