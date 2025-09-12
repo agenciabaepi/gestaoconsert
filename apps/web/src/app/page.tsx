@@ -12,6 +12,7 @@ import UltraModernWordRotator from '@/components/UltraModernWordRotator';
 export default function LandingPage() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   
   // Hook para animações de scroll reveal
   const { isAnimated } = useScrollReveal();
@@ -19,33 +20,72 @@ export default function LandingPage() {
   // Verificar se usuário está logado e redirecionar se necessário
   useEffect(() => {
     const checkUserAndRedirect = async () => {
-      // Verificar se veio de um redirecionamento recente para evitar loops
-      const lastRedirect = sessionStorage.getItem('lastRedirect');
-      const now = Date.now();
-      if (lastRedirect && (now - parseInt(lastRedirect)) < 3000) {
-        return;
-      }
-      
-      // Verificar se há sessão ativa
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        // Marcar o redirecionamento
-        sessionStorage.setItem('lastRedirect', now.toString());
+      try {
+        // Verificar se veio de um redirecionamento recente para evitar loops
+        const lastRedirect = sessionStorage.getItem('lastRedirect');
+        const now = Date.now();
+        if (lastRedirect && (now - parseInt(lastRedirect)) < 10000) { // Aumentar para 10 segundos
+          console.log('Redirecionamento recente detectado, aguardando...');
+          setIsCheckingAuth(false);
+          return;
+        }
         
-        // Buscar dados do usuário
-        const { data: usuario } = await supabase
-          .from('usuarios')
-          .select('nivel')
-          .eq('auth_user_id', session.user.id)
-          .single();
+        // Adicionar verificação de URL atual para evitar loops
+        if (window.location.pathname !== '/') {
+          setIsCheckingAuth(false);
+          return;
+        }
         
-        router.push('/dashboard');
+        // Verificar se há sessão ativa com timeout reduzido
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 2000) // Reduzir para 2 segundos
+        );
+        
+        const sessionPromise = supabase.auth.getSession();
+        
+        const { data: { session } } = await Promise.race([
+          sessionPromise,
+          timeoutPromise
+        ]) as any;
+        
+        if (session?.user) {
+          // Verificar se já está na página de destino
+          if (window.location.pathname === '/dashboard') {
+            setIsCheckingAuth(false);
+            return;
+          }
+          
+          // Marcar o redirecionamento com timestamp
+          sessionStorage.setItem('lastRedirect', now.toString());
+          
+          // Adicionar delay antes do redirecionamento
+          setTimeout(() => {
+            router.replace('/dashboard');
+          }, 500);
+        } else {
+          setIsCheckingAuth(false);
+        }
+      } catch (error) {
+        // Em caso de erro ou timeout, apenas parar o loading
+        console.warn('Erro ao verificar autenticação:', error);
+        setIsCheckingAuth(false);
       }
     };
     
     checkUserAndRedirect();
   }, [router]);
+  
+  // Mostrar loading apenas durante verificação inicial
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#cffb6d] to-[#e0ffe3] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-800">Verificando autenticação...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Auto-rotate do carrossel
   useEffect(() => {

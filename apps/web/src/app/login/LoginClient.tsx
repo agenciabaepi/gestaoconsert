@@ -60,12 +60,68 @@ function LoginClientInner() {
   
   // 🔒 BLOQUEIO TOTAL: Usuários logados NÃO podem acessar a página de login
   useEffect(() => {
-    // Se o usuário já estiver logado, redirecionar IMEDIATAMENTE
-    if (auth.user && auth.session && !auth.loading) {
-      // Redirecionar para dashboard principal
-      router.replace('/dashboard');
-    }
-  }, [auth.user, auth.session, auth.loading, auth.usuarioData?.nivel, router]);
+    let timeoutId: NodeJS.Timeout;
+    let isRedirecting = false;
+    
+    const checkAuthAndRedirect = () => {
+      // Verificar se já está redirecionando para evitar múltiplas tentativas
+      if (isRedirecting) {
+        return;
+      }
+      
+      // Verificar se veio de um redirecionamento recente
+      const lastRedirect = sessionStorage.getItem('loginRedirect');
+      const now = Date.now();
+      if (lastRedirect && (now - parseInt(lastRedirect)) < 15000) { // Aumentar para 15 segundos
+        console.log('Redirecionamento de login recente detectado, aguardando...');
+        return;
+      }
+      
+      // Verificar se já está na página de destino
+      if (window.location.pathname === '/dashboard') {
+        return;
+      }
+      
+      // Se o usuário já estiver logado e não estiver em loading
+      if (auth.user && auth.session && !auth.loading && auth.usuarioData) {
+        // Verificar se a URL atual é realmente /login
+        if (window.location.pathname !== '/login') {
+          return;
+        }
+        
+        isRedirecting = true;
+        
+        // Marcar redirecionamento
+        sessionStorage.setItem('loginRedirect', now.toString());
+        
+        // Usar replace com delay maior e verificação adicional
+        timeoutId = setTimeout(() => {
+          // Verificar novamente antes de redirecionar
+          if (window.location.pathname === '/login' && !window.location.pathname.includes('/dashboard')) {
+            try {
+              router.replace('/dashboard');
+            } catch (error) {
+              console.error('Erro no redirecionamento:', error);
+              isRedirecting = false;
+            }
+          } else {
+            isRedirecting = false;
+          }
+        }, 1500); // Aumentar delay para 1.5 segundos
+      }
+    };
+    
+    // Adicionar debounce maior para evitar múltiplas verificações
+    const debounceTimeout = setTimeout(checkAuthAndRedirect, 800);
+    
+    return () => {
+      clearTimeout(debounceTimeout);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      isRedirecting = false;
+    };
+  }, [auth.user, auth.session, auth.loading, auth.usuarioData, router]);
 
   // Auto-rotate do carrossel
   useEffect(() => {
@@ -93,12 +149,12 @@ function LoginClientInner() {
   }, []);
 
   // 🔒 PROTEÇÃO EXTRA: Se já estiver logado, não renderizar NADA
-  if (auth.user && auth.session && !auth.loading) {
+  if (auth.user && auth.session && !auth.loading && auth.usuarioData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#cffb6d] to-[#e0ffe3] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
-          <p className="mt-4 text-gray-600">Redirecionando...</p>
+          <p className="mt-4 text-gray-600">Redirecionando para o dashboard...</p>
         </div>
       </div>
     );

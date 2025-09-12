@@ -30,29 +30,67 @@ export default function ProtectedArea({
   useEffect(() => {
     if (!isMounted || loading) return;
 
-    // Se não há usuário autenticado, redirecionar para login
-    if (!user || !usuarioData) {
-      router.push('/login');
-      return;
-    }
-
-    // Verificar nível de usuário
-    if (Number(usuarioData.nivel) < requiredLevel) {
-      router.push('/acesso-negado');
-      return;
-    }
-
-    // Verificar permissões específicas
-    if (requiredPermissions.length > 0) {
-      const hasPermission = requiredPermissions.every(permission => 
-        podeUsarFuncionalidade(permission)
-      );
-      
-      if (!hasPermission) {
-        router.push('/acesso-negado');
+    let timeoutId: NodeJS.Timeout;
+    let debounceTimeout: NodeJS.Timeout;
+    
+    const checkAuthAndRedirect = () => {
+      // Verificar se veio de um redirecionamento recente
+      const lastRedirect = sessionStorage.getItem('protectedRedirect');
+      const now = Date.now();
+      if (lastRedirect && (now - parseInt(lastRedirect)) < 10000) { // Aumentar para 10 segundos
+        console.log('Redirecionamento de área protegida recente detectado, aguardando...');
         return;
       }
-    }
+      
+      // Verificar se já está na página de login
+      if (window.location.pathname === '/login') {
+        return;
+      }
+      
+      // Se não há usuário autenticado, redirecionar para login
+      if (!user || !usuarioData) {
+        sessionStorage.setItem('protectedRedirect', now.toString());
+        
+        timeoutId = setTimeout(() => {
+          if (!user || !usuarioData) { // Verificar novamente
+            router.replace('/login');
+          }
+        }, 1000); // Aumentar delay
+        return;
+      }
+
+      // Verificar nível de usuário
+      if (Number(usuarioData.nivel) < requiredLevel) {
+        timeoutId = setTimeout(() => {
+          router.replace('/acesso-negado');
+        }, 500);
+        return;
+      }
+
+      // Verificar permissões específicas
+      if (requiredPermissions.length > 0) {
+        const hasPermission = requiredPermissions.every(permission => 
+          podeUsarFuncionalidade(permission)
+        );
+        
+        if (!hasPermission) {
+          timeoutId = setTimeout(() => {
+            router.replace('/acesso-negado');
+          }, 500);
+          return;
+        }
+      }
+    };
+    
+    // Adicionar debounce para evitar múltiplas verificações
+    debounceTimeout = setTimeout(checkAuthAndRedirect, 500);
+    
+    return () => {
+      clearTimeout(debounceTimeout);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [isMounted, user, usuarioData, loading, router, requiredLevel, requiredPermissions, podeUsarFuncionalidade]);
 
   // Loading state consistente durante hidratação

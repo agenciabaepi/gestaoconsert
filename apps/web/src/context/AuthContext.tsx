@@ -162,6 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let isMounted = true;
     let authTimeout: NodeJS.Timeout;
+    let debounceTimeout: NodeJS.Timeout;
     
     const initializeAuth = async () => {
       try {
@@ -171,7 +172,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             console.warn('⚠️ Timeout na inicialização da autenticação - provavelmente usuário não logado');
             setLoading(false);
           }
-        }, 3000); // 3 segundos para usuários não logados
+        }, 1500); // Reduzido para 1.5 segundos
         
         const { data: { session }, error } = await supabase.auth.getSession();
 
@@ -188,14 +189,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.log('✅ Sessão encontrada - carregando dados do usuário');
           setSession(session);
           setUser(session.user);
-          await fetchUserData(session.user.id, session);
+          
+          // Adicionar debounce maior para evitar múltiplas chamadas
+          debounceTimeout = setTimeout(() => {
+            if (isMounted) {
+              fetchUserData(session.user.id, session);
+            }
+          }, 800); // Aumentar debounce
         } else {
-          console.log('❌ Nenhuma sessão encontrada - usuário não está logado');
-          setLoading(false); // ✅ CRÍTICO: Parar loading imediatamente quando não há sessão
+          console.log('❌ Nenhuma sessão encontrada');
+          setLoading(false);
         }
       } catch (error) {
         console.error('❌ Erro na inicialização da autenticação:', error);
-      } finally {
         if (isMounted) {
           setLoading(false);
         }
@@ -203,14 +209,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     initializeAuth();
-    
+
     return () => {
       isMounted = false;
-      if (authTimeout) {
-        clearTimeout(authTimeout);
-      }
+      clearTimeout(authTimeout);
+      clearTimeout(debounceTimeout);
     };
-  }, []); // Removido fetchUserData das dependências para evitar loops
+  }, [fetchUserData]);
 
   // ✅ CORRIGIDO: Listener de mudanças de auth com tratamento completo
   useEffect(() => {
