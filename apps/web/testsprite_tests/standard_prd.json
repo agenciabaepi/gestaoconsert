@@ -4,140 +4,229 @@
     "date": "2025-09-13",
     "prepared_by": "Software Development Manager"
   },
-  "product_overview": "Sistema Consert is a service order management platform designed for technical repair shops, providing role-based access to admins, technicians, and attendants to efficiently manage service orders, client data, and communication integrations.",
+  "product_overview": "Sistema Consert é uma plataforma completa para gestão de ordens de serviço (OS) destinada a assistências técnicas, facilitando o gerenciamento de clientes, técnicos, pagamentos e comunicação integrada.",
   "core_goals": [
-    "Provide secure authentication with role-based access control for admins, technicians, and attendants.",
-    "Enable creation, editing, status tracking, and notifications of service orders for real-time management.",
-    "Manage client and equipment data with historical service tracking per client.",
-    "Integrate seamlessly with Supabase for database operations, Mercado Pago for payment processing, and WhatsApp for communication.",
-    "Ensure high performance with response times under 2 seconds and support for at least 100 concurrent users.",
-    "Maintain security best practices including SQL injection protection and CORS configuration.",
-    "Guarantee system availability with 99.9% uptime in production."
+    "Implementar um sistema seguro e eficiente de autenticação e autorização com níveis diferenciados de acesso (admin, técnico, atendente).",
+    "Permitir a completa gestão de ordens de serviço incluindo criação, edição, acompanhamento de status e notificações.",
+    "Prover cadastro e gerenciamento detalhado de clientes e equipamentos com histórico de serviços.",
+    "Integrar recursos financeiros como controle de pagamentos via Mercado Pago e controle financeiro interno.",
+    "Implementar comunicação integrada via WhatsApp para envio de mensagens e notificações.",
+    "Garantir alta performance, segurança e disponibilidade do sistema seguindo requisitos não funcionais especificados."
   ],
   "key_features": [
-    "Authentication API supporting login, session management, email verification, and forced logout.",
-    "Service Orders API with CRUD operations, status updates, and notifications to clients and technicians.",
-    "Client Management API for robust client and equipment data handling including search functionality.",
-    "Integration with Mercado Pago API for payment creation, status tracking, reconciliation, and webhook handling.",
-    "WhatsApp Web.js integration allowing message sending, connection management, and disconnect functionality.",
-    "Email verification process with sending, verifying, and resending codes.",
-    "Admin SaaS management features for companies, subscriptions, and metrics.",
-    "Health Check API to monitor system uptime and health."
+    "Sistema completo de autenticação com login, cadastro, recuperação de senha e controle de sessão.",
+    "Gestão de ordens de serviço com criação, edição, visualização, acompanhamento de status e notificações automáticas.",
+    "Cadastro e gerenciamento de clientes, técnicos, fornecedores, equipamentos e comissões.",
+    "Dashboard com métricas essenciais e relatórios financeiros.",
+    "Integração com Mercado Pago para processamento de pagamentos.",
+    "Integração com WhatsApp para envio de mensagens diretas.",
+    "Controle financeiro com abertura, fechamento e movimentações de caixa.",
+    "Sistema responsivo com menu lateral e mobile para navegação intuitiva.",
+    "Mecanismos de segurança incluindo proteção contra SQL injection e validação de sessão.",
+    "Sistema de lembretes e notificações para melhorar a comunicação interna."
   ],
   "user_flow_summary": [
-    "User logs in with role-based authentication and gains access to features according to their permission level.",
-    "Admin or attendant creates or edits service orders and assigns status to track progress.",
-    "Technicians receive notifications on assigned orders and update order status through the platform.",
-    "Clients can view their service order status and receive notifications via WhatsApp or email.",
-    "Admins manage client and equipment data, subscriptions, and monitor system metrics.",
-    "Payment is processed securely through Mercado Pago integrated workflow with status and webhook updates.",
-    "System health is periodically checked ensuring uptime and performance standards are met."
+    "Usuário realiza login com autenticação baseada em roles para acessar funcionalidades específicas.",
+    "Administrador cadastra e gerencia clientes, técnicos, fornecedores e equipamentos.",
+    "Técnico ou atendente cria e atualiza ordens de serviço, acompanhando o status e comunicando-se com o cliente via WhatsApp.",
+    "Usuário visualiza dashboard com métricas e relatórios atualizados em tempo real.",
+    "Operador gerencia movimentações de caixa e controla pagamentos realizados via Mercado Pago.",
+    "Sistema envia notificações e lembretes para usuários conforme ações possam demandar atenção.",
+    "Usuário pode recuperar senha e gerenciar sua sessão para manter acesso seguro."
   ],
   "validation_criteria": [
-    "All user roles can authenticate successfully and see only authorized routes.",
-    "Service orders can be created, edited, viewed, and status updated correctly with notifications sent.",
-    "Client and equipment information is accurately stored and retrievable by search.",
-    "Payments via Mercado Pago complete with proper status tracking and reconciliation.",
-    "WhatsApp messages are sent correctly and connection management APIs function as intended.",
-    "Email verification codes are sent, verified, and can be resent without errors.",
-    "Admin SaaS management APIs correctly handle companies, subscriptions, and provide accurate metrics.",
-    "System uptime meets 99.9% availability and health checks respond as expected.",
-    "Performance benchmarks meet the criteria of response times under 2 seconds for critical actions.",
-    "Security measures effectively prevent SQL Injection and enforce CORS policies as defined."
+    "Verificação de autenticação e autorização funcionando corretamente para todos os níveis de usuário.",
+    "Validação da criação, edição e atualização de ordens de serviço com alteração adequada de status e envio de notificações.",
+    "Teste da integração com Supabase, Mercado Pago e WhatsApp garantindo comunicação e pagamento sem falhas.",
+    "Medição de performance garantindo tempo de resposta menor que 2 segundos nas ações críticas.",
+    "Testes de segurança incluindo proteção contra SQL injection e validação de CORS para domínios autorizados.",
+    "Teste de disponibilidade assegurando uptime mínimo de 99.9% em ambiente de produção.",
+    "Verificação de responsividade do sistema e usabilidade em diferentes tamanhos de tela e dispositivos."
   ],
   "code_summary": {
     "tech_stack": [
       "TypeScript",
       "JavaScript",
-      "Next.js 15.3.2",
-      "React",
-      "Node.js",
+      "Next.js 14",
+      "React 18",
       "Supabase",
       "PostgreSQL",
       "Tailwind CSS",
+      "Node.js",
       "WhatsApp Web.js",
-      "Mercado Pago API",
+      "React Query",
+      "React Hook Form",
+      "Chart.js",
+      "ApexCharts",
+      "React PDF",
+      "JWT",
       "Nodemailer",
-      "Puppeteer"
+      "React Select",
+      "React Icons",
+      "TipTap Editor",
+      "Axios",
+      "Docker"
     ],
     "features": [
       {
-        "name": "Authentication API",
-        "description": "Handles user authentication, session management, email verification, and forced logout functionality",
+        "name": "Sistema de Autenticação",
+        "description": "Sistema completo de autenticação com login, cadastro, recuperação de senha e validação de sessão",
         "files": [
-          "src/app/api/auth/force-logout/route.ts",
-          "src/app/login/LoginClient.tsx",
           "src/context/AuthContext.tsx",
-          "src/hooks/useAuthGuard.ts",
-          "src/utils/authUtils.ts"
-        ]
-      },
-      {
-        "name": "Client Management API",
-        "description": "CRUD operations for client management including search functionality",
-        "files": [
-          "src/app/api/clientes/route.ts",
-          "src/app/clientes/page.tsx",
-          "src/types/cliente.ts"
-        ]
-      },
-      {
-        "name": "Service Orders API",
-        "description": "Create, manage and track service orders with status updates",
-        "files": [
-          "src/app/api/ordens/criar/route.ts",
-          "src/app/nova-os/page.tsx",
-          "src/app/ordens/page.tsx",
-          "src/hooks/useOSLoading.ts",
-          "src/hooks/useOrdens.ts"
-        ]
-      },
-      {
-        "name": "Email Verification API",
-        "description": "Send and verify email verification codes for user authentication",
-        "files": [
-          "src/app/api/email/enviar-codigo/route.ts",
-          "src/app/api/email/verificar-codigo/route.ts",
-          "src/app/api/email/reenviar-codigo/route.ts",
-          "src/lib/email.ts"
-        ]
-      },
-      {
-        "name": "Payment Processing API",
-        "description": "Integration with Mercado Pago for payment processing, status tracking and webhooks",
-        "files": [
-          "src/app/api/pagamentos/criar/route.ts",
-          "src/app/api/pagamentos/status/route.ts",
-          "src/app/api/pagamentos/webhook/route.ts",
-          "src/app/api/pagamentos/reconciliar/route.ts",
-          "src/lib/mercadopago.ts"
-        ]
-      },
-      {
-        "name": "WhatsApp Integration API",
-        "description": "WhatsApp Web.js integration for sending messages and managing connections",
-        "files": [
-          "src/app/api/whatsapp/connect/route.ts",
-          "src/app/api/whatsapp/enviar/route.ts",
-          "src/app/api/whatsapp/disconnect/route.ts"
-        ]
-      },
-      {
-        "name": "Health Check API",
-        "description": "System health monitoring endpoint for uptime verification",
-        "files": [
+          "src/app/login/LoginClient.tsx",
+          "src/components/ProtectedRoute.tsx",
+          "src/components/SessionGuard.tsx",
+          "src/hooks/useSessionValidation.ts",
           "src/app/api/health-check/route.ts"
         ]
       },
       {
-        "name": "Admin SaaS Management API",
-        "description": "Administrative APIs for SaaS management including companies, subscriptions and metrics",
+        "name": "Gestão de Ordens de Serviço",
+        "description": "Sistema completo para criação, edição, visualização e gerenciamento de ordens de serviço",
         "files": [
-          "src/app/api/admin-saas/empresas/route.ts",
-          "src/app/api/admin-saas/pagamentos/route.ts",
-          "src/app/api/admin-saas/metrics/route.ts",
-          "src/app/api/assinaturas/verificar-trial/route.ts",
-          "src/app/api/assinaturas/webhook/route.ts"
+          "src/app/ordens/page.tsx",
+          "src/app/nova-os/page.tsx",
+          "src/hooks/useOrdens.ts",
+          "src/hooks/useOSPermissions.ts"
+        ]
+      },
+      {
+        "name": "Layout e Menu Principal",
+        "description": "Sistema de navegação responsivo com menu lateral e mobile",
+        "files": [
+          "src/components/MenuLayout.tsx",
+          "src/components/menu/"
+        ]
+      },
+      {
+        "name": "Dashboard e Relatórios",
+        "description": "Dashboard principal com métricas, gráficos e relatórios do sistema",
+        "files": [
+          "src/app/dashboard/",
+          "src/components/ui/DashboardCard.tsx"
+        ]
+      },
+      {
+        "name": "Gestão de Clientes",
+        "description": "Sistema para cadastro, edição e gerenciamento de clientes",
+        "files": [
+          "src/app/clientes/",
+          "src/types/cliente.ts"
+        ]
+      },
+      {
+        "name": "Sistema de Caixa",
+        "description": "Controle financeiro com abertura/fechamento de caixa e movimentações",
+        "files": [
+          "src/app/caixa/",
+          "src/components/caixa/",
+          "src/hooks/useCaixa.ts"
+        ]
+      },
+      {
+        "name": "Integração WhatsApp",
+        "description": "Sistema de integração com WhatsApp para envio de mensagens",
+        "files": [
+          "src/app/api/whatsapp/enviar/route.ts",
+          "src/app/api/whatsapp/connect/route.ts"
+        ]
+      },
+      {
+        "name": "Sistema de Pagamentos",
+        "description": "Integração com Mercado Pago e controle de pagamentos",
+        "files": [
+          "src/app/pagamentos/",
+          "src/lib/mercadopago.ts"
+        ]
+      },
+      {
+        "name": "Gestão de Técnicos",
+        "description": "Sistema para gerenciamento de técnicos e suas atribuições",
+        "files": [
+          "src/app/bancada/"
+        ]
+      },
+      {
+        "name": "Sistema de Comissões",
+        "description": "Cálculo e controle de comissões para técnicos",
+        "files": [
+          "src/app/comissoes/"
+        ]
+      },
+      {
+        "name": "Configurações do Sistema",
+        "description": "Painel de configurações gerais do sistema",
+        "files": [
+          "src/app/configuracoes/"
+        ]
+      },
+      {
+        "name": "Gestão de Equipamentos",
+        "description": "Cadastro e controle de equipamentos",
+        "files": [
+          "src/app/equipamentos/"
+        ]
+      },
+      {
+        "name": "Sistema Financeiro",
+        "description": "Controle financeiro completo com relatórios",
+        "files": [
+          "src/app/financeiro/"
+        ]
+      },
+      {
+        "name": "Gestão de Fornecedores",
+        "description": "Sistema para cadastro e gerenciamento de fornecedores",
+        "files": [
+          "src/app/fornecedores/"
+        ]
+      },
+      {
+        "name": "Sistema de Lembretes",
+        "description": "Funcionalidade para criação e gerenciamento de lembretes",
+        "files": [
+          "src/app/lembretes/"
+        ]
+      },
+      {
+        "name": "Landing Page",
+        "description": "Página inicial do sistema com apresentação e cadastro",
+        "files": [
+          "src/app/page.tsx"
+        ]
+      },
+      {
+        "name": "Sistema de Notificações",
+        "description": "Sistema de toast e notificações para o usuário",
+        "files": [
+          "src/components/Toast.tsx",
+          "src/hooks/useToast.ts"
+        ]
+      },
+      {
+        "name": "Componentes UI",
+        "description": "Biblioteca de componentes reutilizáveis da interface",
+        "files": [
+          "src/components/ui/",
+          "src/components/Button.tsx",
+          "src/components/Input.tsx",
+          "src/components/Select.tsx"
+        ]
+      },
+      {
+        "name": "Utilitários e Helpers",
+        "description": "Funções utilitárias e helpers do sistema",
+        "files": [
+          "src/utils/",
+          "src/lib/utils.ts",
+          "src/lib/supabase/"
+        ]
+      },
+      {
+        "name": "Sistema de Retry",
+        "description": "Hook para retry automático de operações",
+        "files": [
+          "src/hooks/useRetry.ts"
         ]
       }
     ]
