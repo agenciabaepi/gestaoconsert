@@ -1,8 +1,10 @@
 # Build de produção simples e funcional
 FROM node:18-alpine
 
-# Instalar dependências do sistema para Puppeteer
-RUN apk add --no-cache \
+# Atualizar e instalar dependências básicas primeiro
+RUN apk update && apk add --no-cache \
+    bash \
+    && apk add --no-cache \
     chromium \
     nss \
     freetype \
@@ -22,21 +24,22 @@ WORKDIR /app
 # Copiar arquivos de dependências
 COPY package*.json ./
 
-# Instalar dependências
-RUN npm ci --only=production
-
-# Copiar código da aplicação
-COPY . .
+# Instalar todas as dependências (incluindo dev) para o build
+RUN npm ci
 
 # Configurações de ambiente
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
+# Copiar código da aplicação
+COPY . .
+
 # Fazer build de produção
 RUN npm run build
 
-# Limpar dependências de desenvolvimento  
-RUN npm ci --only=production --ignore-scripts
+# Limpar e reinstalar apenas dependências de produção
+RUN npm ci --only=production --ignore-scripts && \
+    npm cache clean --force
 
 # Expor porta
 EXPOSE 3000
