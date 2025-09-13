@@ -73,8 +73,8 @@ function ConfiguracoesInner() {
 
   // ✅ CORRIGIDO: Usar diretamente o contexto em vez de estado local
   // ✅ CORRIGIDO: Incluir usuarioteste com acesso total
-  const isAdmin = usuarioData.nivel === 'admin';
-  const isUsuarioTeste = usuarioData.nivel === 'usuarioteste';
+  const isAdmin = usuarioData?.nivel === 'admin';
+  const isUsuarioTeste = usuarioData?.nivel === 'usuarioteste';
   
   const tabs = (isAdmin || isUsuarioTeste)
     ? [
@@ -86,7 +86,7 @@ function ConfiguracoesInner() {
         { name: 'Catálogo', component: <CatalogoPage /> },
         { name: 'WhatsApp', component: <WhatsAppPage /> },
       ]
-    : usuarioData.nivel === 'atendente'
+    : usuarioData?.nivel === 'atendente'
     ? [
         { name: 'Termos de Garantia', component: <TermosPage /> },
       ]
@@ -105,7 +105,7 @@ function ConfiguracoesInner() {
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-6">Configurações Gerais</h1>
         {/* DEBUG: Exibir nível do usuário na interface */}
-        <div className="mb-4 text-xs text-gray-400">Nível detectado: {usuarioData.nivel || 'desconhecido'}</div>
+        <div className="mb-4 text-xs text-gray-400">Nível detectado: {usuarioData?.nivel || 'desconhecido'}</div>
 
         <Tab.Group selectedIndex={tabIndex} onChange={handleTabChange}>
           <Tab.List className="flex space-x-2 bg-gray-100 p-1 rounded-lg overflow-x-auto">

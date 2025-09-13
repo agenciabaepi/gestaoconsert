@@ -1,0 +1,484 @@
+[
+  {
+    "id": "TC001",
+    "title": "User login success with valid credentials",
+    "description": "Verify that users with valid credentials (admin, technician, attendant) can log in successfully and are redirected to appropriate landing pages.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Input valid username/email and password for admin role."
+      },
+      {
+        "type": "action",
+        "description": "Click the login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login is successful, user session is established, and admin dashboard is shown."
+      },
+      {
+        "type": "action",
+        "description": "Logout and repeat login steps with technician and attendant valid credentials."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify respective role dashboards or landing pages are shown."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "User login failure with invalid credentials",
+    "description": "Check that incorrect username/email or password prevents login and shows appropriate error messages.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Input invalid username/email and/or password."
+      },
+      {
+        "type": "action",
+        "description": "Click the login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login is rejected and error message is displayed."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Role-based access control enforcement",
+    "description": "Ensure users cannot access restricted areas based on their roles and that unauthorized access returns appropriate errors or redirections.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as attendant."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to access administrator-only pages (e.g., user management)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access is denied or redirected."
+      },
+      {
+        "type": "action",
+        "description": "Login as technician."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to edit critical system settings restricted to administrators."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access is denied."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Create new service order",
+    "description": "Verify that authorized users can create a new service order by associating client and equipment data, and that it gets saved correctly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as administrator."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to new service order creation page."
+      },
+      {
+        "type": "action",
+        "description": "Fill out all required fields including client, equipment, service details, and initial status set to 'pending'."
+      },
+      {
+        "type": "action",
+        "description": "Submit the service order form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the service order is created, stored in the backend, and displayed in the orders list with correct details."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Edit existing service order and update status",
+    "description": "Ensure users can edit details of service orders and update their status through valid transitions.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as technician."
+      },
+      {
+        "type": "action",
+        "description": "Open an existing service order in 'pending' status."
+      },
+      {
+        "type": "action",
+        "description": "Edit service order details and change status to 'in progress'."
+      },
+      {
+        "type": "action",
+        "description": "Save changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify edits and status update are saved, and updated order is shown correctly."
+      },
+      {
+        "type": "action",
+        "description": "Update status from 'in progress' to 'completed'."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify status update is accepted and displayed properly."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Attempt invalid status transition on service order",
+    "description": "Validate that invalid status changes on service orders are rejected with appropriate error notifications.",
+    "category": "error handling",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as technician."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to a service order with status 'completed'."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to change status back to 'pending'."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the system rejects the update and shows an error message."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Manage client records with history",
+    "description": "Verify creation, editing, viewing of client details including associated service history is working as expected.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as administrator."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to clients management page."
+      },
+      {
+        "type": "action",
+        "description": "Create a new client with all mandatory information."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify client data is saved and visible in the list."
+      },
+      {
+        "type": "action",
+        "description": "View the service order history for a client."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify historical service records are correctly retrieved and displayed."
+      },
+      {
+        "type": "action",
+        "description": "Edit client details and save."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated client information is saved and displayed."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Manage equipment information and service history",
+    "description": "Ensure equipment details can be created, viewed and edited, along with its associated service records.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as technician."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to equipment management page."
+      },
+      {
+        "type": "action",
+        "description": "Create a new equipment entry linked to a client."
+      },
+      {
+        "type": "assertion",
+        "description": "Validate that equipment details are saved and visible."
+      },
+      {
+        "type": "action",
+        "description": "View equipment service history."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all related service orders appear correctly."
+      },
+      {
+        "type": "action",
+        "description": "Edit equipment information."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm changes are saved and reflected in the UI."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Notifications sent on service order status change",
+    "description": "Check that clients and technicians receive notifications when service order statuses are updated.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as technician."
+      },
+      {
+        "type": "action",
+        "description": "Update a service order status."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify notifications are triggered and sent to associated client and technician."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Successful payment processing via Mercado Pago",
+    "description": "Verify that payments linked to service orders are processed securely and transactions complete successfully.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as attendant."
+      },
+      {
+        "type": "action",
+        "description": "Initiate payment for a completed service order."
+      },
+      {
+        "type": "action",
+        "description": "Complete the payment using Mercado Pago integration."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm payment status is updated as successful and recorded in the system."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Handle payment failures gracefully",
+    "description": "Simulate payment failure scenarios and verify that errors are handled properly with user notifications.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Initiate a payment but simulate a failure response from Mercado Pago."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user is informed of the failure with clear error message."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no incorrect payment status is set in the system."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Send and receive messages through WhatsApp integration",
+    "description": "Validate that API endpoints for WhatsApp messaging send messages successfully and handle responses correctly.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Invoke WhatsApp connect API endpoint to establish session."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify connection is established successfully."
+      },
+      {
+        "type": "action",
+        "description": "Send a test message via WhatsApp send API endpoint."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify message is delivered and response contains correct status."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "UI components render correctly and meet accessibility standards",
+    "description": "Check consistent rendering and behavioral correctness of reusable UI components like Badge, Button, Dialog, Input, Select, Toast, with accessibility compliance.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Render Badge, Button, Dialog, Input, Select, and Toast components in test harness."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify visual consistency, responsiveness, and correct behavior."
+      },
+      {
+        "type": "assertion",
+        "description": "Audit components for keyboard navigation and screen reader support."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Centralized error handling captures and reports errors",
+    "description": "Confirm that system errors in any module are caught by centralized error handling and appropriate alerts or logs are generated.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Trigger errors intentionally in different system areas (e.g., API failures, form validation)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify errors are caught, user-friendly messages are shown, and error logs record details."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "API health check endpoint responds correctly",
+    "description": "Validate that the health check API endpoint returns expected status and performs within latency requirements.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Call the health-check API endpoint."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify response status indicates healthy system."
+      },
+      {
+        "type": "assertion",
+        "description": "Ensure response time is under 2 seconds."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "System performance under load",
+    "description": "Test that critical API actions (login, order creation, payment) respond within the acceptable latency and system uptime of 99.9% is maintained.",
+    "category": "performance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate concurrent logins, service order creations, and payments using load testing tools."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the average response time for critical API calls stays below 2 seconds."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no elevated error rates and system uptime is consistently above 99.9%."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Access restriction for unauthenticated users",
+    "description": "Verify that users who are not authenticated cannot access protected routes and features.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to access order management, client management, equipment management, and other protected pages without logging in."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify redirection to login page or access denied errors."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Session expiration and logout behavior",
+    "description": "Confirm that user sessions expire appropriately and logout functionality clears session data and protects routes afterwards.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as any user role."
+      },
+      {
+        "type": "action",
+        "description": "Remain idle until session timeout duration is reached."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify session expires and user is redirected to login page."
+      },
+      {
+        "type": "action",
+        "description": "Login again and then perform explicit logout."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all session data is cleared and protected routes are not accessible without re-login."
+      }
+    ]
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "user authentication with role based access control",
+    "description": "Test the login API to ensure users can authenticate successfully and are granted access based on their roles (admin, technician, attendant). Verify that unauthorized users cannot access protected routes."
+  },
+  {
+    "id": "TC002",
+    "title": "create view and edit service orders with status tracking",
+    "description": "Test the service order APIs to create new orders, view existing orders, edit order details, and update order status (pending, in progress, completed). Verify that notifications are sent on status updates."
+  },
+  {
+    "id": "TC003",
+    "title": "manage client information with service history tracking",
+    "description": "Test client management APIs to create, view, and edit client details. Verify that service history related to clients is accurately maintained and retrievable."
+  },
+  {
+    "id": "TC004",
+    "title": "manage equipment details associated with service orders",
+    "description": "Test equipment management APIs to add, view, and edit equipment details linked to service orders. Verify that equipment service history is correctly tracked."
+  },
+  {
+    "id": "TC005",
+    "title": "send and receive messages through whatsapp integration",
+    "description": "Test the WhatsApp API endpoints for connecting to WhatsApp and sending messages. Verify that messages are sent and received correctly and that connection status is properly handled."
+  },
+  {
+    "id": "TC006",
+    "title": "process payments securely via mercado pago integration",
+    "description": "Test payment processing through the Mercado Pago integration to ensure transactions complete successfully and securely. Verify handling of payment success and failure scenarios."
+  },
+  {
+    "id": "TC007",
+    "title": "interact with supabase backend for data operations",
+    "description": "Test the Supabase client utility to ensure proper interaction with the backend database for CRUD operations related to users, orders, clients, and equipment."
+  },
+  {
+    "id": "TC008",
+    "title": "render reusable ui components consistently",
+    "description": "Test the reusable UI components (Badge, Button, Dialog, Input, Select, Toast) to ensure they render correctly and consistently across different parts of the application with accessibility support."
+  },
+  {
+    "id": "TC009",
+    "title": "handle errors centrally with error handling utility",
+    "description": "Test the centralized error handling utility to verify that errors are caught, logged, and presented to users appropriately without crashing the application."
+  },
+  {
+    "id": "TC010",
+    "title": "check system health via health check api endpoint",
+    "description": "Test the health check API endpoint to ensure it returns the correct status indicating the system's health and availability for monitoring purposes."
+  }
+]

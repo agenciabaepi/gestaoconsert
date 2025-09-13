@@ -66,9 +66,22 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ WhatsApp: Erro ao enviar mensagem:', error);
     
+    // Garantir que a resposta JSON seja válida
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    
     return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
+      { 
+        success: false,
+        error: 'Erro interno do servidor',
+        message: errorMessage,
+        timestamp: new Date().toISOString()
+      },
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
     );
   }
 }

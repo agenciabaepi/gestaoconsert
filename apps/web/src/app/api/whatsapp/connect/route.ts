@@ -131,7 +131,6 @@ export async function POST(request: NextRequest) {
       }),
       puppeteer: {
         headless: true,
-        executablePath: '/usr/bin/chromium-browser',
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
@@ -142,10 +141,12 @@ export async function POST(request: NextRequest) {
           '--disable-3d-apis',
           '--disable-accelerated-2d-canvas',
           '--disable-features=VizDisplayCompositor',
-          '--disable-dbus',
           '--single-process',
           '--no-zygote',
-          '--disable-extensions'
+          '--disable-extensions',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding'
         ]
       }
     });
@@ -211,24 +212,58 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Inicializar cliente
-    await client.initialize();
+    // Inicializar cliente com timeout
+    try {
+      const initPromise = client.initialize();
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout na inicialização do WhatsApp')), 30000);
+      });
+      
+      await Promise.race([initPromise, timeoutPromise]);
+      
+      // Adicionar cliente à lista global
+      global.activeClients.set(empresa_id, client);
 
-    // Adicionar cliente à lista global
-    global.activeClients.set(empresa_id, client);
-
-    return NextResponse.json({
-      success: true,
-      message: 'WhatsApp conectado com sucesso!',
-      status: 'connecting'
-    });
+      return NextResponse.json({
+        success: true,
+        message: 'WhatsApp conectado com sucesso!',
+        status: 'connecting',
+        timestamp: new Date().toISOString()
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    } catch (initError) {
+      console.error('❌ WhatsApp: Erro na inicialização:', initError);
+      
+      // Limpar cliente em caso de erro
+      if (global.activeClients.has(empresa_id)) {
+        global.activeClients.delete(empresa_id);
+      }
+      
+      throw new Error(`Falha na inicialização: ${initError instanceof Error ? initError.message : 'Erro desconhecido'}`);
+    }
 
   } catch (error) {
     console.error('❌ WhatsApp: Erro ao conectar:', error);
     
+    // Garantir que a resposta JSON seja válida
+    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+    
     return NextResponse.json(
-      { error: 'Erro interno do servidor: ' + (error instanceof Error ? error.message : 'Erro desconhecido') },
-      { status: 500 }
+      { 
+        success: false,
+        error: 'Erro interno do servidor',
+        message: errorMessage,
+        timestamp: new Date().toISOString()
+      },
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
     );
   }
 }
