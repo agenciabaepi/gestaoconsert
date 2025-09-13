@@ -1,0 +1,162 @@
+                                                                                                         {
+  "project_name": "Consert - Sistema de Gestão de Assistência Técnica",
+  "description": "Sistema completo para controle de ordens de serviço, clientes e equipe técnica com interface moderna e intuitiva",
+  "tech_stack": {
+    "frontend": {
+      "framework": "Next.js 14.2.5",
+      "language": "TypeScript",
+      "styling": "Tailwind CSS",
+      "ui_library": "Lucide React (ícones)",
+      "state_management": "React Query (@tanstack/react-query)",
+      "forms": "React Hook Form",
+      "validation": "Zod"
+    },
+    "backend": {
+      "runtime": "Node.js",
+      "framework": "Next.js API Routes",
+      "database": "Supabase (PostgreSQL)",
+      "authentication": "JWT + Supabase Auth",
+      "file_storage": "Supabase Storage"
+    },
+    "integrations": {
+      "payment": "Mercado Pago",
+      "messaging": "WhatsApp Web.js",
+      "email": "Nodemailer",
+      "notifications": "Firebase Admin SDK",
+      "real_time": "Socket.io"
+    },
+    "deployment": {
+      "containerization": "Docker",
+      "orchestration": "Docker Compose",
+      "environment": "Production VPS"
+    }
+  },
+  "main_features": [
+    "Autenticação com controle de acesso baseado em roles (admin, técnico, atendente)",
+    "Gestão completa de ordens de serviço com rastreamento de status",
+    "Cadastro e histórico de clientes",
+    "Gerenciamento de equipamentos associados às ordens",
+    "Integração com WhatsApp para comunicação",
+    "Processamento de pagamentos via Mercado Pago",
+    "Sistema de notificações em tempo real",
+    "Dashboard administrativo com métricas",
+    "Gestão de assinaturas e cobrança",
+    "Sistema de upload de arquivos",
+    "Monitoramento de saúde do sistema"
+  ],
+  "api_endpoints": {
+    "authentication": [
+      "/api/login",
+      "/api/auth/force-logout",
+      "/api/verificar"
+    ],
+    "business_core": [
+      "/api/ordens",
+      "/api/clientes",
+      "/api/equipamentos",
+      "/api/empresa",
+      "/api/usuarios"
+    ],
+    "integrations": [
+      "/api/whatsapp/connect",
+      "/api/whatsapp/enviar",
+      "/api/mercado-pago",
+      "/api/email/enviar-codigo",
+      "/api/notificacoes"
+    ],
+    "admin": [
+      "/api/admin-saas/empresas",
+      "/api/admin-saas/pagamentos",
+      "/api/assinaturas",
+      "/api/metrics"
+    ],
+    "utilities": [
+      "/api/health-check",
+      "/api/upload",
+      "/api/ui-components",
+      "/api/protected-route"
+    ]
+  },
+  "database_schema": {
+    "main_tables": [
+      "ordens_servico",
+      "clientes",
+      "equipamentos",
+      "empresas",
+      "usuarios",
+      "pagamentos",
+      "assinaturas",
+      "notificacoes"
+    ],
+    "relationships": [
+      "ordens_servico -> clientes (many-to-one)",
+      "ordens_servico -> equipamentos (many-to-many)",
+      "usuarios -> empresas (many-to-one)",
+      "pagamentos -> ordens_servico (one-to-many)"
+    ]
+  },
+  "ui_components": [
+    "Badge",
+    "Button",
+    "Dialog",
+    "Input",
+    "Select",
+    "Toast",
+    "Navigation",
+    "Dashboard Cards",
+    "Data Tables",
+    "Forms"
+  ],
+  "security_features": [
+    "JWT Authentication",
+    "Role-based Access Control (RBAC)",
+    "Protected API Routes",
+    "Environment Variables for Secrets",
+    "CORS Configuration",
+    "Input Validation with Zod"
+  ],
+  "performance_optimizations": [
+    "React Query for Data Caching",
+    "Next.js Image Optimization",
+    "Code Splitting",
+    "Lazy Loading",
+    "Server-Side Rendering (SSR)"
+  ],
+  "testing_status": {
+    "total_tests": 10,
+    "passed": 2,
+    "failed": 8,
+    "coverage_areas": [
+      "User Authentication",
+      "Service Order Management",
+      "Client Management",
+      "WhatsApp Integration",
+      "Payment Processing",
+      "UI Components",
+      "Error Handling",
+      "System Health Monitoring"
+    ],
+    "critical_issues": [
+      "Schema do Banco: Coluna 'description' ausente na tabela 'ordens_servico'",
+      "Endpoint de Login: Rota de autenticação com problemas (404)",
+      "API de Pagamentos: Endpoint do Mercado Pago inacessível",
+      "Integração WhatsApp: Erro de parsing JSON no backend",
+      "Chaves de API: Problemas de autenticação/autorização"
+    ]
+  },
+  "environment_variables": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "JWT_SECRET",
+    "MERCADO_PAGO_ACCESS_TOKEN",
+    "FIREBASE_ADMIN_SDK_KEY",
+    "NEXT_PUBLIC_SITE_URL"
+  ],
+  "deployment_info": {
+    "port": 3000,
+    "docker_compose": true,
+    "production_url": "https://gestaoconsert.com.br",
+    "health_check": "/api/health-check"
+  }
+}

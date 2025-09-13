@@ -1,11 +1,11 @@
-# TestSprite AI Testing Report (MCP) - Backend Tests
+# TestSprite AI Testing Report (MCP)
 
 ---
 
 ## 1️⃣ Document Metadata
 - **Project Name:** Consert
 - **Version:** 0.1.0
-- **Date:** 2025-09-12
+- **Date:** 2025-09-13
 - **Prepared by:** TestSprite AI Team
 
 ---
@@ -13,192 +13,210 @@
 ## 2️⃣ Requirement Validation Summary
 
 ### Requirement: User Authentication
-- **Description:** Sistema de autenticação de usuários com controle de acesso baseado em funções.
+- **Description:** Supports role-based access control for admins, technicians, and attendants with proper login validation.
 
 #### Test 1
 - **Test ID:** TC001
-- **Test Name:** user authentication with role based access control
-- **Test Code:** [TC001_user_authentication_with_role_based_access_control.py](./TC001_user_authentication_with_role_based_access_control.py)
-- **Test Error:** Login failed with status 404 - The login API endpoint returned a 404 status indicating that the route or resource for user authentication is not found.
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/2b953ff9-221d-4d36-a7f1-d876fc224827)
+- **Test Name:** authentication api role based access control
+- **Test Code:** [TC001_authentication_api_role_based_access_control.py](./TC001_authentication_api_role_based_access_control.py)
+- **Test Error:** Traceback (most recent call last):
+  File "/var/task/handler.py", line 258, in run_with_retry
+    exec(code, exec_env)
+  File "<string>", line 87, in <module>
+  File "<string>", line 46, in test_authentication_api_role_based_access_control
+AssertionError: Login failed with status 404
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/2ed46f4f-00fd-4f5b-bfd1-d3a3ad723083)
 - **Status:** ❌ Failed
 - **Severity:** High
-- **Analysis / Findings:** O endpoint de login não foi encontrado. É necessário verificar a configuração de rotas e garantir que o serviço de autenticação esteja corretamente implementado e acessível.
+- **Analysis / Findings:** The authentication API is returning a 404 Not Found error on login attempts. This indicates that the endpoint or the resource required for role-based access control is not found or misconfigured, preventing proper login and authorization.
 
 ---
 
 ### Requirement: Service Order Management
-- **Description:** Gerenciamento completo de ordens de serviço com criação, visualização, edição e rastreamento de status.
+- **Description:** Allows creation, editing, and status updates of service orders with notification capabilities.
 
 #### Test 1
 - **Test ID:** TC002
-- **Test Name:** create view and edit service orders with status tracking
-- **Test Code:** [TC002_create_view_and_edit_service_orders_with_status_tracking.py](./TC002_create_view_and_edit_service_orders_with_status_tracking.py)
-- **Test Error:** Failed to create order: Could not find the 'description' column of 'ordens_servico' in the schema cache
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/9f3a4bea-a1b7-4165-9f15-47d771c27f85)
+- **Test Name:** service orders api create edit status update notifications
+- **Test Code:** [TC002_service_orders_api_create_edit_status_update_notifications.py](./TC002_service_orders_api_create_edit_status_update_notifications.py)
+- **Test Error:** Traceback (most recent call last):
+  File "/var/task/handler.py", line 258, in run_with_retry
+    exec(code, exec_env)
+  File "<string>", line 95, in <module>
+  File "<string>", line 29, in test_service_orders_api_create_edit_status_update_notifications
+AssertionError: Create service order failed: {"error":"Erro ao criar a Ordem de Serviço: Could not find the 'dataPrevistaConclusao' column of 'ordens_servico' in the schema cache"}
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/78fac5a6-334f-43e3-b830-a083c5249f7f)
 - **Status:** ❌ Failed
 - **Severity:** High
-- **Analysis / Findings:** Problema de sincronização do schema do banco de dados. A coluna 'description' está ausente no cache do schema da tabela 'ordens_servico'.
-
-#### Test 2
-- **Test ID:** TC004
-- **Test Name:** manage equipment details associated with service orders
-- **Test Code:** [TC004_manage_equipment_details_associated_with_service_orders.py](./TC004_manage_equipment_details_associated_with_service_orders.py)
-- **Test Error:** Failed to create service order: Could not find the 'description' column of 'ordens_servico' in the schema cache
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/7070c903-9b8a-4ee1-ba69-827b99ca19f1)
-- **Status:** ❌ Failed
-- **Severity:** High
-- **Analysis / Findings:** Mesmo problema de schema que TC002, afetando o gerenciamento de equipamentos associados às ordens de serviço.
+- **Analysis / Findings:** The failure occurred because the 'dataPrevistaConclusao' column was missing from the 'ordens_servico' table schema cache when attempting to create a service order, causing the database operation to fail.
 
 ---
 
 ### Requirement: Client Management
-- **Description:** Gerenciamento de informações de clientes com histórico de serviços.
+- **Description:** Provides CRUD operations for client and equipment data with search functionality.
 
 #### Test 1
 - **Test ID:** TC003
-- **Test Name:** manage client information with service history tracking
-- **Test Code:** [TC003_manage_client_information_with_service_history_tracking.py](./TC003_manage_client_information_with_service_history_tracking.py)
-- **Test Error:** Failed to create client: Invalid API key
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/47482d47-4aaf-423f-87c5-2c1d89920404)
+- **Test Name:** client management api crud and search functionality
+- **Test Code:** [TC003_client_management_api_crud_and_search_functionality.py](./TC003_client_management_api_crud_and_search_functionality.py)
+- **Test Error:** Traceback (most recent call last):
+  File "/var/task/handler.py", line 258, in run_with_retry
+    exec(code, exec_env)
+  File "<string>", line 189, in <module>
+  File "<string>", line 52, in test_client_management_api_crud_and_search
+AssertionError: Client creation failed: {"error":"invalid input syntax for type uuid: \"1\""}
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/b61f4d28-aacd-4293-8bc6-e829a593e34e)
 - **Status:** ❌ Failed
 - **Severity:** High
-- **Analysis / Findings:** Problema de autenticação/autorização. A chave de API utilizada é inválida ou não possui as permissões necessárias.
-
-#### Test 2
-- **Test ID:** TC007
-- **Test Name:** interact with supabase backend for data operations
-- **Test Code:** [TC007_interact_with_supabase_backend_for_data_operations.py](./TC007_interact_with_supabase_backend_for_data_operations.py)
-- **Test Error:** Client creation failed: empresaId e nome são obrigatórios
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/76b3cc91-513a-4340-ba8a-9d796fc83ffb)
-- **Status:** ❌ Failed
-- **Severity:** Medium
-- **Analysis / Findings:** Falha na validação de campos obrigatórios. Os campos 'empresaId' e 'nome' são necessários para criação de clientes.
-
----
-
-### Requirement: WhatsApp Integration
-- **Description:** Integração com WhatsApp para envio e recebimento de mensagens.
-
-#### Test 1
-- **Test ID:** TC005
-- **Test Name:** send and receive messages through whatsapp integration
-- **Test Code:** [TC005_send_and_receive_messages_through_whatsapp_integration.py](./TC005_send_and_receive_messages_through_whatsapp_integration.py)
-- **Test Error:** WhatsApp connect failed: Erro interno do servidor: Unexpected end of JSON input
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/8e78482e-6ded-4194-a134-24321a9292ee)
-- **Status:** ❌ Failed
-- **Severity:** High
-- **Analysis / Findings:** Erro de parsing JSON no serviço de integração WhatsApp. Resposta malformada ou incompleta do backend.
+- **Analysis / Findings:** The test failed during client creation due to invalid UUID input syntax; the system received '1' where a UUID was expected, causing a type conversion error in the backend.
 
 ---
 
 ### Requirement: Payment Processing
-- **Description:** Processamento seguro de pagamentos via integração com Mercado Pago.
+- **Description:** Handles payment processing through Mercado Pago integration with status tracking and webhook handling.
+
+#### Test 1
+- **Test ID:** TC004
+- **Test Name:** payment processing api mercadopago integration
+- **Test Code:** [TC004_payment_processing_api_mercadopago_integration.py](./TC004_payment_processing_api_mercadopago_integration.py)
+- **Test Error:** Traceback (most recent call last):
+  File "/var/task/handler.py", line 258, in run_with_retry
+    exec(code, exec_env)
+  File "<string>", line 90, in <module>
+  File "<string>", line 25, in test_payment_processing_api_mercadopago_integration
+AssertionError: Expected 201 Created, got 400
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/56f16a1e-d821-4ca3-8c8a-5c89d5ee088d)
+- **Status:** ❌ Failed
+- **Severity:** High
+- **Analysis / Findings:** The payment creation request to the Mercado Pago integration endpoint returned a 400 Bad Request instead of the expected 201 Created, indicating incorrect or missing parameters in the payment creation payload.
+
+---
+
+### Requirement: WhatsApp Integration
+- **Description:** Provides API endpoints for WhatsApp message sending and connection management.
+
+#### Test 1
+- **Test ID:** TC005
+- **Test Name:** whatsapp integration api message sending and connection management
+- **Test Code:** [TC005_whatsapp_integration_api_message_sending_and_connection_management.py](./TC005_whatsapp_integration_api_message_sending_and_connection_management.py)
+- **Test Error:** Traceback (most recent call last):
+  File "/var/task/handler.py", line 258, in run_with_retry
+    exec(code, exec_env)
+  File "<string>", line 52, in <module>
+  File "<string>", line 18, in test_whatsapp_integration_api_message_sending_and_connection_management
+AssertionError: Failed to connect WhatsApp: {"error":"Empresa ID é obrigatório"}
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/acf0b8d3-781e-4bb3-b09a-c29886274d4c)
+- **Status:** ❌ Failed
+- **Severity:** Medium
+- **Analysis / Findings:** The WhatsApp integration API failed to connect because the required 'Empresa ID' parameter was missing, causing request validation to fail.
+
+---
+
+### Requirement: Email Verification
+- **Description:** Handles email verification with code sending, verification, and resending capabilities.
 
 #### Test 1
 - **Test ID:** TC006
-- **Test Name:** process payments securely via mercado pago integration
-- **Test Code:** [TC006_process_payments_securely_via_mercado_pago_integration.py](./TC006_process_payments_securely_via_mercado_pago_integration.py)
-- **Test Error:** Expected status code 200, got 404
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/16dabd99-c9b8-4e43-907d-2c1461001f78)
-- **Status:** ❌ Failed
-- **Severity:** High
-- **Analysis / Findings:** Endpoint de pagamento não encontrado (404). Verificar se a rota está corretamente configurada e o serviço está deployado.
-
----
-
-### Requirement: UI Components
-- **Description:** Componentes de interface reutilizáveis com renderização consistente.
-
-#### Test 1
-- **Test ID:** TC008
-- **Test Name:** render reusable ui components consistently
-- **Test Code:** [TC008_render_reusable_ui_components_consistently.py](./TC008_render_reusable_ui_components_consistently.py)
-- **Test Error:** Expected status 200 but got 404
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/5aaa001c-7f32-4119-a239-37b0fe7ed711)
+- **Test Name:** email verification api send verify resend codes
+- **Test Code:** [TC006_email_verification_api_send_verify_resend_codes.py](./TC006_email_verification_api_send_verify_resend_codes.py)
+- **Test Error:** Traceback (most recent call last):
+  File "/var/task/handler.py", line 258, in run_with_retry
+    exec(code, exec_env)
+  File "<string>", line 63, in <module>
+  File "<string>", line 24, in test_email_verification_api_send_verify_resend_codes
+AssertionError: Send code failed: {"error":"Usuário não encontrado"}
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/61bd33d9-7552-4ecb-886d-8c75327b1b38)
 - **Status:** ❌ Failed
 - **Severity:** Medium
-- **Analysis / Findings:** Serviço backend para componentes UI não encontrado. Verificar se o endpoint existe e está acessível.
+- **Analysis / Findings:** The email verification API failed to send a verification code because the specified user was not found in the system, resulting in an error response.
 
 ---
 
-### Requirement: Error Handling
-- **Description:** Tratamento centralizado de erros com logging e apresentação adequada.
+### Requirement: Admin SaaS Management
+- **Description:** Provides admin APIs for managing companies, subscriptions, and system metrics.
 
 #### Test 1
-- **Test ID:** TC009
-- **Test Name:** handle errors centrally with error handling utility
-- **Test Code:** [TC009_handle_errors_centrally_with_error_handling_utility.py](./TC009_handle_errors_centrally_with_error_handling_utility.py)
-- **Test Error:** N/A
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/c52c9349-7e18-4261-87bf-6dc1a37307e1)
-- **Status:** ✅ Passed
-- **Severity:** Low
-- **Analysis / Findings:** Sistema de tratamento de erros funcionando corretamente. Erros são capturados, logados e apresentados adequadamente.
+- **Test ID:** TC007
+- **Test Name:** admin saas management api companies subscriptions metrics
+- **Test Code:** [TC007_admin_saas_management_api_companies_subscriptions_metrics.py](./TC007_admin_saas_management_api_companies_subscriptions_metrics.py)
+- **Test Error:** Traceback (most recent call last):
+  File "/var/task/handler.py", line 258, in run_with_retry
+    exec(code, exec_env)
+  File "<string>", line 123, in <module>
+  File "<string>", line 30, in test_admin_saas_management_api_companies_subscriptions_metrics
+AssertionError: Company creation failed: 
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/61106aa9-f3d2-4779-b3e6-dab438221b43)
+- **Status:** ❌ Failed
+- **Severity:** High
+- **Analysis / Findings:** Company creation failed with no detailed error provided, indicating a backend failure or misconfiguration during the company creation process in the admin SaaS management API.
 
 ---
 
 ### Requirement: System Health Monitoring
-- **Description:** Monitoramento de saúde do sistema via endpoint de health check.
+- **Description:** Provides health check API for system uptime monitoring and status verification.
 
 #### Test 1
-- **Test ID:** TC010
-- **Test Name:** check system health via health check api endpoint
-- **Test Code:** [TC010_check_system_health_via_health_check_api_endpoint.py](./TC010_check_system_health_via_health_check_api_endpoint.py)
+- **Test ID:** TC008
+- **Test Name:** health check api system uptime monitoring
+- **Test Code:** [TC008_health_check_api_system_uptime_monitoring.py](./TC008_health_check_api_system_uptime_monitoring.py)
 - **Test Error:** N/A
-- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/1e4f9706-06cd-4560-b915-df4d03022ec7)
+- **Test Visualization and Result:** [View Test Results](https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/ac381eff-b28d-4366-9d45-a1c8815041b8)
 - **Status:** ✅ Passed
 - **Severity:** Low
-- **Analysis / Findings:** Endpoint de health check funcionando corretamente, retornando status adequado para monitoramento.
+- **Analysis / Findings:** The health check API passed successfully, confirming that the system uptime monitoring endpoint correctly responds to health queries as expected.
 
 ---
 
 ## 3️⃣ Coverage & Matching Metrics
 
-- **20% dos testes passaram**
-- **80% dos testes falharam**
+- **12.5% dos testes passaram**
+- **87.5% dos testes falharam**
 - **Principais lacunas/riscos:**
-  - Problemas críticos de schema do banco de dados
-  - Endpoints de autenticação não encontrados
-  - Integração WhatsApp com problemas de parsing JSON
-  - Serviços de pagamento inacessíveis
-  - Validação de campos obrigatórios inconsistente
+  - Problemas críticos de autenticação com endpoint não encontrado (404)
+  - Schema do banco de dados com colunas ausentes
+  - Validação de UUID inadequada nos endpoints
+  - Integração do Mercado Pago com problemas de configuração
+  - Parâmetros obrigatórios ausentes na integração WhatsApp
+  - Usuários não encontrados no sistema de verificação de email
+  - Falhas na criação de empresas no sistema admin
 
 | Requirement                    | Total Tests | ✅ Passed | ⚠️ Partial | ❌ Failed |
 |--------------------------------|-------------|-----------|-------------|------------|
 | User Authentication            | 1           | 0         | 0           | 1          |
-| Service Order Management       | 2           | 0         | 0           | 2          |
-| Client Management              | 2           | 0         | 0           | 2          |
-| WhatsApp Integration           | 1           | 0         | 0           | 1          |
+| Service Order Management       | 1           | 0         | 0           | 1          |
+| Client Management              | 1           | 0         | 0           | 1          |
 | Payment Processing             | 1           | 0         | 0           | 1          |
-| UI Components                  | 1           | 0         | 0           | 1          |
-| Error Handling                 | 1           | 1         | 0           | 0          |
+| WhatsApp Integration           | 1           | 0         | 0           | 1          |
+| Email Verification             | 1           | 0         | 0           | 1          |
+| Admin SaaS Management          | 1           | 0         | 0           | 1          |
 | System Health Monitoring       | 1           | 1         | 0           | 0          |
-| **TOTAL**                      | **10**      | **2**     | **0**       | **8**      |
+| **TOTAL**                      | **8**       | **1**     | **0**       | **7**      |
 
 ---
 
 ## 4️⃣ Principais Problemas Identificados
 
 ### 🔴 Críticos (High Severity)
-1. **Schema do Banco de Dados**: Coluna 'description' ausente na tabela 'ordens_servico'
-2. **Endpoint de Login**: Rota de autenticação não encontrada (404)
-3. **API de Pagamentos**: Endpoint do Mercado Pago inacessível
-4. **Integração WhatsApp**: Erro de parsing JSON no backend
-5. **Chaves de API**: Problemas de autenticação/autorização
+1. **Endpoint de Autenticação**: API de login retornando 404 Not Found
+2. **Schema do Banco**: Coluna 'dataPrevistaConclusao' ausente na tabela 'ordens_servico'
+3. **Validação UUID**: Entrada inválida de UUID causando falhas na criação de clientes
+4. **API Mercado Pago**: Endpoint retornando 400 Bad Request por parâmetros incorretos
+5. **Criação de Empresas**: Falha na criação de empresas sem detalhes do erro
 
 ### 🟡 Médios (Medium Severity)
-1. **Validação de Campos**: Campos obrigatórios não validados adequadamente
-2. **Componentes UI**: Serviço backend para componentes não encontrado
+1. **WhatsApp Integration**: Parâmetro 'Empresa ID' obrigatório ausente
+2. **Verificação de Email**: Usuários não encontrados no sistema
 
 ## 5️⃣ Próximos Passos Recomendados
 
-1. **Corrigir Schema do Banco**: Adicionar coluna 'description' na tabela 'ordens_servico'
-2. **Implementar Endpoint de Login**: Criar/corrigir rota `/api/login`
-3. **Configurar API de Pagamentos**: Verificar e corrigir endpoint do Mercado Pago
-4. **Corrigir Integração WhatsApp**: Resolver problemas de parsing JSON
-5. **Revisar Autenticação**: Validar chaves de API e permissões
-6. **Melhorar Validações**: Implementar validação consistente de campos obrigatórios
-7. **Executar Testes Novamente**: Após correções, executar nova bateria de testes
+1. **Corrigir Endpoint de Login**: Investigar e corrigir a configuração de roteamento da API de autenticação
+2. **Atualizar Schema do Banco**: Adicionar coluna 'dataPrevistaConclusao' na tabela 'ordens_servico'
+3. **Melhorar Validação UUID**: Implementar validação adequada de UUID nos endpoints
+4. **Configurar Mercado Pago**: Revisar payload e autenticação da integração de pagamentos
+5. **Corrigir WhatsApp API**: Garantir que 'Empresa ID' seja obrigatório no schema da API
+6. **Validar Usuários**: Adicionar validação de existência de usuários antes do envio de códigos
+7. **Investigar Admin API**: Verificar logs do backend para identificar causa das falhas na criação de empresas
+8. **Executar Testes Novamente**: Após correções, executar nova bateria de testes
 
 ---
 

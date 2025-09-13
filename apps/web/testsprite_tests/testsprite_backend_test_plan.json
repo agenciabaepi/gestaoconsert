@@ -1,52 +1,42 @@
 [
   {
     "id": "TC001",
-    "title": "user authentication with role based access control",
-    "description": "Test the login API to ensure users can authenticate successfully and are granted access based on their roles (admin, technician, attendant). Verify that unauthorized users cannot access protected routes."
+    "title": "authentication api role based access control",
+    "description": "Verify that the authentication API correctly enforces role-based access control for admins, technicians, and attendants, allowing access only to authorized routes and functionalities."
   },
   {
     "id": "TC002",
-    "title": "create view and edit service orders with status tracking",
-    "description": "Test the service order APIs to create new orders, view existing orders, edit order details, and update order status (pending, in progress, completed). Verify that notifications are sent on status updates."
+    "title": "service orders api create edit status update notifications",
+    "description": "Test the service orders API for creating, editing, and updating the status of service orders, and ensure notifications are sent to clients and technicians accordingly."
   },
   {
     "id": "TC003",
-    "title": "manage client information with service history tracking",
-    "description": "Test client management APIs to create, view, and edit client details. Verify that service history related to clients is accurately maintained and retrievable."
+    "title": "client management api crud and search functionality",
+    "description": "Validate the client management API's ability to perform CRUD operations on client and equipment data, including the search functionality to retrieve accurate results."
   },
   {
     "id": "TC004",
-    "title": "manage equipment details associated with service orders",
-    "description": "Test equipment management APIs to add, view, and edit equipment details linked to service orders. Verify that equipment service history is correctly tracked."
+    "title": "payment processing api mercadopago integration",
+    "description": "Test the payment processing API's integration with Mercado Pago, including payment creation, status tracking, reconciliation, and webhook handling."
   },
   {
     "id": "TC005",
-    "title": "send and receive messages through whatsapp integration",
-    "description": "Test the WhatsApp API endpoints for connecting to WhatsApp and sending messages. Verify that messages are sent and received correctly and that connection status is properly handled."
+    "title": "whatsapp integration api message sending and connection management",
+    "description": "Verify that the WhatsApp integration API can send messages correctly, manage connections, and handle disconnect functionality as expected."
   },
   {
     "id": "TC006",
-    "title": "process payments securely via mercado pago integration",
-    "description": "Test payment processing through the Mercado Pago integration to ensure transactions complete successfully and securely. Verify handling of payment success and failure scenarios."
+    "title": "email verification api send verify resend codes",
+    "description": "Test the email verification API for sending verification codes, verifying them, and resending codes without errors."
   },
   {
     "id": "TC007",
-    "title": "interact with supabase backend for data operations",
-    "description": "Test the Supabase client utility to ensure proper interaction with the backend database for CRUD operations related to users, orders, clients, and equipment."
+    "title": "admin saas management api companies subscriptions metrics",
+    "description": "Validate the admin SaaS management APIs for handling companies, subscriptions, and providing accurate system metrics."
   },
   {
     "id": "TC008",
-    "title": "render reusable ui components consistently",
-    "description": "Test the reusable UI components (Badge, Button, Dialog, Input, Select, Toast) to ensure they render correctly and consistently across different parts of the application with accessibility support."
-  },
-  {
-    "id": "TC009",
-    "title": "handle errors centrally with error handling utility",
-    "description": "Test the centralized error handling utility to verify that errors are caught, logged, and presented to users appropriately without crashing the application."
-  },
-  {
-    "id": "TC010",
-    "title": "check system health via health check api endpoint",
-    "description": "Test the health check API endpoint to ensure it returns the correct status indicating the system's health and availability for monitoring purposes."
+    "title": "health check api system uptime monitoring",
+    "description": "Test the health check API to ensure it accurately monitors system uptime and responds correctly to health queries."
   }
 ]

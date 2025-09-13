@@ -41,135 +41,284 @@
       </style>
     </head>
     <body>
-      <h1>Relatório de Testes - Sistema Consert</h1>
-<h2>Informações do Projeto</h2>
-<ul>
-<li><strong>Nome do Projeto:</strong> web (Sistema Consert)</li>
-<li><strong>Versão:</strong> 0.1.0</li>
-<li><strong>Data de Execução:</strong> 13/09/2025</li>
-<li><strong>Repositório:</strong> /Users/lucasoliveira/Desktop/teste-sistema/Consert/apps/web</li>
-<li><strong>Ambiente de Teste:</strong> http://localhost:3000</li>
-</ul>
-<h2>Resumo Executivo</h2>
-<h3>Status Geral dos Testes</h3>
-<ul>
-<li><strong>Total de Testes:</strong> 18</li>
-<li><strong>Testes Aprovados:</strong> 3 ✅</li>
-<li><strong>Testes Falharam:</strong> 15 ❌</li>
-<li><strong>Taxa de Sucesso:</strong> 16.7%</li>
-</ul>
-<h3>Melhoria Significativa</h3>
-<p>🎉 <strong>PROGRESSO IMPORTANTE:</strong> Após a correção das configurações do Next.js:</p>
-<ul>
-<li><strong>Antes:</strong> 0/18 testes passando (0%)</li>
-<li><strong>Agora:</strong> 3/18 testes passando (16.7%)</li>
-<li><strong>Melhoria:</strong> +3 testes funcionais</li>
-</ul>
-<h2>Problemas Corrigidos</h2>
-<h3>✅ Configuração do Next.js</h3>
-<ul>
-<li><strong>Problema:</strong> Conflito entre <code>next.config.js</code> e <code>next.config.ts</code> causando <code>ERR_EMPTY_RESPONSE</code></li>
-<li><strong>Solução:</strong> Consolidação das configurações em um único arquivo <code>next.config.ts</code></li>
-<li><strong>Resultado:</strong> Servidor agora responde corretamente com status HTTP 200</li>
-</ul>
-<h3>✅ Carregamento de Recursos Estáticos</h3>
-<ul>
-<li><strong>Problema:</strong> Arquivos JavaScript e CSS não carregavam</li>
-<li><strong>Solução:</strong> Configurações de headers e cache otimizadas</li>
-<li><strong>Resultado:</strong> Recursos estáticos agora são servidos corretamente</li>
-</ul>
-<h2>Problemas Identificados que Ainda Precisam de Correção</h2>
-<h3>🔧 Autenticação Supabase</h3>
-<ul>
-<li><strong>Descrição:</strong> Erros relacionados ao signOut e sessões</li>
-<li><strong>Impacto:</strong> Afeta fluxos de login/logout</li>
-<li><strong>Prioridade:</strong> Alta</li>
-<li><strong>Erro Típico:</strong> <code>Failed to fetch</code> em operações de autenticação</li>
-</ul>
-<h3>🔧 Configuração de Imagens</h3>
-<ul>
-<li><strong>Descrição:</strong> Warnings sobre proporções de imagem</li>
-<li><strong>Impacto:</strong> Baixo (apenas warnings)</li>
-<li><strong>Prioridade:</strong> Baixa</li>
-<li><strong>Solução Sugerida:</strong> Adicionar <code>width: &quot;auto&quot;</code> ou <code>height: &quot;auto&quot;</code> no CSS</li>
-</ul>
-<h3>🔧 Elementos de Interface</h3>
-<ul>
-<li><strong>Descrição:</strong> Alguns elementos não são encontrados pelos testes</li>
-<li><strong>Impacto:</strong> Médio</li>
-<li><strong>Prioridade:</strong> Média</li>
-<li><strong>Possível Causa:</strong> Seletores XPath desatualizados ou elementos carregados dinamicamente</li>
-</ul>
-<h2>Detalhes Técnicos</h2>
-<h3>Configurações Aplicadas</h3>
-<ul>
-<li>Consolidação de <code>next.config.js</code> e <code>next.config.ts</code></li>
-<li>Headers de segurança configurados</li>
-<li>Cache estratégico implementado</li>
-<li>Otimizações para múltiplos usuários</li>
-<li>Suporte a SVG via SVGR</li>
-<li>Configurações específicas para VPS</li>
-</ul>
-<h3>Ambiente de Teste</h3>
-<ul>
-<li><strong>URL Local:</strong> http://localhost:3000</li>
-<li><strong>URL de Rede:</strong> http://192.168.1.11:3000</li>
-<li><strong>Proxy TestSprite:</strong> Porta 52171</li>
-<li><strong>Status do Servidor:</strong> ✅ Funcionando (HTTP 200)</li>
-</ul>
-<h2>Próximos Passos</h2>
-<h3>Prioridade Alta</h3>
-<ol>
-<li>
-<p><strong>Corrigir autenticação Supabase</strong></p>
-<ul>
-<li>Verificar configurações de CORS</li>
-<li>Validar variáveis de ambiente</li>
-<li>Testar fluxos de login/logout</li>
-</ul>
-</li>
-<li>
-<p><strong>Atualizar seletores de teste</strong></p>
-<ul>
-<li>Revisar XPaths dos elementos</li>
-<li>Implementar data-testid para elementos críticos</li>
-</ul>
-</li>
-</ol>
-<h3>Prioridade Média</h3>
-<ol start="3">
-<li>
-<p><strong>Melhorar tratamento de erros</strong></p>
-<ul>
-<li>Implementar retry automático</li>
-<li>Adicionar timeouts mais robustos</li>
-</ul>
-</li>
-<li>
-<p><strong>Otimizar carregamento</strong></p>
-<ul>
-<li>Verificar lazy loading de componentes</li>
-<li>Implementar loading states</li>
-</ul>
-</li>
-</ol>
-<h3>Prioridade Baixa</h3>
-<ol start="5">
-<li><strong>Corrigir warnings de imagem</strong>
-<ul>
-<li>Ajustar CSS para manter proporções</li>
-<li>Otimizar tamanhos de imagem</li>
-</ul>
-</li>
-</ol>
-<h2>Conclusão</h2>
-<p>✅ <strong>Sucesso Parcial:</strong> A correção das configurações do Next.js resolveu o problema crítico de <code>ERR_EMPTY_RESPONSE</code>, permitindo que 3 testes passassem.</p>
-<p>🔧 <strong>Trabalho Restante:</strong> Ainda há 15 testes falhando, principalmente relacionados à autenticação Supabase e elementos de interface.</p>
-<p>📈 <strong>Progresso Positivo:</strong> A melhoria de 0% para 16.7% de testes passando demonstra que estamos no caminho certo.</p>
+      <h1>TestSprite AI Testing Report (MCP) - Backend Tests</h1>
 <hr>
-<p><strong>Relatório gerado automaticamente pelo TestSprite MCP</strong><br>
-<strong>Data:</strong> 13/09/2025<br>
-<strong>Versão do TestSprite:</strong> Latest</p>
+<h2>1️⃣ Document Metadata</h2>
+<ul>
+<li><strong>Project Name:</strong> Consert</li>
+<li><strong>Version:</strong> 0.1.0</li>
+<li><strong>Date:</strong> 2025-09-12</li>
+<li><strong>Prepared by:</strong> TestSprite AI Team</li>
+</ul>
+<hr>
+<h2>2️⃣ Requirement Validation Summary</h2>
+<h3>Requirement: User Authentication</h3>
+<ul>
+<li><strong>Description:</strong> Sistema de autenticação de usuários com controle de acesso baseado em funções.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC001</li>
+<li><strong>Test Name:</strong> user authentication with role based access control</li>
+<li><strong>Test Code:</strong> <a href="./TC001_user_authentication_with_role_based_access_control.py">TC001_user_authentication_with_role_based_access_control.py</a></li>
+<li><strong>Test Error:</strong> Login failed with status 404 - The login API endpoint returned a 404 status indicating that the route or resource for user authentication is not found.</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/2b953ff9-221d-4d36-a7f1-d876fc224827">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> O endpoint de login não foi encontrado. É necessário verificar a configuração de rotas e garantir que o serviço de autenticação esteja corretamente implementado e acessível.</li>
+</ul>
+<hr>
+<h3>Requirement: Service Order Management</h3>
+<ul>
+<li><strong>Description:</strong> Gerenciamento completo de ordens de serviço com criação, visualização, edição e rastreamento de status.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC002</li>
+<li><strong>Test Name:</strong> create view and edit service orders with status tracking</li>
+<li><strong>Test Code:</strong> <a href="./TC002_create_view_and_edit_service_orders_with_status_tracking.py">TC002_create_view_and_edit_service_orders_with_status_tracking.py</a></li>
+<li><strong>Test Error:</strong> Failed to create order: Could not find the 'description' column of 'ordens_servico' in the schema cache</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/9f3a4bea-a1b7-4165-9f15-47d771c27f85">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Problema de sincronização do schema do banco de dados. A coluna 'description' está ausente no cache do schema da tabela 'ordens_servico'.</li>
+</ul>
+<h4>Test 2</h4>
+<ul>
+<li><strong>Test ID:</strong> TC004</li>
+<li><strong>Test Name:</strong> manage equipment details associated with service orders</li>
+<li><strong>Test Code:</strong> <a href="./TC004_manage_equipment_details_associated_with_service_orders.py">TC004_manage_equipment_details_associated_with_service_orders.py</a></li>
+<li><strong>Test Error:</strong> Failed to create service order: Could not find the 'description' column of 'ordens_servico' in the schema cache</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/7070c903-9b8a-4ee1-ba69-827b99ca19f1">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Mesmo problema de schema que TC002, afetando o gerenciamento de equipamentos associados às ordens de serviço.</li>
+</ul>
+<hr>
+<h3>Requirement: Client Management</h3>
+<ul>
+<li><strong>Description:</strong> Gerenciamento de informações de clientes com histórico de serviços.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC003</li>
+<li><strong>Test Name:</strong> manage client information with service history tracking</li>
+<li><strong>Test Code:</strong> <a href="./TC003_manage_client_information_with_service_history_tracking.py">TC003_manage_client_information_with_service_history_tracking.py</a></li>
+<li><strong>Test Error:</strong> Failed to create client: Invalid API key</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/47482d47-4aaf-423f-87c5-2c1d89920404">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Problema de autenticação/autorização. A chave de API utilizada é inválida ou não possui as permissões necessárias.</li>
+</ul>
+<h4>Test 2</h4>
+<ul>
+<li><strong>Test ID:</strong> TC007</li>
+<li><strong>Test Name:</strong> interact with supabase backend for data operations</li>
+<li><strong>Test Code:</strong> <a href="./TC007_interact_with_supabase_backend_for_data_operations.py">TC007_interact_with_supabase_backend_for_data_operations.py</a></li>
+<li><strong>Test Error:</strong> Client creation failed: empresaId e nome são obrigatórios</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/76b3cc91-513a-4340-ba8a-9d796fc83ffb">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> Medium</li>
+<li><strong>Analysis / Findings:</strong> Falha na validação de campos obrigatórios. Os campos 'empresaId' e 'nome' são necessários para criação de clientes.</li>
+</ul>
+<hr>
+<h3>Requirement: WhatsApp Integration</h3>
+<ul>
+<li><strong>Description:</strong> Integração com WhatsApp para envio e recebimento de mensagens.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC005</li>
+<li><strong>Test Name:</strong> send and receive messages through whatsapp integration</li>
+<li><strong>Test Code:</strong> <a href="./TC005_send_and_receive_messages_through_whatsapp_integration.py">TC005_send_and_receive_messages_through_whatsapp_integration.py</a></li>
+<li><strong>Test Error:</strong> WhatsApp connect failed: Erro interno do servidor: Unexpected end of JSON input</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/8e78482e-6ded-4194-a134-24321a9292ee">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Erro de parsing JSON no serviço de integração WhatsApp. Resposta malformada ou incompleta do backend.</li>
+</ul>
+<hr>
+<h3>Requirement: Payment Processing</h3>
+<ul>
+<li><strong>Description:</strong> Processamento seguro de pagamentos via integração com Mercado Pago.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC006</li>
+<li><strong>Test Name:</strong> process payments securely via mercado pago integration</li>
+<li><strong>Test Code:</strong> <a href="./TC006_process_payments_securely_via_mercado_pago_integration.py">TC006_process_payments_securely_via_mercado_pago_integration.py</a></li>
+<li><strong>Test Error:</strong> Expected status code 200, got 404</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/16dabd99-c9b8-4e43-907d-2c1461001f78">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Endpoint de pagamento não encontrado (404). Verificar se a rota está corretamente configurada e o serviço está deployado.</li>
+</ul>
+<hr>
+<h3>Requirement: UI Components</h3>
+<ul>
+<li><strong>Description:</strong> Componentes de interface reutilizáveis com renderização consistente.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC008</li>
+<li><strong>Test Name:</strong> render reusable ui components consistently</li>
+<li><strong>Test Code:</strong> <a href="./TC008_render_reusable_ui_components_consistently.py">TC008_render_reusable_ui_components_consistently.py</a></li>
+<li><strong>Test Error:</strong> Expected status 200 but got 404</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/5aaa001c-7f32-4119-a239-37b0fe7ed711">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> Medium</li>
+<li><strong>Analysis / Findings:</strong> Serviço backend para componentes UI não encontrado. Verificar se o endpoint existe e está acessível.</li>
+</ul>
+<hr>
+<h3>Requirement: Error Handling</h3>
+<ul>
+<li><strong>Description:</strong> Tratamento centralizado de erros com logging e apresentação adequada.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC009</li>
+<li><strong>Test Name:</strong> handle errors centrally with error handling utility</li>
+<li><strong>Test Code:</strong> <a href="./TC009_handle_errors_centrally_with_error_handling_utility.py">TC009_handle_errors_centrally_with_error_handling_utility.py</a></li>
+<li><strong>Test Error:</strong> N/A</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/c52c9349-7e18-4261-87bf-6dc1a37307e1">View Test Results</a></li>
+<li><strong>Status:</strong> ✅ Passed</li>
+<li><strong>Severity:</strong> Low</li>
+<li><strong>Analysis / Findings:</strong> Sistema de tratamento de erros funcionando corretamente. Erros são capturados, logados e apresentados adequadamente.</li>
+</ul>
+<hr>
+<h3>Requirement: System Health Monitoring</h3>
+<ul>
+<li><strong>Description:</strong> Monitoramento de saúde do sistema via endpoint de health check.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC010</li>
+<li><strong>Test Name:</strong> check system health via health check api endpoint</li>
+<li><strong>Test Code:</strong> <a href="./TC010_check_system_health_via_health_check_api_endpoint.py">TC010_check_system_health_via_health_check_api_endpoint.py</a></li>
+<li><strong>Test Error:</strong> N/A</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/97aac802-44be-4209-830d-8d5ecdf93275/1e4f9706-06cd-4560-b915-df4d03022ec7">View Test Results</a></li>
+<li><strong>Status:</strong> ✅ Passed</li>
+<li><strong>Severity:</strong> Low</li>
+<li><strong>Analysis / Findings:</strong> Endpoint de health check funcionando corretamente, retornando status adequado para monitoramento.</li>
+</ul>
+<hr>
+<h2>3️⃣ Coverage &amp; Matching Metrics</h2>
+<ul>
+<li><strong>20% dos testes passaram</strong></li>
+<li><strong>80% dos testes falharam</strong></li>
+<li><strong>Principais lacunas/riscos:</strong>
+<ul>
+<li>Problemas críticos de schema do banco de dados</li>
+<li>Endpoints de autenticação não encontrados</li>
+<li>Integração WhatsApp com problemas de parsing JSON</li>
+<li>Serviços de pagamento inacessíveis</li>
+<li>Validação de campos obrigatórios inconsistente</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Total Tests</th>
+<th>✅ Passed</th>
+<th>⚠️ Partial</th>
+<th>❌ Failed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User Authentication</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Service Order Management</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Client Management</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+</tr>
+<tr>
+<td>WhatsApp Integration</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Payment Processing</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>UI Components</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Error Handling</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>System Health Monitoring</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>10</strong></td>
+<td><strong>2</strong></td>
+<td><strong>0</strong></td>
+<td><strong>8</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>4️⃣ Principais Problemas Identificados</h2>
+<h3>🔴 Críticos (High Severity)</h3>
+<ol>
+<li><strong>Schema do Banco de Dados</strong>: Coluna 'description' ausente na tabela 'ordens_servico'</li>
+<li><strong>Endpoint de Login</strong>: Rota de autenticação não encontrada (404)</li>
+<li><strong>API de Pagamentos</strong>: Endpoint do Mercado Pago inacessível</li>
+<li><strong>Integração WhatsApp</strong>: Erro de parsing JSON no backend</li>
+<li><strong>Chaves de API</strong>: Problemas de autenticação/autorização</li>
+</ol>
+<h3>🟡 Médios (Medium Severity)</h3>
+<ol>
+<li><strong>Validação de Campos</strong>: Campos obrigatórios não validados adequadamente</li>
+<li><strong>Componentes UI</strong>: Serviço backend para componentes não encontrado</li>
+</ol>
+<h2>5️⃣ Próximos Passos Recomendados</h2>
+<ol>
+<li><strong>Corrigir Schema do Banco</strong>: Adicionar coluna 'description' na tabela 'ordens_servico'</li>
+<li><strong>Implementar Endpoint de Login</strong>: Criar/corrigir rota <code>/api/login</code></li>
+<li><strong>Configurar API de Pagamentos</strong>: Verificar e corrigir endpoint do Mercado Pago</li>
+<li><strong>Corrigir Integração WhatsApp</strong>: Resolver problemas de parsing JSON</li>
+<li><strong>Revisar Autenticação</strong>: Validar chaves de API e permissões</li>
+<li><strong>Melhorar Validações</strong>: Implementar validação consistente de campos obrigatórios</li>
+<li><strong>Executar Testes Novamente</strong>: Após correções, executar nova bateria de testes</li>
+</ol>
+<hr>
+<p><strong>Relatório gerado automaticamente pelo TestSprite AI Team</strong></p>
 
     </body>
     </html>
