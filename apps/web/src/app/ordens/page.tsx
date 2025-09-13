@@ -233,7 +233,6 @@ export default function ListaOrdensPage() {
   useEffect(() => {
     if (!waitingForAuth && isMounted && !authLoading) {
       fetchOrdens(true);
-      loadTecnicos();
     }
   }, [waitingForAuth, isMounted, authLoading]);
   
@@ -429,7 +428,7 @@ export default function ListaOrdensPage() {
     
     if (!forceRefresh && 
         cacheKey === currentCacheKey && 
-        now - lastFetchTime < 30000 && // 30 segundos
+        now - lastFetchTime < 60000 && // Aumentar cache para 60 segundos
         ordens.length > 0) {
       setLoading(false);
       setLoadingOrdens(false);
@@ -440,161 +439,50 @@ export default function ListaOrdensPage() {
     setError(null);
     
     try {
-      await executeWithRetry(async () => {
-      const queryTimeout = process.env.NODE_ENV === 'production' ? 45000 : 30000; // 45s para produção
-      
-      const result = await Promise.race([
-        supabase
-          .from('ordens_servico')
-          .select(`
-            id,
-            numero_os,
-            cliente_id,
-            categoria,
-            marca,
-            modelo,
-            status,
-            status_tecnico,
-            created_at,
-            tecnico_id,
-            data_entrega,
-            prazo_entrega,
-            valor_faturado,
-            valor_peca,
-            valor_servico,
-            qtd_peca,
-            qtd_servico,
-            desconto,
-            servico,
-            tipo,
-            os_garantia_id,
-            observacao,
-            clientes!left(nome, telefone, email),
-            tecnico:usuarios!left(nome)
-          `)
-          .eq("empresa_id", empresaId)
-          .order('created_at', { ascending: false })
-          .limit(50), // Reduzir para 50 registros para velocidade
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Query timeout - dados demorando muito para carregar')), queryTimeout) // Timeout mais tolerante
-        )
-      ]);
-
-      const { data, error } = result as any;
+      // Query simplificada - apenas dados essenciais
+      const { data, error } = await supabase
+        .from('ordens_servico')
+        .select(`
+          id,
+          numero_os,
+          cliente_id,
+          categoria,
+          marca,
+          modelo,
+          status,
+          status_tecnico,
+          created_at,
+          tecnico_id,
+          valor_faturado,
+          valor_peca,
+          valor_servico,
+          desconto,
+          servico,
+          tipo,
+          clientes!left(nome, telefone),
+          tecnico:usuarios!left(nome)
+        `)
+        .eq("empresa_id", empresaId)
+        .order('created_at', { ascending: false })
+        .limit(100); // Aumentar limite mas manter razoável
 
       if (error) {
         console.error('Erro ao carregar OS:', error);
-        addToast('error', 'Erro ao carregar ordens de serviço. Tente novamente.');
+        addToast('error', 'Erro ao carregar ordens de serviço.');
         setLoadingOrdens(false);
         return;
-      } else if (data) {
-        data.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        // Buscar nomes dos técnicos se necessário
-        const tecnicoIds = [...new Set(data.filter((item: any) => item.tecnico_id).map((item: any) => item.tecnico_id))];
-        let tecnicosDict: Record<string, string> = {};
-        
-        if (tecnicoIds.length > 0) {
-          const { data: tecnicosData } = await supabase
-            .from('usuarios')
-            .select('id, nome')
-            .in('id', tecnicoIds);
-          
-          if (tecnicosData) {
-            tecnicosDict = tecnicosData.reduce((acc: Record<string, string>, tecnico: any) => {
-              acc[tecnico.id] = tecnico.nome;
-              return acc;
-            }, {} as Record<string, string>);
-          }
-        }
+      }
 
-        // Busca de vendas por cliente
-        const vendasDict: Record<string, any> = {};
-        
-        try {
-          const vendasTimeoutPromise = new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Vendas timeout')), 30000)
-          );
-
-          const vendasQueryPromise = supabase
-            .from('vendas')
-            .select('id, cliente_id, forma_pagamento, total, status, data_venda, observacoes')
-            .eq('empresa_id', empresaId)
-            .order('data_venda', { ascending: false })
-            .limit(500); // Limitar resultados
-
-          const vendasResult = await Promise.race([
-            vendasQueryPromise,
-            vendasTimeoutPromise
-          ]);
-          
-          const { data: todasVendas, error: errorVendas } = vendasResult as any;
-          
-          if (errorVendas) {
-            console.warn('⚠️ Erro ao buscar vendas:', errorVendas);
-          } else if (todasVendas) {
-            const osEntregues = data.filter((os: any) => 
-              os.valor_faturado > 0 && 
-              (os.status === 'ENTREGUE' || os.status_tecnico === 'FINALIZADA')
-            );
-            
-            osEntregues.forEach((os: any) => {
-              // Buscar venda específica da O.S. através das observações
-              const vendaOS = todasVendas.find((v: any) => 
-                v.observacoes?.includes(`O.S. #${os.numero_os}`) || 
-                v.observacoes?.includes(`OS #${os.numero_os}`)
-              );
-              
-              // Se não encontrar venda específica, buscar por cliente e valor próximo
-              if (!vendaOS) {
-                const vendaCliente = todasVendas
-                  .filter((v: any) => v.cliente_id === os.cliente_id)
-                  .find((v: any) => Math.abs(v.total - (os.valor_faturado || 0)) <= 5); // Tolerância de R$ 5
-                
-                if (vendaCliente) {
-                  vendasDict[os.id] = {
-                    id: vendaCliente.id,
-                    forma_pagamento: vendaCliente.forma_pagamento,
-                    total: vendaCliente.total,
-                    status: vendaCliente.status
-                  };
-                }
-              } else {
-                vendasDict[os.id] = {
-                  id: vendaOS.id,
-                  forma_pagamento: vendaOS.forma_pagamento,
-                  total: vendaOS.total,
-                  status: vendaOS.status
-                };
-              }
-            });
-          }
-        } catch (error) {
-          console.warn('⚠️ Timeout na busca de vendas:', error);
-          // Continuar sem dados de vendas
-        }
-
+      if (data) {
         const mapped = data.map((item: any) => {
-          // manter datas como YYYY-MM-DD para evitar timezone
-          const entregaCalc = item.data_entrega
-            ? item.data_entrega
-            : (item.vencimento_garantia
-              ? addDaysDateOnly(item.vencimento_garantia, -90)
-              : '');
-          const garantiaCalc = item.vencimento_garantia
-            ? item.vencimento_garantia
-            : (item.data_entrega
-              ? addDaysDateOnly(item.data_entrega, 90)
-              : '');
-          
           const valorFaturado = item.valor_faturado || 0;
-          const vendaOS = vendasDict[item.id];
           
           return {
-          id: item.id,
+            id: item.id,
             numero: item.numero_os || 0,
             cliente: item.clientes?.nome || 'Cliente não informado',
             clienteTelefone: item.clientes?.telefone ? formatPhoneNumber(item.clientes.telefone) : '',
-            clienteEmail: item.clientes?.email || '',
+            clienteEmail: '',
             aparelho: item.modelo || item.marca || item.categoria || 'N/A',
             aparelhoCategoria: item.categoria || '',
             aparelhoMarca: item.marca || '',
@@ -602,65 +490,33 @@ export default function ListaOrdensPage() {
             statusOS: item.status || 'N/A',
             statusTecnico: item.status_tecnico || 'N/A',
             entrada: item.created_at || '',
-            tecnico: item.tecnico?.nome || tecnicosDict[item.tecnico_id] || item.tecnico_id || 'N/A',
+            tecnico: item.tecnico?.nome || 'N/A',
             atendente: 'N/A',
-            entrega: entregaCalc,
-            prazoEntrega: item.prazo_entrega || '',
-            garantia: garantiaCalc,
-          valorPeca: item.valor_peca || 0,
-          valorServico: item.valor_servico || 0,
-          desconto: item.desconto || 0,
-            valorTotal: ((item.valor_peca || 0) * (item.qtd_peca || 1)) + ((item.valor_servico || 0) * (item.qtd_servico || 1)),
-            valorComDesconto: (((item.valor_peca || 0) * (item.qtd_peca || 1)) + ((item.valor_servico || 0) * (item.qtd_servico || 1))) - (item.desconto || 0),
-          valorFaturado: valorFaturado,
+            entrega: '',
+            prazoEntrega: '',
+            garantia: '',
+            valorPeca: item.valor_peca || 0,
+            valorServico: item.valor_servico || 0,
+            desconto: item.desconto || 0,
+            valorTotal: (item.valor_peca || 0) + (item.valor_servico || 0),
+            valorComDesconto: (item.valor_peca || 0) + (item.valor_servico || 0) - (item.desconto || 0),
+            valorFaturado: valorFaturado,
             tipo: item.tipo || 'Nova',
-            foiFaturada: valorFaturado > 0 && (item.status === 'ENTREGUE' || item.status_tecnico === 'FINALIZADA'),
-            formaPagamento: getFormaPagamento(item, vendaOS),
-            osGarantiaId: item.os_garantia_id || null,
-            observacao: item.observacao || null,
+            foiFaturada: valorFaturado > 0,
+            formaPagamento: valorFaturado > 0 ? 'pix' : 'N/A',
+            osGarantiaId: null,
+            observacao: null,
           };
         });
 
         setOrdens(mapped);
-
-        // Calcular métricas dos cards
-        const hoje = new Date();
-        const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-        const inicioSemana = new Date(hoje.setDate(hoje.getDate() - hoje.getDay()));
-        const mesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
-
-        const totalOS = mapped.length;
-        const totalMes = mapped.filter((o: any) => new Date(o.entrada) >= inicioMes).length;
-        const retornosMes = mapped.filter((o: any) => o.tipo === 'Retorno' && new Date(o.entrada) >= inicioMes).length;
-        const percentualRetornos = totalOS > 0 ? Math.round((retornosMes / totalOS) * 100) : 0;
-
-        // Calcular crescimento
-        const ordensSemana = mapped.filter((o: any) => new Date(o.entrada) >= inicioSemana).length;
-        const ordensSemanaAnterior = mapped.filter((o: any) => {
-          const data = new Date(o.entrada);
-          const semanaAnterior = new Date(inicioSemana);
-          semanaAnterior.setDate(semanaAnterior.getDate() - 7);
-          return data >= semanaAnterior && data < inicioSemana;
-        }).length;
-
-        const ordensMesAnterior = mapped.filter((o: any) => {
-          const data = new Date(o.entrada);
-          return data >= mesAnterior && data < inicioMes;
-        }).length;
-    
-    const calcPercent = (atual: number, anterior: number) => {
-      if (anterior === 0) return atual > 0 ? 100 : 0;
-      return Math.round(((atual - anterior) / anterior) * 100);
-    };
-
-        setTotalOS(totalOS);
-        setPercentualRetornos(percentualRetornos);
+        setTotalOS(mapped.length);
+        setPercentualRetornos(0); // Simplificar cálculo
       }
       
       // Atualizar cache
       setLastFetchTime(now);
       setCacheKey(currentCacheKey);
-      });
       
     } catch (error) {
       setError(error);
@@ -680,10 +536,11 @@ export default function ListaOrdensPage() {
         addToast('error', 'Erro inesperado. Tente recarregar a página.');
       }
     } finally {
-      setLoadingOrdens(false);
       setLoading(false);
     }
   };
+
+  // Função loadTecnicos removida para melhorar performance
 
   const handleStatusChange = (ordemId: string, newStatus: string, newStatusTecnico: string) => {
     setOrdens(prevOrdens => 
@@ -695,48 +552,7 @@ export default function ListaOrdensPage() {
     );
   };
 
-  const loadTecnicos = async () => {
-    if (!validateCompanyData(false)) {
-      return;
-    }
-
-    const empresaId = getCompanyId();
-    if (!empresaId) {
-      return;
-    }
-
-    setLoadingTecnicos(true);
-    try {
-      const tecnicosResult = await Promise.race([
-        supabase
-          .from('usuarios')
-          .select('nome')
-          .eq('empresa_id', empresaId)
-          .eq('nivel', 'tecnico')
-          .order('nome'),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Técnicos timeout')), 30000) // 30 segundos - mais tolerante
-        )
-      ]);
-      
-      const { data, error } = tecnicosResult as any;
-
-      if (error) {
-        console.warn('⚠️ Falha ao buscar técnicos:', error);
-        setTecnicos([]);
-        return;
-      }
-
-      if (data) {
-        setTecnicos(data.map((u: any) => u.nome).filter(Boolean));
-      }
-    } catch (error) {
-      console.warn('⚠️ Timeout ao carregar técnicos:', error);
-      setTecnicos([]);
-    } finally {
-      setLoadingTecnicos(false);
-    }
-  };
+  // Função loadTecnicos removida para melhorar performance
 
   const totalPages = Math.ceil(filteredOrdens.length / itemsPerPage);
   const paginated = filteredOrdens.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -888,7 +704,7 @@ export default function ListaOrdensPage() {
           {/* Header com título e botão */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ordens de Serviço Lucas</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ordens de Serviço pedro</h1>
               <p className="text-gray-600 mt-1 text-sm md:text-base">
                 Gerencie todas as ordens de serviço da sua empresa
               </p>
