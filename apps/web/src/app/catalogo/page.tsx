@@ -477,9 +477,17 @@ export default function CatalogoPage() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Imagem do Serviço</label>
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-                      {form.imagemPreview ? (
+                      {form.imagemPreview && form.imagemPreview.trim() !== '' ? (
                         <div className="space-y-4">
-                          <img src={form.imagemPreview} alt="preview" className="w-full h-32 object-cover rounded-lg" />
+                          <img 
+                            src={form.imagemPreview} 
+                            alt="preview" 
+                            className="w-full h-32 object-cover rounded-lg"
+                            onError={(e) => {
+                              console.error('Erro ao carregar preview da imagem:', form.imagemPreview);
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
                           <p className="text-sm text-gray-500">Clique para alterar a imagem</p>
                         </div>
                       ) : (
@@ -626,8 +634,16 @@ export default function CatalogoPage() {
                 )}
               </div>
               <div className="flex flex-col items-end gap-2">
-                {empresaData?.logo_url && (
-                  <img src={empresaData.logo_url} alt="Logo" className="print-logo" />
+                {empresaData?.logo_url && empresaData.logo_url.trim() !== '' && (
+                  <img 
+                    src={empresaData.logo_url} 
+                    alt="Logo" 
+                    className="print-logo"
+                    onError={(e) => {
+                      console.error('Erro ao carregar logo da empresa:', empresaData.logo_url);
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                 )}
                 <div style={{ fontSize: '10pt', color: '#6b7280', textAlign: 'right' }}>
                   <div>Gerado em: {new Date().toLocaleDateString('pt-BR')}</div>
@@ -678,8 +694,16 @@ export default function CatalogoPage() {
                     {arr.map(i => (
                       <tr key={i.id} className="border-b align-top">
                     <td className="px-3 py-2">
-                      {i.imagem_url ? (
-                        <img src={i.imagem_url} alt={i.titulo} className="w-10 h-10 object-cover rounded" />
+                      {i.imagem_url && i.imagem_url.trim() !== '' ? (
+                        <img 
+                          src={i.imagem_url} 
+                          alt={i.titulo} 
+                          className="w-10 h-10 object-cover rounded"
+                          onError={(e) => {
+                            console.error('Erro ao carregar imagem do item:', i.imagem_url);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
                       ) : (
                         <div className="w-10 h-10 bg-gray-100 rounded" />)
                       }
@@ -720,10 +744,26 @@ export default function CatalogoPage() {
                     <label className="block">
                       <div className="text-xs text-gray-600 mb-1">Imagem</div>
                       <div className="border border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-gray-400">
-                        {editForm.imagemPreview ? (
-                          <img src={editForm.imagemPreview} alt="preview" className="w-full h-28 object-cover rounded" />
-                        ) : ((editingItem as any).imagem_url ? (
-                          <img src={(editingItem as any).imagem_url} alt={editingItem.titulo} className="w-full h-28 object-cover rounded" />
+                        {editForm.imagemPreview && editForm.imagemPreview.trim() !== '' ? (
+                          <img 
+                            src={editForm.imagemPreview} 
+                            alt="preview" 
+                            className="w-full h-28 object-cover rounded"
+                            onError={(e) => {
+                              console.error('Erro ao carregar preview da edição:', editForm.imagemPreview);
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : ((editingItem as any).imagem_url && (editingItem as any).imagem_url.trim() !== '' ? (
+                          <img 
+                            src={(editingItem as any).imagem_url} 
+                            alt={editingItem.titulo} 
+                            className="w-full h-28 object-cover rounded"
+                            onError={(e) => {
+                              console.error('Erro ao carregar imagem do item editado:', (editingItem as any).imagem_url);
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
                         ) : (
                           <div className="text-gray-400 text-sm">Clique para selecionar</div>
                         ))}

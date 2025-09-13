@@ -1,37 +1,33 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 /**
- * Cria o cliente do Supabase apenas no browser.
- * Evita erro "supabaseUrl is required" durante o build/prerender no servidor.
+ * Cria o cliente do Supabase para uso universal (browser e servidor).
  */
-export const supabase: SupabaseClient | any =
-  typeof window !== 'undefined'
-    ? createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          auth: {
-            persistSession: true, // ✅ Persistir sessão
-            autoRefreshToken: true, // ✅ Renovar tokens automaticamente
-            detectSessionInUrl: true, // ✅ Detectar sessão na URL
-            flowType: 'pkce' // ✅ Usar PKCE para segurança
-          },
-          global: {
-            headers: {
-              'x-client-info': 'supabase-js-web'
-            }
-          },
-          db: {
-            schema: 'public'
-          },
-          realtime: {
-            params: {
-              eventsPerSecond: 2
-            }
-          }
-        }
-      )
-    : ({} as any);
+export const supabase: SupabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    auth: {
+      persistSession: typeof window !== 'undefined', // Persistir apenas no browser
+      autoRefreshToken: typeof window !== 'undefined', // Renovar apenas no browser
+      detectSessionInUrl: typeof window !== 'undefined', // Detectar apenas no browser
+      flowType: 'pkce' // ✅ Usar PKCE para segurança
+    },
+    global: {
+      headers: {
+        'x-client-info': 'supabase-js-web'
+      }
+    },
+    db: {
+      schema: 'public'
+    },
+    realtime: {
+      params: {
+        eventsPerSecond: 2
+      }
+    }
+  }
+);
 
 export function createAdminClient(): SupabaseClient {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

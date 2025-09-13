@@ -51,9 +51,9 @@ RUN npm ci --only=production --ignore-scripts && \
     npm cache clean --force
 
 # Expor porta
-EXPOSE 3000
+EXPOSE 4000
 
-ENV PORT=3000
+ENV PORT=4000
 ENV HOSTNAME="0.0.0.0"
 
 # Usar modo produção

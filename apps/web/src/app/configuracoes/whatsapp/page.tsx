@@ -268,7 +268,7 @@ export default function WhatsAppPage() {
             </div>
 
             {/* QR Code */}
-            {session?.status === 'connecting' && session.qr_code && (
+            {session?.status === 'connecting' && session.qr_code && session.qr_code.trim() !== '' && (
               <div className="mb-8 text-center">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">
                   Escaneie o QR Code
@@ -280,6 +280,9 @@ export default function WhatsAppPage() {
                     width={300}
                     height={300}
                     className="mx-auto"
+                    onError={(e) => {
+                      console.error('Erro ao carregar QR Code:', session.qr_code);
+                    }}
                   />
                 </div>
                 <p className="text-sm text-gray-600 mt-4">

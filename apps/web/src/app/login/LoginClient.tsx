@@ -276,7 +276,7 @@ function LoginClientInner() {
       const { data: usuario, error } = await supabase
         .from('usuarios')
         .select('email')
-        .eq('usuario', username)
+        .eq('nome', username)
         .single();
       if (error || !usuario?.email) {
         setIsSubmitting(false);

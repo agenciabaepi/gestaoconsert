@@ -52,6 +52,7 @@ import { useOSPermissions } from '@/hooks/useOSPermissions';
 export default function ListaOrdensPage() {
   const router = useRouter();
   const { validateCompanyData, getCompanyId, loading: authLoading } = useOSPermissions();
+  const { usuarioData, empresaData } = useAuth();
   const { addToast } = useToast();
   const { executeWithRetry, manualRetry, state: retryState } = useSupabaseRetry();
 
@@ -78,9 +79,177 @@ export default function ListaOrdensPage() {
   
   // ✅ CORREÇÃO: Adicionar estado para controlar hidratação
   const [isMounted, setIsMounted] = useState(false);
+  const [waitingForAuth, setWaitingForAuth] = useState(true);
 
   // Estado para abas
   const [activeTab, setActiveTab] = useState('todas');
+  
+  // Definir todos os hooks antes de qualquer early return
+  const handleRetry = useCallback(async () => {
+    setError(null);
+    await manualRetry(() => fetchOrdens(true));
+  }, [manualRetry]);
+
+
+
+  const filteredOrdens = useMemo(() => {
+    let filtered = ordens;
+
+    // Filtro por aba
+    if (activeTab === 'abertas') {
+      filtered = filtered.filter(ordem => 
+        ordem.statusOS !== 'Entregue' && 
+        ordem.statusOS !== 'Cancelada'
+      );
+    } else if (activeTab === 'entregues') {
+      filtered = filtered.filter(ordem => ordem.statusOS === 'Entregue');
+    }
+
+    // Filtro por termo de busca
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(ordem => 
+        ordem.numero.toString().includes(term) ||
+        ordem.cliente.toLowerCase().includes(term) ||
+        ordem.aparelho.toLowerCase().includes(term) ||
+        ordem.servico.toLowerCase().includes(term) ||
+        ordem.tecnico.toLowerCase().includes(term)
+      );
+    }
+
+    // Filtros específicos
+    if (statusFilter) {
+      filtered = filtered.filter(ordem => ordem.statusOS === statusFilter);
+    }
+    if (aparelhoFilter) {
+      filtered = filtered.filter(ordem => ordem.aparelhoCategoria === aparelhoFilter);
+    }
+    if (tecnicoFilter) {
+      filtered = filtered.filter(ordem => ordem.tecnico === tecnicoFilter);
+    }
+    if (tipoFilter) {
+      filtered = filtered.filter(ordem => ordem.tipo === tipoFilter);
+    }
+
+    return filtered;
+  }, [ordens, activeTab, searchTerm, statusFilter, aparelhoFilter, tecnicoFilter, tipoFilter]);
+
+  const contadores = useMemo(() => {
+    const reparoConcluido = ordens.filter(os => {
+      const statusTecnico = (os.statusTecnico || '').toLowerCase();
+      return statusTecnico.includes('reparo concluído') || statusTecnico.includes('reparo concluido');
+    }).length;
+    
+    const concluidas = ordens.filter(os => {
+      const statusConcluidos = ['entregue', 'finalizado', 'concluído', 'reparo concluído'];
+      return statusConcluidos.includes(os.statusOS.toLowerCase());
+    }).length;
+    
+    const orcamentos = ordens.filter(os => {
+      const statusOrcamento = ['orçamento', 'orçamento enviado', 'aguardando aprovação'];
+      return statusOrcamento.includes(os.statusOS.toLowerCase());
+    }).length;
+    
+    const aguardandoRetirada = ordens.filter(os => {
+      const stOs = (os.statusOS || '').toUpperCase();
+      const stTec = (os.statusTecnico || '').toUpperCase();
+      return stOs === 'AGUARDANDO RETIRADA' || stTec === 'AGUARDANDO RETIRADA';
+    }).length;
+    
+    const aprovadas = ordens.filter(os => {
+      const stOs = (os.statusOS || '').toUpperCase();
+      const stTec = (os.statusTecnico || '').toUpperCase();
+      return stOs === 'APROVADO' || stTec === 'APROVADO';
+    }).length;
+    
+    const laudoPronto = ordens.filter(os => {
+      const stTec = (os.statusTecnico || '').toUpperCase();
+      return stTec === 'ORÇAMENTO ENVIADO' || stTec === 'ORCAMENTO ENVIADO' || stTec === 'AGUARDANDO APROVAÇÃO' || stTec === 'AGUARDANDO APROVACAO';
+    }).length;
+    
+    const retornos = ordens.filter(os => {
+      return os.tipo === 'Retorno' || (os.osGarantiaId && os.osGarantiaId.trim() !== '');
+    }).length;
+    
+    const todas = ordens.length;
+    const abertas = ordens.filter(ordem => 
+      ordem.statusOS !== 'Entregue' && 
+      ordem.statusOS !== 'Cancelada'
+    ).length;
+    const entregues = ordens.filter(ordem => ordem.statusOS === 'Entregue').length;
+    
+    return { reparoConcluido, concluidas, orcamentos, aguardandoRetirada, aprovadas, laudoPronto, retornos, todas, abertas, entregues };
+  }, [ordens]);
+
+  // Handlers
+
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  }, []);
+
+  const handleStatusFilterChange = (value: string) => {
+    setStatusFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleAparelhoFilterChange = (value: string) => {
+    setAparelhoFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleTecnicoFilterChange = (value: string) => {
+    setTecnicoFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handleTipoFilterChange = (value: string) => {
+    setTipoFilter(value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
+  // ✅ CORREÇÃO: Aguardar autenticação antes de carregar dados
+  useEffect(() => {
+    setIsMounted(true);
+  }, []); // Executar apenas uma vez
+
+  useEffect(() => {
+    if (!authLoading && empresaData?.id && usuarioData?.auth_user_id) {
+      setWaitingForAuth(false);
+    }
+  }, [authLoading, empresaData?.id, usuarioData?.auth_user_id]);
+
+  // useEffect para carregar dados
+  useEffect(() => {
+    if (!waitingForAuth && isMounted && !authLoading) {
+      fetchOrdens(true);
+      loadTecnicos();
+    }
+  }, [waitingForAuth, isMounted, authLoading]);
+  
+  // ✅ CORREÇÃO: Mostrar loading enquanto aguarda autenticação
+  if (!isMounted || waitingForAuth) {
+    return (
+      <div className="flex min-h-screen bg-white">
+        <div className="flex items-center justify-center min-h-screen w-full">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Carregando dados da empresa...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
 
   function formatDate(date: string) {
@@ -274,7 +443,7 @@ export default function ListaOrdensPage() {
       await executeWithRetry(async () => {
       const queryTimeout = process.env.NODE_ENV === 'production' ? 45000 : 30000; // 45s para produção
       
-      const { data, error } = await Promise.race([
+      const result = await Promise.race([
         supabase
           .from('ordens_servico')
           .select(`
@@ -310,6 +479,8 @@ export default function ListaOrdensPage() {
           setTimeout(() => reject(new Error('Query timeout - dados demorando muito para carregar')), queryTimeout) // Timeout mais tolerante
         )
       ]);
+
+      const { data, error } = result as any;
 
       if (error) {
         console.error('Erro ao carregar OS:', error);
@@ -351,10 +522,12 @@ export default function ListaOrdensPage() {
             .order('data_venda', { ascending: false })
             .limit(500); // Limitar resultados
 
-          const { data: todasVendas, error: errorVendas } = await Promise.race([
+          const vendasResult = await Promise.race([
             vendasQueryPromise,
             vendasTimeoutPromise
           ]);
+          
+          const { data: todasVendas, error: errorVendas } = vendasResult as any;
           
           if (errorVendas) {
             console.warn('⚠️ Erro ao buscar vendas:', errorVendas);
@@ -512,11 +685,6 @@ export default function ListaOrdensPage() {
     }
   };
 
-  const handleRetry = useCallback(async () => {
-    setError(null);
-    await manualRetry(() => fetchOrdens(true));
-  }, [manualRetry]);
-
   const handleStatusChange = (ordemId: string, newStatus: string, newStatusTecnico: string) => {
     setOrdens(prevOrdens => 
       prevOrdens.map(os => 
@@ -527,7 +695,7 @@ export default function ListaOrdensPage() {
     );
   };
 
-  const fetchTecnicos = async () => {
+  const loadTecnicos = async () => {
     if (!validateCompanyData(false)) {
       return;
     }
@@ -539,7 +707,7 @@ export default function ListaOrdensPage() {
 
     setLoadingTecnicos(true);
     try {
-      const { data, error } = await Promise.race([
+      const tecnicosResult = await Promise.race([
         supabase
           .from('usuarios')
           .select('nome')
@@ -550,6 +718,8 @@ export default function ListaOrdensPage() {
           setTimeout(() => reject(new Error('Técnicos timeout')), 30000) // 30 segundos - mais tolerante
         )
       ]);
+      
+      const { data, error } = tecnicosResult as any;
 
       if (error) {
         console.warn('⚠️ Falha ao buscar técnicos:', error);
@@ -562,184 +732,16 @@ export default function ListaOrdensPage() {
       }
     } catch (error) {
       console.warn('⚠️ Timeout ao carregar técnicos:', error);
-      setTecnicos([])
+      setTecnicos([]);
     } finally {
       setLoadingTecnicos(false);
     }
   };
 
-
-  // useEffect para controlar hidratação
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  
-  // useEffect para carregar dados
-  useEffect(() => {
-    // Aguardar o carregamento da autenticação antes de validar
-    if (authLoading) {
-      console.log('🔄 Aguardando carregamento da autenticação...');
-      return;
-    }
-    
-    if (!validateCompanyData(false)) {
-      console.warn('Dados da empresa não disponíveis - aguardando...');
-      return;
-    }
-
-    let isMounted = true;
-    
-    const loadData = async () => {
-      try {
-        const empresaId = getCompanyId();
-        console.log('🔄 Carregando dados para empresa:', empresaId);
-        await Promise.all([
-          fetchOrdens(),
-          fetchTecnicos()
-        ]);
-      } catch (error) {
-        if (isMounted) {
-          console.error('Erro ao carregar dados:', error);
-          addToast('error', 'Erro ao carregar dados. Tente recarregar a página.');
-        }
-      }
-    };
-
-    const timeoutId = setTimeout(loadData, 200);
-    
-    return () => {
-      isMounted = false;
-      clearTimeout(timeoutId);
-    };
-  }, [validateCompanyData, getCompanyId, addToast, authLoading]);
-
-
-
-  // Filtros e busca
-  const filteredOrdens = useMemo(() => {
-    // Debug: mostrar dados de filtro
-
-    return ordens.filter(os => {
-      const matchesSearch = searchTerm === '' || 
-        os.numero.toString().includes(searchTerm) ||
-        os.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        os.aparelho.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        os.servico.toLowerCase().includes(searchTerm.toLowerCase());
-
-      const matchesStatus = statusFilter === '' || os.statusOS.toLowerCase() === statusFilter.toLowerCase();
-      const matchesAparelho = aparelhoFilter === '' || os.aparelho.toLowerCase().includes(aparelhoFilter.toLowerCase());
-      const matchesTecnico = tecnicoFilter === '' || os.tecnico.toLowerCase().includes(tecnicoFilter.toLowerCase());
-      const matchesTipo = tipoFilter === '' || os.tipo === tipoFilter;
-      
-      // Filtro por aba - Garantir consistência visual entre todas as abas
-      let matchesTab = true;
-      if (activeTab === 'reparo_concluido') {
-        // OS com reparo concluído pelo técnico (status_tecnico)
-        const statusTecnico = (os.statusTecnico || '').toLowerCase();
-        matchesTab = statusTecnico.includes('reparo concluído') || statusTecnico.includes('reparo concluido');
-      } else if (activeTab === 'concluidas') {
-        // OS concluídas: entregues, finalizadas (status da OS)
-        const statusConcluidos = ['entregue', 'finalizado', 'concluído', 'reparo concluído'];
-        matchesTab = statusConcluidos.includes(os.statusOS.toLowerCase());
-      } else if (activeTab === 'orcamentos') {
-        // OS com orçamento (status da OS)
-        const statusOrcamento = ['orçamento', 'orçamento enviado', 'aguardando aprovação'];
-        matchesTab = statusOrcamento.includes(os.statusOS.toLowerCase());
-      } else if (activeTab === 'aguardando_retirada') {
-        // OS aguardando retirada (status da OS ou técnico)
-        const stOs = (os.statusOS || '').toUpperCase();
-        const stTec = (os.statusTecnico || '').toUpperCase();
-        matchesTab = stOs === 'AGUARDANDO RETIRADA' || stTec === 'AGUARDANDO RETIRADA';
-      } else if (activeTab === 'aprovadas') {
-        // OS aprovadas (status da OS ou técnico)
-        const stOs = (os.statusOS || '').toUpperCase();
-        const stTec = (os.statusTecnico || '').toUpperCase();
-        matchesTab = stOs === 'APROVADO' || stTec === 'APROVADO';
-      } else if (activeTab === 'laudo_pronto') {
-        // OS com laudo pronto (status técnico)
-        const stTec = (os.statusTecnico || '').toUpperCase();
-        matchesTab = stTec === 'ORÇAMENTO ENVIADO' || stTec === 'ORCAMENTO ENVIADO' || stTec === 'AGUARDANDO APROVAÇÃO' || stTec === 'AGUARDANDO APROVACAO';
-      } else if (activeTab === 'retornos') {
-        // OS de retorno
-        matchesTab = os.tipo === 'Retorno' || (os.osGarantiaId && os.osGarantiaId.trim() !== '');
-      }
-      // activeTab === 'todas' não filtra nada - mostra todas as OSs
-
-      return matchesSearch && matchesStatus && matchesAparelho && matchesTecnico && matchesTipo && matchesTab;
-    });
-
-  }, [ordens, searchTerm, statusFilter, aparelhoFilter, tecnicoFilter, tipoFilter, activeTab]);
-
   const totalPages = Math.ceil(filteredOrdens.length / itemsPerPage);
   const paginated = filteredOrdens.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setSearchTerm(value);
-    setCurrentPage(1);
-  }, []);
 
-  const handleStatusFilterChange = useCallback((value: string) => {
-    setStatusFilter(value);
-    setCurrentPage(1);
-  }, []);
-
-  const handleTecnicoFilterChange = useCallback((value: string) => {
-    setTecnicoFilter(value);
-    setCurrentPage(1);
-  }, []);
-
-  const handleTipoFilterChange = useCallback((value: string) => {
-    setTipoFilter(value);
-    setCurrentPage(1);
-  }, []);
-
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
-  }, []);
-
-  const handleTabChange = useCallback((tab: string) => {
-    setActiveTab(tab);
-    setCurrentPage(1);
-  }, []);
-
-  // Contadores para as abas
-  const contadores = useMemo(() => {
-    const reparoConcluido = ordens.filter(os => {
-      const statusTecnico = (os.statusTecnico || '').toLowerCase();
-      return statusTecnico.includes('reparo concluído') || statusTecnico.includes('reparo concluido');
-    }).length;
-    
-    const concluidas = ordens.filter(os => {
-      const statusConcluidos = ['entregue', 'finalizado', 'concluído', 'reparo concluído'];
-      return statusConcluidos.includes(os.statusOS.toLowerCase());
-    }).length;
-    
-    const orcamentos = ordens.filter(os => {
-      const statusOrcamento = ['orçamento', 'orçamento enviado', 'aguardando aprovação'];
-      return statusOrcamento.includes(os.statusOS.toLowerCase());
-    }).length;
-    const aguardandoRetirada = ordens.filter(os => {
-      const stOs = (os.statusOS || '').toUpperCase();
-      const stTec = (os.statusTecnico || '').toUpperCase();
-      return stOs === 'AGUARDANDO RETIRADA' || stTec === 'AGUARDANDO RETIRADA';
-    }).length;
-    const aprovadas = ordens.filter(os => {
-      const stOs = (os.statusOS || '').toUpperCase();
-      const stTec = (os.statusTecnico || '').toUpperCase();
-      return stOs === 'APROVADO' || stTec === 'APROVADO';
-    }).length;
-    const laudoPronto = ordens.filter(os => {
-      const stTec = (os.statusTecnico || '').toUpperCase();
-      return stTec === 'ORÇAMENTO ENVIADO' || stTec === 'ORCAMENTO ENVIADO' || stTec === 'AGUARDANDO APROVAÇÃO' || stTec === 'AGUARDANDO APROVACAO';
-    }).length;
-    
-    // Adicionar contador de retornos
-    const retornos = ordens.filter(os => {
-      return os.tipo === 'Retorno' || (os.osGarantiaId && os.osGarantiaId.trim() !== '');
-    }).length;
-    
-    return { reparoConcluido, concluidas, orcamentos, aguardandoRetirada, aprovadas, laudoPronto, retornos, todas: ordens.length };
-  }, [ordens]);
 
   // ✅ OTIMIZADO: Loading states mais inteligentes
   const empresaId = getCompanyId();
@@ -1124,7 +1126,7 @@ export default function ListaOrdensPage() {
                     type="text"
                   placeholder="Buscar por OS, cliente, aparelho ou serviço..."
                     value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onChange={handleSearchChange}
                   className="pl-10 w-full"
                   />
               </div>

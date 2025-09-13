@@ -527,11 +527,15 @@ export default function PerfilPage() {
               {/* Bloco de avatar e upload */}
               <div className="flex flex-col items-center mb-8">
                 <div className="relative">
-                  {fotoUrl ? (
+                  {fotoUrl && fotoUrl.trim() !== '' ? (
                     <img
                       src={fotoUrl}
                       alt="Foto de perfil"
                       className="w-32 h-32 rounded-full border-4 border-gray-900 object-cover shadow-lg"
+                      onError={(e) => {
+                        console.error('Erro ao carregar foto de perfil:', fotoUrl);
+                        (e.currentTarget as HTMLImageElement).style.display = 'none';
+                      }}
                     />
                   ) : (
                     <div className="w-32 h-32 rounded-full border-4 border-gray-900 bg-gray-200 flex items-center justify-center shadow-lg">
@@ -779,4 +783,4 @@ export default function PerfilPage() {
       </div>
     </MenuLayout>
   );
-} 
+}

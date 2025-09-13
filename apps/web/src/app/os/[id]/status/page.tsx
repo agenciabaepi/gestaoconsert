@@ -212,11 +212,15 @@ export default function StatusOSPage() {
                 Status atual: <span className="font-semibold text-blue-600">{osData.status_atual}</span>
               </p>
             </div>
-            {osData.logo_url && (
+            {osData.logo_url && osData.logo_url.trim() !== '' && (
               <img 
                 src={osData.logo_url} 
                 alt="Logo da empresa" 
                 className="h-12 w-auto"
+                onError={(e) => {
+                  console.error('Erro ao carregar logo da empresa:', osData.logo_url);
+                  (e.currentTarget as HTMLImageElement).style.display = 'none';
+                }}
               />
             )}
           </div>
@@ -324,12 +328,16 @@ export default function StatusOSPage() {
               Imagens do Aparelho
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {osData.imagens.map((imagem) => (
+              {osData.imagens.filter(imagem => imagem.url && imagem.url.trim() !== '').map((imagem) => (
                 <div key={imagem.id} className="relative">
                   <img
                     src={imagem.url}
                     alt={imagem.descricao || 'Imagem do aparelho'}
                     className="w-full h-48 object-cover rounded-lg"
+                    onError={(e) => {
+                      console.error('Erro ao carregar imagem da OS:', imagem.url);
+                      (e.currentTarget as HTMLImageElement).style.display = 'none';
+                    }}
                   />
                   {imagem.descricao && (
                     <p className="mt-2 text-sm text-gray-600">{imagem.descricao}</p>

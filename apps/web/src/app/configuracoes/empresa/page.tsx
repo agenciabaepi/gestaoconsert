@@ -242,12 +242,16 @@ export default function ConfigEmpresa() {
           </div>
 
           <div className="flex items-center gap-6">
-            {formData.logo_url ? (
+            {formData.logo_url && formData.logo_url.trim() !== '' ? (
               <div className="relative">
                 <img 
                   src={formData.logo_url} 
                   alt="Logo da empresa" 
                   className="w-24 h-24 object-contain border border-gray-200 rounded-lg"
+                  onError={(e) => {
+                    console.error('Erro ao carregar logo da empresa:', formData.logo_url);
+                    (e.currentTarget as HTMLImageElement).style.display = 'none';
+                  }}
                 />
                 {editMode && (
                   <button

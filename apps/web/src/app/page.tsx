@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import macbookImage from '../assets/imagens/macbook.png';
+import macbookImage from '../assets/imagens/macbook.svg';
 import { supabase } from '@/lib/supabaseClient';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import UltraModernWordRotator from '@/components/UltraModernWordRotator';

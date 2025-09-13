@@ -655,12 +655,13 @@ export default function CaixaPage() {
                             }}
                           >
                              <div className="aspect-square bg-gray-100 rounded-t-lg flex items-center justify-center overflow-hidden">
-                              {produto.imagem_url ? (
+                              {produto.imagem_url && produto.imagem_url.trim() !== '' ? (
                                 <img 
                                   src={produto.imagem_url} 
                                   alt={produto.nome}
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
+                                    console.error('Erro ao carregar imagem do produto:', produto.imagem_url);
                                     e.currentTarget.style.display = 'none';
                                     e.currentTarget.nextElementSibling?.classList.remove('hidden');
                                   }}
@@ -963,12 +964,13 @@ export default function CaixaPage() {
                         }}
                       >
                         <div className="aspect-square bg-gray-100 rounded-t-lg flex items-center justify-center overflow-hidden">
-                          {product.imagem_url ? (
+                          {product.imagem_url && product.imagem_url.trim() !== '' ? (
                             <img 
                               src={product.imagem_url} 
                               alt={product.nome}
                               className="w-full h-full object-cover"
                               onError={(e) => {
+                                console.error('Erro ao carregar imagem do produto:', product.imagem_url);
                                 e.currentTarget.style.display = 'none';
                                 e.currentTarget.nextElementSibling?.classList.remove('hidden');
                               }}

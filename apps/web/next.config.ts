@@ -26,6 +26,9 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'public, max-age=300, s-maxage=600' },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Access-Control-Allow-Origin', value: isProduction ? 'https://gestaoconsert.com.br' : '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, PUT, DELETE, OPTIONS' },
+          { key: 'Access-Control-Allow-Headers', value: 'Content-Type, Authorization, apikey' },
         ],
       },
       {
@@ -51,17 +54,34 @@ const nextConfig: NextConfig = {
             key: 'X-Content-Type-Options',
             value: 'nosniff',
           },
-          // Configuração específica para VPS
+          // Configuração específica para VPS e Supabase
           ...(isProduction ? [
             {
               key: 'Access-Control-Allow-Origin',
               value: 'https://gestaoconsert.com.br',
             },
             {
+              key: 'Access-Control-Allow-Credentials',
+              value: 'true',
+            },
+            {
               key: 'Cache-Control',
               value: 'public, max-age=31536000, immutable',
             },
-          ] : []),
+          ] : [
+            {
+              key: 'Access-Control-Allow-Origin',
+              value: '*',
+            },
+            {
+              key: 'Access-Control-Allow-Methods',
+              value: 'GET, POST, PUT, DELETE, OPTIONS',
+            },
+            {
+              key: 'Access-Control-Allow-Headers',
+              value: 'Content-Type, Authorization, apikey',
+            },
+          ]),
         ],
       },
     ];

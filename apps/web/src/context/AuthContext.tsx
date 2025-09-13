@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
         // Aumentar timeout e adicionar verificação de conectividade
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout na busca de dados')), 15000) // 15 segundos
+          setTimeout(() => reject(new Error('Timeout na busca de dados')), 30000) // 30 segundos
         );
         
         const fetchPromise = fetchUserDataOptimized(userId);
@@ -168,7 +168,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const testVPSConnectivity = async (): Promise<boolean> => {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // Aumentar para 10s
         
         const response = await fetch('/api/health-check', {
           method: 'HEAD',
@@ -178,7 +178,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         clearTimeout(timeoutId);
         return response.ok;
       } catch {
-        return false;
+        // Não falhar por problemas de conectividade - apenas logar
+        console.warn('⚠️ Verificação de conectividade falhou, continuando...');
+        return true; // Assumir conectividade OK para não causar logout
       }
     };
     
@@ -186,8 +188,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         // ✅ SOLUÇÃO CENTRALIZADA: Timeout baseado no ambiente
         const isProduction = process.env.NODE_ENV === 'production';
-        const authTimeoutDuration = isProduction ? 8000 : 1500; // 8s para VPS, 1.5s para localhost
-        const debounceDelay = isProduction ? 1500 : 800;
+        const authTimeoutDuration = isProduction ? 30000 : 10000; // 30s para VPS, 10s para localhost
+        const debounceDelay = isProduction ? 2000 : 1000;
         
         authTimeout = setTimeout(() => {
           if (isMounted && loading) {
@@ -207,7 +209,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               if (isMounted && loading) {
                 setLoading(false);
               }
-            }, 15000); // 15 segundos para casos extremos
+            }, 45000); // 45 segundos para casos extremos
           }
         }
         
@@ -255,46 +257,77 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [fetchUserData]);
 
-  // ✅ CORRIGIDO: useEffect principal com timeout aumentado e retry melhorado
+  // ✅ OTIMIZADO: useEffect principal com timeout e retry melhorados
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     let mounted = true;
+    let initializationInProgress = false;
 
     const initializeAuth = async () => {
+      if (initializationInProgress) {
+        console.log('Inicialização já em progresso, ignorando...');
+        return;
+      }
+      
+      initializationInProgress = true;
+      
       try {
         setLoading(true);
         
-        // Aumentar timeout para 3 segundos
+        // Timeout aumentado para 5 segundos
         const timeoutPromise = new Promise((_, reject) => {
           timeoutId = setTimeout(() => {
             reject(new Error('Timeout na inicialização da autenticação'));
-          }, 3000); // Aumentado de 1500ms para 3000ms
+          }, 5000);
         });
 
         const authPromise = (async () => {
-          const { data: { session } } = await supabase.auth.getSession();
-          
-          if (session?.user && mounted) {
-            // Implementar retry com backoff exponencial
-            let retryCount = 0;
-            const maxRetries = 3;
+          try {
+            const { data: { session }, error } = await supabase.auth.getSession();
             
-            while (retryCount < maxRetries && mounted) {
-              try {
-                await fetchUserData(session.user.id, session);
-                break;
-              } catch (error) {
-                retryCount++;
-                if (retryCount < maxRetries) {
-                  const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
-                  console.log(`Tentativa ${retryCount} falhou, tentando novamente em ${delay}ms...`);
-                  await new Promise(resolve => setTimeout(resolve, delay));
-                } else {
-                  console.error('Falha após todas as tentativas de retry:', error);
-                  throw error;
+            if (error) {
+              console.error('Erro ao obter sessão:', error);
+              throw error;
+            }
+            
+            if (session?.user && mounted) {
+              setSession(session);
+              setUser(session.user);
+              
+              // Implementar retry com backoff exponencial otimizado
+              let retryCount = 0;
+              const maxRetries = 3;
+              
+              while (retryCount < maxRetries && mounted) {
+                try {
+                  await fetchUserData(session.user.id, session);
+                  console.log('✅ Dados do usuário carregados com sucesso');
+                  break;
+                } catch (error) {
+                  retryCount++;
+                  console.warn(`⚠️ Tentativa ${retryCount}/${maxRetries} falhou:`, error);
+                  
+                  if (retryCount < maxRetries) {
+                    const delay = Math.min(1000 * Math.pow(2, retryCount), 8000);
+                    console.log(`🔄 Tentando novamente em ${delay}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                  } else {
+                    console.error('❌ Falha após todas as tentativas de retry:', error);
+                    // Não limpar sessão em caso de erro de rede, apenas os dados do usuário
+                    if (mounted) {
+                      setUsuarioData(null);
+                      setEmpresaData(null);
+                    }
+                  }
                 }
               }
+            } else if (mounted) {
+              // Não há sessão válida
+              clearSession();
             }
+          } catch (error) {
+            console.error('Erro no authPromise:', error);
+            throw error;
           }
         })();
 
@@ -302,15 +335,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
       } catch (error) {
         if (mounted) {
-          console.error('Erro na inicialização da autenticação:', error);
-          // Não limpar a sessão imediatamente em caso de erro de rede
-          if (error.message !== 'Timeout na inicialização da autenticação') {
+          console.error('❌ Erro na inicialização da autenticação:', error);
+          
+          // Só limpar sessão se for erro de autenticação, não de rede
+          if (error?.message?.includes('Invalid') || error?.message?.includes('Unauthorized')) {
             clearSession();
+          } else {
+            // Para erros de rede/timeout, manter sessão mas marcar como não carregando
+            console.log('🔄 Erro de rede detectado, mantendo sessão existente');
           }
         }
       } finally {
         if (mounted) {
           setLoading(false);
+          initializationInProgress = false;
         }
         if (timeoutId) {
           clearTimeout(timeoutId);
@@ -318,11 +356,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    // Debounce para evitar múltiplas inicializações
-    const debounceTimeout = setTimeout(initializeAuth, 100);
+    // Debounce reduzido para inicialização mais rápida
+    const debounceTimeout = setTimeout(initializeAuth, 50);
 
     return () => {
       mounted = false;
+      initializationInProgress = false;
       clearTimeout(debounceTimeout);
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -330,49 +369,195 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [fetchUserData]);
 
-  // ✅ CORRIGIDO: Listener de mudanças de auth com tratamento completo
+  // ✅ OTIMIZADO: Listener de mudanças de auth com debounce e controle de estado
   useEffect(() => {
+    let debounceTimer: NodeJS.Timeout;
+    let isProcessing = false;
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event: string, session: Session | null) => {
-        try {
-          switch (event) {
-          case 'SIGNED_IN':
-            if (session) {
-              setSession(session);
-              setUser(session.user);
-              // Carregar dados quando usuário logar
-              await fetchUserData(session.user.id, session);
-            }
-            break;
-            
-          case 'TOKEN_REFRESHED':
-            if (session) {
-              setSession(session);
-              setUser(session.user);
-            }
-            break;
-            
-          case 'SIGNED_OUT':
-            clearSession();
-            setLoading(false);
-            break;
-            
-          case 'USER_UPDATED':
-            if (session) {
-              setSession(session);
-              setUser(session.user);
-            }
-            break;
-          }
-        } catch (error) {
-          console.error('❌ Erro no onAuthStateChange:', error);
-          handleAuthError(error);
+        console.log('🔄 Auth state change:', event, session?.user?.id);
+        
+        // Debounce para evitar múltiplas execuções
+        if (debounceTimer) {
+          clearTimeout(debounceTimer);
         }
+        
+        debounceTimer = setTimeout(async () => {
+          if (isProcessing) {
+            console.log('⏳ Processamento já em andamento, ignorando evento:', event);
+            return;
+          }
+          
+          isProcessing = true;
+          
+          try {
+            switch (event) {
+              case 'SIGNED_IN':
+              case 'TOKEN_REFRESHED':
+                if (session?.user) {
+                  console.log('✅ Processando login/refresh para:', session.user.email);
+                  setSession(session);
+                  setUser(session.user);
+                  
+                  try {
+                    await fetchUserData(session.user.id, session);
+                    console.log('✅ Dados do usuário atualizados após', event);
+                  } catch (error) {
+                    console.error('❌ Erro ao buscar dados do usuário após', event, ':', error);
+                    // Não limpar sessão em caso de erro de rede
+                    if (!error?.message?.includes('Network') && !error?.message?.includes('timeout')) {
+                      console.warn('⚠️ Erro não relacionado à rede, mantendo sessão');
+                    }
+                  }
+                } else {
+                  console.warn('⚠️ Evento', event, 'sem sessão válida');
+                }
+                break;
+                
+              case 'SIGNED_OUT':
+                console.log('🚪 Processando logout');
+                clearSession();
+                setLoading(false);
+                break;
+                
+              case 'USER_UPDATED':
+                if (session?.user) {
+                  console.log('👤 Atualizando dados do usuário');
+                  setUser(session.user);
+                  setSession(session);
+                } else {
+                  console.warn('⚠️ USER_UPDATED sem sessão válida');
+                }
+                break;
+                
+              default:
+                console.log('ℹ️ Evento de auth não tratado:', event);
+            }
+          } catch (error) {
+            console.error('❌ Erro no processamento do evento de auth:', error);
+            handleAuthError(error);
+          } finally {
+            isProcessing = false;
+          }
+        }, 100); // Debounce de 100ms
       }
     );
 
-    return () => subscription.unsubscribe();
-  }, [clearSession]);
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      subscription.unsubscribe();
+    };
+  }, [fetchUserData, clearSession]);
+
+  // ✅ NOVO: Sistema de heartbeat para manter sessão ativa
+  useEffect(() => {
+    let heartbeatInterval: NodeJS.Timeout;
+    let isHeartbeatActive = false;
+    
+    const startHeartbeat = () => {
+      if (isHeartbeatActive) return;
+      
+      isHeartbeatActive = true;
+      console.log('💓 Iniciando heartbeat da sessão');
+      
+      heartbeatInterval = setInterval(async () => {
+        if (!session?.user) {
+          console.log('💓 Parando heartbeat - sem sessão');
+          isHeartbeatActive = false;
+          return;
+        }
+        
+        try {
+          // Verificar se a sessão ainda é válida
+          const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.warn('⚠️ Erro no heartbeat:', error);
+            return;
+          }
+          
+          if (!currentSession) {
+            console.log('💓 Heartbeat detectou sessão expirada');
+            clearSession();
+            isHeartbeatActive = false;
+            return;
+          }
+          
+          // Verificar conectividade com o backend
+          try {
+            const response = await fetch('/api/health-check', {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${currentSession.access_token}`,
+              },
+              signal: AbortSignal.timeout(5000)
+            });
+            
+            if (!response.ok) {
+              console.warn('⚠️ Heartbeat: Backend não responsivo');
+            } else {
+              console.log('💓 Heartbeat: Sessão e backend OK');
+            }
+          } catch (fetchError) {
+            console.warn('⚠️ Heartbeat: Erro de conectividade:', fetchError);
+          }
+          
+        } catch (error) {
+          console.error('❌ Erro no heartbeat:', error);
+        }
+      }, 30000); // Heartbeat a cada 30 segundos
+    };
+    
+    const stopHeartbeat = () => {
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+        isHeartbeatActive = false;
+        console.log('💓 Heartbeat parado');
+      }
+    };
+    
+    // Iniciar heartbeat se há sessão ativa
+    if (session?.user && !loading) {
+      startHeartbeat();
+    } else {
+      stopHeartbeat();
+    }
+    
+    return () => {
+      stopHeartbeat();
+    };
+  }, [session, loading, clearSession]);
+  
+  // ✅ NOVO: Verificação de sessão no foco da página
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (!document.hidden && session?.user) {
+        console.log('👁️ Página focada, verificando sessão...');
+        
+        try {
+          const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+          
+          if (error || !currentSession) {
+            console.log('👁️ Sessão expirada detectada no foco');
+            clearSession();
+          } else {
+            console.log('👁️ Sessão válida no foco');
+          }
+        } catch (error) {
+          console.error('❌ Erro ao verificar sessão no foco:', error);
+        }
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [session, clearSession]);
 
   // ✅ REMOVIDO: useEffect que causava loops infinitos
   // Os dados são carregados apenas uma vez no useEffect principal

@@ -99,7 +99,7 @@ export const useSessionMonitor = (options: SessionMonitorOptions = {}) => {
     }
   }, [autoRefreshOnError, addToast]);
 
-  // ✅ Monitor periódico de sessão
+  // ✅ Monitor periódico de sessão - MENOS AGRESSIVO
   useEffect(() => {
     if (!session || !user) return;
 
@@ -108,14 +108,30 @@ export const useSessionMonitor = (options: SessionMonitorOptions = {}) => {
       if (now - lastCheckRef.current < checkInterval) return;
       
       lastCheckRef.current = now;
+      
+      // ✅ NOVO: Verificar se a sessão ainda é válida antes de fazer verificações
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (!currentSession || currentSession.user.id !== user.id) {
+          console.log('🔄 Sessão expirada, redirecionando...');
+          return;
+        }
+      } catch (error) {
+        console.warn('⚠️ Erro ao verificar sessão:', error);
+        return; // Não fazer logout por erro de rede
+      }
+      
       await handleSessionIssues();
     };
 
+    // ✅ AUMENTAR intervalo para 2 minutos ao invés de 30 segundos
+    const safeCheckInterval = Math.max(checkInterval, 120000); // Mínimo 2 minutos
+    
     // Verificar imediatamente
     checkSession();
     
-    // Verificar periodicamente
-    intervalRef.current = setInterval(checkSession, checkInterval);
+    // Verificar periodicamente com intervalo maior
+    intervalRef.current = setInterval(checkSession, safeCheckInterval);
 
     return () => {
       if (intervalRef.current) {

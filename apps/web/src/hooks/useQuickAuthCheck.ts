@@ -11,11 +11,11 @@ export const useQuickAuthCheck = () => {
   useEffect(() => {
     const quickCheck = async () => {
       try {
-        // Verificação super rápida de sessão
+        // Verificação super rápida de sessão - AUMENTAR TIMEOUT
         const { data: { session }, error } = await Promise.race([
           supabase.auth.getSession(),
           new Promise((_, reject) => 
-            setTimeout(() => reject(new Error('Quick auth timeout')), 1000)
+            setTimeout(() => reject(new Error('Quick auth timeout')), 5000) // Aumentar para 5s
           )
         ]) as any;
 

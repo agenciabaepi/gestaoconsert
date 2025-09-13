@@ -58,7 +58,7 @@ export default function ProtectedArea({
     };
     
     // Debounce simples - aumentado para evitar logout prematuro
-    const timeoutId = setTimeout(checkAuth, 2000);
+    const timeoutId = setTimeout(checkAuth, 5000); // Aumentar para 5 segundos
     
     return () => clearTimeout(timeoutId);
   }, [isMounted, user, usuarioData, loading, router, requiredLevel, requiredPermissions, podeUsarFuncionalidade]);
