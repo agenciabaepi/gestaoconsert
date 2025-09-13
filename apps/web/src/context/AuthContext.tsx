@@ -164,15 +164,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let authTimeout: NodeJS.Timeout;
     let debounceTimeout: NodeJS.Timeout;
     
+    // ✅ NOVA FUNÇÃO: Teste de conectividade específico para VPS
+    const testVPSConnectivity = async (): Promise<boolean> => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        
+        const response = await fetch('/api/health-check', {
+          method: 'HEAD',
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        return response.ok;
+      } catch {
+        return false;
+      }
+    };
+    
     const initializeAuth = async () => {
       try {
-        // ✅ OTIMIZADO: Timeout mais rápido para usuários não logados
+        // ✅ SOLUÇÃO CENTRALIZADA: Timeout baseado no ambiente
+        const isProduction = process.env.NODE_ENV === 'production';
+        const authTimeoutDuration = isProduction ? 8000 : 1500; // 8s para VPS, 1.5s para localhost
+        const debounceDelay = isProduction ? 1500 : 800;
+        
         authTimeout = setTimeout(() => {
           if (isMounted && loading) {
             console.warn('⚠️ Timeout na inicialização da autenticação - provavelmente usuário não logado');
             setLoading(false);
           }
-        }, 1500); // Reduzido para 1.5 segundos
+        }, authTimeoutDuration);
+        
+        // ✅ NOVO: Verificação de conectividade centralizada para VPS
+        if (isProduction) {
+          const connectivityCheck = await testVPSConnectivity();
+          if (!connectivityCheck) {
+            console.warn('🌐 Problemas de conectividade detectados no VPS');
+            // Aumentar timeout ainda mais para VPS com problemas de rede
+            clearTimeout(authTimeout);
+            authTimeout = setTimeout(() => {
+              if (isMounted && loading) {
+                setLoading(false);
+              }
+            }, 15000); // 15 segundos para casos extremos
+          }
+        }
         
         const { data: { session }, error } = await supabase.auth.getSession();
 
@@ -190,12 +227,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setSession(session);
           setUser(session.user);
           
-          // Adicionar debounce maior para evitar múltiplas chamadas
+          // Adicionar debounce maior para produção
+          const debounceDelay = process.env.NODE_ENV === 'production' ? 1500 : 800; // 1.5s para produção
           debounceTimeout = setTimeout(() => {
             if (isMounted) {
               fetchUserData(session.user.id, session);
             }
-          }, 800); // Aumentar debounce
+          }, debounceDelay);
         } else {
           console.log('❌ Nenhuma sessão encontrada');
           setLoading(false);
