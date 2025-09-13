@@ -38,7 +38,7 @@ echo "📋 Logs da aplicação:"
 docker-compose logs app --tail=20
 
 echo "🏥 Testando health check..."
-curl -f http://localhost:3001/health || echo "⚠️ Health check falhou"
+curl -f http://localhost:3000/api/health-check || echo "⚠️ Health check falhou"
 
 echo "✅ Deploy concluído!"
 echo "🌐 Acesse: https://www.gestaoconsert.com.br"
