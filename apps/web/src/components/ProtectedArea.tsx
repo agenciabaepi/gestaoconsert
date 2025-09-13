@@ -30,51 +30,20 @@ export default function ProtectedArea({
   useEffect(() => {
     if (!isMounted || loading) return;
 
-    let timeoutId: NodeJS.Timeout;
-    let debounceTimeout: NodeJS.Timeout;
-    
-    const checkAuthAndRedirect = () => {
-      // ✅ MELHORADO: Verificação de redirecionamento recente aumentada
-      const lastRedirect = sessionStorage.getItem('protectedRedirect');
-      const now = Date.now();
-      if (lastRedirect && (now - parseInt(lastRedirect)) < 15000) { // Aumentado para 15 segundos
-        console.log('Redirecionamento de área protegida recente detectado, aguardando...');
-        return;
-      }
-      
-      // Verificar se já está na página de login
-      if (window.location.pathname === '/login') {
-        return;
-      }
-      
-      // ✅ MELHORADO: Verificação de conectividade antes de redirecionar
-      const isOnline = navigator.onLine;
-      if (!isOnline) {
-        console.log('🌐 Sem conexão com a internet, aguardando...');
-        return;
-      }
-      
-      // Se não há usuário autenticado, redirecionar para login
+    // ✅ SIMPLIFICADO: Apenas verificar autenticação, sem timeouts complexos
+    const checkAuth = () => {
       if (!user || !usuarioData) {
-        sessionStorage.setItem('protectedRedirect', now.toString());
-        
-        timeoutId = setTimeout(() => {
-          if (!user || !usuarioData) { // Verificar novamente
-            console.log('🔄 Redirecionando para login após timeout estendido');
-            router.replace('/login');
-          }
-        }, 3000); // Aumentado de 1000ms para 3000ms
+        // AuthContext já lidou com timeouts e conectividade
+        router.replace('/login');
         return;
       }
-
+    
       // Verificar nível de usuário
       if (Number(usuarioData.nivel) < requiredLevel) {
-        timeoutId = setTimeout(() => {
-          router.replace('/acesso-negado');
-        }, 500);
+        router.replace('/acesso-negado');
         return;
       }
-
+    
       // Verificar permissões específicas
       if (requiredPermissions.length > 0) {
         const hasPermission = requiredPermissions.every(permission => 
@@ -82,23 +51,16 @@ export default function ProtectedArea({
         );
         
         if (!hasPermission) {
-          timeoutId = setTimeout(() => {
-            router.replace('/acesso-negado');
-          }, 500);
+          router.replace('/acesso-negado');
           return;
         }
       }
     };
     
-    // ✅ MELHORADO: Debounce aumentado para evitar verificações excessivas
-    debounceTimeout = setTimeout(checkAuthAndRedirect, 1000); // Aumentado de 500ms para 1000ms
+    // Debounce simples
+    const timeoutId = setTimeout(checkAuth, 500);
     
-    return () => {
-      clearTimeout(debounceTimeout);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
+    return () => clearTimeout(timeoutId);
   }, [isMounted, user, usuarioData, loading, router, requiredLevel, requiredPermissions, podeUsarFuncionalidade]);
 
   // Loading state consistente durante hidratação

@@ -272,6 +272,8 @@ export default function ListaOrdensPage() {
     
     try {
       await executeWithRetry(async () => {
+      const queryTimeout = process.env.NODE_ENV === 'production' ? 45000 : 30000; // 45s para produção
+      
       const { data, error } = await Promise.race([
         supabase
           .from('ordens_servico')
@@ -305,7 +307,7 @@ export default function ListaOrdensPage() {
           .order('created_at', { ascending: false })
           .limit(50), // Reduzir para 50 registros para velocidade
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Query timeout - dados demorando muito para carregar')), 30000) // 30 segundos - mais tolerante
+          setTimeout(() => reject(new Error('Query timeout - dados demorando muito para carregar')), queryTimeout) // Timeout mais tolerante
         )
       ]);
 
@@ -884,7 +886,7 @@ export default function ListaOrdensPage() {
           {/* Header com título e botão */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 md:mb-8 gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ordens de Serviço</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ordens de Serviço Lucas</h1>
               <p className="text-gray-600 mt-1 text-sm md:text-base">
                 Gerencie todas as ordens de serviço da sua empresa
               </p>

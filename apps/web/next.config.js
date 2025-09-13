@@ -47,6 +47,38 @@ const nextConfig = {
   poweredByHeader: false,
 
   // Configurações de segurança
+  // ✅ CONFIGURAÇÃO GLOBAL: Headers e timeouts baseados no ambiente
+  async headers() {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          // ✅ CONFIGURAÇÃO ESPECÍFICA PARA VPS
+          ...(isProduction ? [
+            {
+              key: 'Access-Control-Allow-Origin',
+              value: 'https://gestaoconsert.com.br',
+            },
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=31536000, immutable',
+            },
+          ] : []),
+        ],
+      },
+    ];
+  },
+
   async rewrites() {
     return [
       { source: '/api/:path*', destination: '/api/:path*' },
