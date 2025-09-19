@@ -13,6 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useEmpresas } from '@/hooks/useApi';
+import { SafeNumber } from '@/components/SafeNumber';
 import { 
   Building2, 
   Search, 
@@ -25,86 +27,27 @@ import {
   XCircle,
   Plus,
   Download,
-  Upload
+  Upload,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 
 export default function CompaniesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
-  // Dados mockados para demonstração
-  const companies = [
-    {
-      id: 1,
-      name: 'Tech Solutions LTDA',
-      cnpj: '12.345.678/0001-90',
-      email: 'contato@techsolutions.com',
-      plan: 'Premium',
-      status: 'active',
-      users: 45,
-      createdAt: '2024-01-15',
-      lastActivity: '2024-01-20',
-      revenue: 2500.00,
-    },
-    {
-      id: 2,
-      name: 'Digital Marketing Pro',
-      cnpj: '98.765.432/0001-10',
-      email: 'admin@digitalmarketing.com',
-      plan: 'Standard',
-      status: 'active',
-      users: 23,
-      createdAt: '2024-01-14',
-      lastActivity: '2024-01-19',
-      revenue: 1200.00,
-    },
-    {
-      id: 3,
-      name: 'Consultoria Empresarial',
-      cnpj: '11.222.333/0001-44',
-      email: 'contato@consultoria.com',
-      plan: 'Basic',
-      status: 'inactive',
-      users: 12,
-      createdAt: '2024-01-13',
-      lastActivity: '2024-01-18',
-      revenue: 500.00,
-    },
-    {
-      id: 4,
-      name: 'Serviços Gerais',
-      cnpj: '55.666.777/0001-88',
-      email: 'info@servicosgerais.com',
-      plan: 'Premium',
-      status: 'active',
-      users: 67,
-      createdAt: '2024-01-12',
-      lastActivity: '2024-01-20',
-      revenue: 3200.00,
-    },
-    {
-      id: 5,
-      name: 'Inovação Digital',
-      cnpj: '99.888.777/0001-66',
-      email: 'contato@inovacaodigital.com',
-      plan: 'Standard',
-      status: 'pending',
-      users: 34,
-      createdAt: '2024-01-11',
-      lastActivity: '2024-01-17',
-      revenue: 0.00,
-    },
-  ];
-
-  const filteredCompanies = companies.filter(company => {
-    const matchesSearch = company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         company.cnpj.includes(searchTerm) ||
-                         company.email.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || company.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
+  const { data: empresasData, loading, error, refetch } = useEmpresas({
+    page: currentPage,
+    pageSize,
+    search: searchTerm,
+    status: statusFilter === 'all' ? undefined : statusFilter,
   });
+
+  const companies = empresasData?.items || [];
+  const totalCompanies = empresasData?.total || 0;
+  const totalPages = empresasData?.totalPages || 0;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -114,6 +57,8 @@ export default function CompaniesPage() {
         return <Badge variant="destructive">Inativa</Badge>;
       case 'pending':
         return <Badge variant="warning">Pendente</Badge>;
+      case 'trial':
+        return <Badge variant="outline">Trial</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -128,9 +73,54 @@ export default function CompaniesPage() {
       case 'Basic':
         return <Badge variant="outline">Basic</Badge>;
       default:
-        return <Badge variant="outline">{plan}</Badge>;
+        return <Badge variant="outline">{plan || 'N/A'}</Badge>;
     }
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-4 lg:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Gestão de Empresas</h1>
+            <p className="text-sm text-gray-600 mt-1">Gerencie todas as empresas cadastradas no sistema</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <div className="flex items-center space-x-2 text-gray-600">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span>Carregando empresas...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-4 lg:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Gestão de Empresas</h1>
+            <p className="text-sm text-gray-600 mt-1">Gerencie todas as empresas cadastradas no sistema</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Erro ao carregar empresas</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={refetch}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Tentar novamente
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 lg:space-y-6">
@@ -156,62 +146,64 @@ export default function CompaniesPage() {
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-        <Card>
-          <CardContent className="p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">Total de Empresas</p>
-                <p className="text-xl lg:text-2xl font-bold text-gray-900">{companies.length}</p>
-              </div>
-              <Building2 className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+            <Card>
+              <CardContent className="p-4 lg:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs lg:text-sm font-medium text-gray-600">Total de Empresas</p>
+                    <p className="text-xl lg:text-2xl font-bold text-gray-900">
+                      <SafeNumber value={totalCompanies} />
+                    </p>
+                  </div>
+                  <Building2 className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">Empresas Ativas</p>
-                <p className="text-xl lg:text-2xl font-bold text-green-600">
-                  {companies.filter(c => c.status === 'active').length}
-                </p>
-              </div>
-              <CheckCircle className="w-6 h-6 lg:w-8 lg:h-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="p-4 lg:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs lg:text-sm font-medium text-gray-600">Empresas Ativas</p>
+                    <p className="text-xl lg:text-2xl font-bold text-green-600">
+                      <SafeNumber value={companies.filter(c => c.status === 'active').length} />
+                    </p>
+                  </div>
+                  <CheckCircle className="w-6 h-6 lg:w-8 lg:h-8 text-green-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">Empresas Inativas</p>
-                <p className="text-xl lg:text-2xl font-bold text-red-600">
-                  {companies.filter(c => c.status === 'inactive').length}
-                </p>
-              </div>
-              <XCircle className="w-6 h-6 lg:w-8 lg:h-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="p-4 lg:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs lg:text-sm font-medium text-gray-600">Empresas Inativas</p>
+                    <p className="text-xl lg:text-2xl font-bold text-red-600">
+                      <SafeNumber value={companies.filter(c => c.status === 'inactive').length} />
+                    </p>
+                  </div>
+                  <XCircle className="w-6 h-6 lg:w-8 lg:h-8 text-red-600" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardContent className="p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs lg:text-sm font-medium text-gray-600">Pendentes</p>
-                <p className="text-xl lg:text-2xl font-bold text-yellow-600">
-                  {companies.filter(c => c.status === 'pending').length}
-                </p>
-              </div>
-              <Filter className="w-6 h-6 lg:w-8 lg:h-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
-        </div>
+            <Card>
+              <CardContent className="p-4 lg:p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs lg:text-sm font-medium text-gray-600">Em Trial</p>
+                    <p className="text-xl lg:text-2xl font-bold text-yellow-600">
+                      <SafeNumber value={companies.filter(c => c.status === 'trial').length} />
+                    </p>
+                  </div>
+                  <Filter className="w-6 h-6 lg:w-8 lg:h-8 text-yellow-600" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
       {/* Filters and Search */}
       <Card>
@@ -268,42 +260,42 @@ export default function CompaniesPage() {
                   <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
-                {filteredCompanies.map((company) => (
-                  <TableRow key={company.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium text-gray-900">{company.name}</div>
-                        <div className="text-sm text-gray-500">{company.email}</div>
-                        <div className="sm:hidden text-xs text-gray-400 mt-1">{company.cnpj}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell font-mono text-sm">{company.cnpj}</TableCell>
-                    <TableCell className="hidden md:table-cell">{getPlanBadge(company.plan)}</TableCell>
-                    <TableCell>{getStatusBadge(company.status)}</TableCell>
-                    <TableCell className="hidden lg:table-cell text-center">{company.users}</TableCell>
-                    <TableCell className="hidden lg:table-cell font-medium">
-                      R$ {company.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </TableCell>
-                    <TableCell className="hidden xl:table-cell text-sm text-gray-500">
-                      {new Date(company.lastActivity).toLocaleDateString('pt-BR')}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+                  <TableBody>
+                    {companies.map((company: any) => (
+                      <TableRow key={company.id}>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium text-gray-900">{company.nome}</div>
+                            <div className="text-sm text-gray-500">{company.email}</div>
+                            <div className="sm:hidden text-xs text-gray-400 mt-1">{company.cnpj}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell font-mono text-sm">{company.cnpj}</TableCell>
+                        <TableCell className="hidden md:table-cell">{getPlanBadge(company.plano_nome)}</TableCell>
+                        <TableCell>{getStatusBadge(company.status)}</TableCell>
+                        <TableCell className="hidden lg:table-cell text-center">{company.usuarios_count || 0}</TableCell>
+                        <TableCell className="hidden lg:table-cell font-medium">
+                          <SafeNumber value={company.ultimo_pagamento?.valor || 0} format="currency" />
+                        </TableCell>
+                        <TableCell className="hidden xl:table-cell text-sm text-gray-500">
+                          {company.created_at ? new Date(company.created_at).toLocaleDateString('pt-BR') : 'N/A'}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
             </Table>
           </div>
         </CardContent>
