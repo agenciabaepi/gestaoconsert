@@ -55,7 +55,8 @@ export default function SettingsPage() {
   };
 
   const handleSecurityChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     setSecuritySettings(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
