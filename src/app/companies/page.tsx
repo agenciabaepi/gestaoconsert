@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -134,8 +133,7 @@ export default function CompaniesPage() {
   };
 
   return (
-    <MainLayout>
-      <div className="space-y-6">
+    <div className="space-y-4 lg:space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -309,7 +307,6 @@ export default function CompaniesPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </MainLayout>
+    </div>
   );
 }
