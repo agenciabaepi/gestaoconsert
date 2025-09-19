@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MainLayout } from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,106 +13,69 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { SafeNumber } from '@/components/SafeNumber';
 import { 
-  CreditCard, 
   DollarSign, 
   TrendingUp, 
-  TrendingDown,
+  Clock, 
+  BarChart3,
   Search, 
   Filter, 
   Download,
   Eye,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Calendar,
-  BarChart3,
-  PieChart
+  MoreVertical
 } from 'lucide-react';
 
 export default function FinancialPage() {
-  const [activeTab, setActiveTab] = useState('payments');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
   // Dados mockados para demonstração
-  const financialStats = {
-    totalRevenue: 45680.00,
-    monthlyRevenue: 12350.00,
+  const financialData = {
+    totalRevenue: 45680,
+    monthlyRevenue: 12350,
     pendingPayments: 8,
-    paidPayments: 142,
     averageTicket: 320.50,
+    mrr: 12350,
+    arr: 148200,
     churnRate: 2.3,
-    mrr: 12350.00,
-    arr: 148200.00,
   };
 
   const payments = [
     {
       id: 1,
       company: 'Tech Solutions LTDA',
+      invoice: 'INV-001',
       amount: 2500.00,
       plan: 'Premium',
       status: 'paid',
-      dueDate: '2024-01-15',
-      paidDate: '2024-01-15',
       method: 'PIX',
-      invoice: 'INV-001',
+      dueDate: '2024-01-14',
+      paymentDate: '2024-01-14',
     },
     {
       id: 2,
       company: 'Digital Marketing Pro',
+      invoice: 'INV-002',
       amount: 1200.00,
       plan: 'Standard',
-      status: 'paid',
-      dueDate: '2024-01-14',
-      paidDate: '2024-01-14',
+      status: 'pending',
       method: 'Cartão',
-      invoice: 'INV-002',
+      dueDate: '2024-01-15',
+      paymentDate: null,
     },
     {
       id: 3,
       company: 'Consultoria Empresarial',
+      invoice: 'INV-003',
       amount: 500.00,
       plan: 'Basic',
-      status: 'pending',
-      dueDate: '2024-01-13',
-      paidDate: null,
-      method: 'Boleto',
-      invoice: 'INV-003',
-    },
-    {
-      id: 4,
-      company: 'Serviços Gerais',
-      amount: 3200.00,
-      plan: 'Premium',
       status: 'paid',
-      dueDate: '2024-01-12',
-      paidDate: '2024-01-12',
-      method: 'PIX',
-      invoice: 'INV-004',
-    },
-    {
-      id: 5,
-      company: 'Inovação Digital',
-      amount: 1200.00,
-      plan: 'Standard',
-      status: 'overdue',
-      dueDate: '2024-01-10',
-      paidDate: null,
       method: 'Boleto',
-      invoice: 'INV-005',
+      dueDate: '2024-01-13',
+      paymentDate: '2024-01-13',
     },
   ];
-
-  const filteredPayments = payments.filter(payment => {
-    const matchesSearch = payment.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         payment.invoice.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'all' || payment.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -128,293 +90,202 @@ export default function FinancialPage() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'paid':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'pending':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
-      case 'overdue':
-        return <XCircle className="w-4 h-4 text-red-600" />;
+  const getPlanBadge = (plan: string) => {
+    switch (plan) {
+      case 'Premium':
+        return <Badge variant="default">Premium</Badge>;
+      case 'Standard':
+        return <Badge variant="secondary">Standard</Badge>;
+      case 'Basic':
+        return <Badge variant="outline">Basic</Badge>;
       default:
-        return <Clock className="w-4 h-4 text-gray-600" />;
+        return <Badge variant="outline">{plan}</Badge>;
     }
   };
 
-  const tabs = [
-    { id: 'payments', label: 'Pagamentos', icon: CreditCard },
-    { id: 'reports', label: 'Relatórios', icon: BarChart3 },
-    { id: 'analytics', label: 'Analytics', icon: PieChart },
-  ];
-
   return (
-    <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Módulo Financeiro</h1>
-            <p className="text-gray-600">Gerencie pagamentos, receitas e relatórios financeiros</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Período
-            </Button>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Download className="w-4 h-4" />
-              Exportar
-            </Button>
-          </div>
+    <div className="space-y-4 lg:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Módulo Financeiro</h1>
+          <p className="text-sm text-gray-600 mt-1">Gerencie pagamentos, receitas e relatórios financeiros</p>
         </div>
-
-        {/* Financial Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Receita Total</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    R$ {financialStats.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <DollarSign className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Receita Mensal</p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    R$ {financialStats.monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Pagamentos Pendentes</p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {financialStats.pendingPayments}
-                  </p>
-                </div>
-                <Clock className="w-8 h-8 text-yellow-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Ticket Médio</p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    R$ {financialStats.averageTicket.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <BarChart3 className="w-8 h-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex gap-2">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Exportar</span>
+          </Button>
+          <Button className="flex items-center gap-2">
+            <BarChart3 className="w-4 h-4" />
+            Relatório
+          </Button>
         </div>
+      </div>
 
-        {/* Additional Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">MRR</p>
-                  <p className="text-xl font-bold text-gray-900">
-                    R$ {financialStats.mrr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </p>
-                  <p className="text-sm text-green-600">+12% vs mês anterior</p>
-                </div>
-                <TrendingUp className="w-6 h-6 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">ARR</p>
-                  <p className="text-xl font-bold text-gray-900">
-                    R$ {financialStats.arr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </p>
-                  <p className="text-sm text-green-600">+8% vs ano anterior</p>
-                </div>
-                <TrendingUp className="w-6 h-6 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Taxa de Churn</p>
-                  <p className="text-xl font-bold text-red-600">
-                    {financialStats.churnRate}%
-                  </p>
-                  <p className="text-sm text-red-600">+0.3% vs mês anterior</p>
-                </div>
-                <TrendingDown className="w-6 h-6 text-red-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tabs */}
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <Card>
-          <CardHeader>
+          <CardContent className="p-4 lg:p-6">
             <div className="flex items-center justify-between">
-              <CardTitle>Gestão Financeira</CardTitle>
-              <div className="flex gap-2">
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <Button
-                      key={tab.id}
-                      variant={activeTab === tab.id ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setActiveTab(tab.id)}
-                      className="flex items-center gap-2"
-                    >
-                      <Icon className="w-4 h-4" />
-                      {tab.label}
-                    </Button>
-                  );
-                })}
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Receita Total</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">
+                  <SafeNumber value={financialData.totalRevenue} format="currency" />
+                </p>
               </div>
+              <DollarSign className="w-6 h-6 lg:w-8 lg:h-8 text-green-600" />
             </div>
-          </CardHeader>
-          <CardContent>
-            {activeTab === 'payments' && (
-              <div className="space-y-6">
-                {/* Filters */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                      <Input
-                        placeholder="Buscar por empresa ou fatura..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <select
-                      value={statusFilter}
-                      onChange={(e) => setStatusFilter(e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    >
-                      <option value="all">Todos os Status</option>
-                      <option value="paid">Pagos</option>
-                      <option value="pending">Pendentes</option>
-                      <option value="overdue">Vencidos</option>
-                    </select>
-                    <Button variant="outline" className="flex items-center gap-2">
-                      <Filter className="w-4 h-4" />
-                      Filtros
-                    </Button>
-                  </div>
-                </div>
+          </CardContent>
+        </Card>
 
-                {/* Payments Table */}
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Empresa</TableHead>
-                        <TableHead>Fatura</TableHead>
-                        <TableHead>Valor</TableHead>
-                        <TableHead>Plano</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Método</TableHead>
-                        <TableHead>Vencimento</TableHead>
-                        <TableHead>Pagamento</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredPayments.map((payment) => (
-                        <TableRow key={payment.id}>
-                          <TableCell className="font-medium">{payment.company}</TableCell>
-                          <TableCell className="font-mono text-sm">{payment.invoice}</TableCell>
-                          <TableCell className="font-medium">
-                            R$ {payment.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{payment.plan}</Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              {getStatusIcon(payment.status)}
-                              {getStatusBadge(payment.status)}
-                            </div>
-                          </TableCell>
-                          <TableCell>{payment.method}</TableCell>
-                          <TableCell className="text-sm text-gray-500">
-                            {new Date(payment.dueDate).toLocaleDateString('pt-BR')}
-                          </TableCell>
-                          <TableCell className="text-sm text-gray-500">
-                            {payment.paidDate ? new Date(payment.paidDate).toLocaleDateString('pt-BR') : '-'}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <Button variant="ghost" size="icon">
-                                <Eye className="w-4 h-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon">
-                                <Download className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+        <Card>
+          <CardContent className="p-4 lg:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Receita Mensal</p>
+                <p className="text-xl lg:text-2xl font-bold text-blue-600">
+                  <SafeNumber value={financialData.monthlyRevenue} format="currency" />
+                </p>
               </div>
-            )}
+              <TrendingUp className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
 
-            {activeTab === 'reports' && (
-              <div className="space-y-6">
-                <div className="text-center py-12">
-                  <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Relatórios Financeiros</h3>
-                  <p className="text-gray-600 mb-4">Visualize relatórios detalhados de receita e pagamentos</p>
-                  <Button>Gerar Relatório</Button>
-                </div>
+        <Card>
+          <CardContent className="p-4 lg:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Pendentes</p>
+                <p className="text-xl lg:text-2xl font-bold text-yellow-600">
+                  {financialData.pendingPayments}
+                </p>
               </div>
-            )}
+              <Clock className="w-6 h-6 lg:w-8 lg:h-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
 
-            {activeTab === 'analytics' && (
-              <div className="space-y-6">
-                <div className="text-center py-12">
-                  <PieChart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Analytics Financeiro</h3>
-                  <p className="text-gray-600 mb-4">Análises avançadas de performance financeira</p>
-                  <Button>Ver Analytics</Button>
-                </div>
+        <Card>
+          <CardContent className="p-4 lg:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Ticket Médio</p>
+                <p className="text-xl lg:text-2xl font-bold text-purple-600">
+                  <SafeNumber value={financialData.averageTicket} format="currency" />
+                </p>
               </div>
-            )}
+              <BarChart3 className="w-6 h-6 lg:w-8 lg:h-8 text-purple-600" />
+            </div>
           </CardContent>
         </Card>
       </div>
-    </MainLayout>
+
+      {/* Financial Management */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Gestão Financeira</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Tabs */}
+          <div className="flex space-x-1 mb-6">
+            <Button variant="default" size="sm">Pagamentos</Button>
+            <Button variant="outline" size="sm">Relatórios</Button>
+            <Button variant="outline" size="sm">Analytics</Button>
+          </div>
+
+          {/* Search and Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder="Buscar por empresa ou fatura..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+              >
+                <option value="all">Todos os Status</option>
+                <option value="paid">Pagos</option>
+                <option value="pending">Pendentes</option>
+                <option value="overdue">Vencidos</option>
+              </select>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="w-4 h-4" />
+                <span className="hidden sm:inline">Filtros</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[200px]">Empresa</TableHead>
+                  <TableHead className="hidden sm:table-cell">Fatura</TableHead>
+                  <TableHead className="hidden md:table-cell">Valor</TableHead>
+                  <TableHead className="hidden md:table-cell">Plano</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="hidden lg:table-cell">Método</TableHead>
+                  <TableHead className="hidden xl:table-cell">Vencimento</TableHead>
+                  <TableHead className="hidden xl:table-cell">Pagamento</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {payments.map((payment) => (
+                  <TableRow key={payment.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium text-gray-900">{payment.company}</div>
+                        <div className="sm:hidden text-xs text-gray-400 mt-1">
+                          {payment.invoice} • <SafeNumber value={payment.amount} format="currency" />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell font-mono text-sm">{payment.invoice}</TableCell>
+                    <TableCell className="hidden md:table-cell font-medium">
+                      <SafeNumber value={payment.amount} format="currency" />
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">{getPlanBadge(payment.plan)}</TableCell>
+                    <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm">{payment.method}</TableCell>
+                    <TableCell className="hidden xl:table-cell text-sm text-gray-500">
+                      {new Date(payment.dueDate).toLocaleDateString('pt-BR')}
+                    </TableCell>
+                    <TableCell className="hidden xl:table-cell text-sm text-gray-500">
+                      {payment.paymentDate ? new Date(payment.paymentDate).toLocaleDateString('pt-BR') : '-'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Download className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

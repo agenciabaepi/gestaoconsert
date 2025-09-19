@@ -4,6 +4,7 @@ import React from 'react';
 import { DashboardCard } from '@/components/ui/DashboardCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SafeNumber } from '@/components/SafeNumber';
+import { SafeDate } from '@/components/SafeDate';
 import { 
   Building2, 
   Users, 
@@ -29,7 +30,7 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">Dashboard</h2>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
-          <span>Última atualização: {new Date().toLocaleString('pt-BR')}</span>
+          <span>Última atualização: <SafeDate format="datetime" /></span>
         </div>
       </div>
 

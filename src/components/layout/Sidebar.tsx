@@ -70,7 +70,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
   return (
     <div className={cn(
-      'bg-white border-r border-gray-200 transition-all duration-300 flex flex-col',
+      'bg-white border-r border-gray-200 transition-all duration-300 flex flex-col h-full',
       isCollapsed ? 'w-16' : 'w-64'
     )}>
       {/* Header */}
@@ -99,7 +99,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-4">
-        <ul className="space-y-2">
+        <ul className="space-y-1">
           {menuItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -120,7 +120,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                     isActive ? 'text-green-600' : 'text-gray-500 group-hover:text-gray-700'
                   )} />
                   {!isCollapsed && (
-                    <span className="font-medium">{item.title}</span>
+                    <span className="font-medium text-sm">{item.title}</span>
                   )}
                 </Link>
               </li>
