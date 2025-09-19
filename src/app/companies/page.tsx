@@ -134,182 +134,181 @@ export default function CompaniesPage() {
   };
 
   return (
-    <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Gestão de Empresas</h1>
-            <p className="text-gray-600">Gerencie todas as empresas cadastradas no sistema</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Upload className="w-4 h-4" />
-              Importar
-            </Button>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Download className="w-4 h-4" />
-              Exportar
-            </Button>
-            <Button className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Nova Empresa
-            </Button>
-          </div>
+    <div className="space-y-4 lg:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">Gestão de Empresas</h1>
+          <p className="text-sm text-gray-600 mt-1">Gerencie todas as empresas cadastradas no sistema</p>
         </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total de Empresas</p>
-                  <p className="text-2xl font-bold text-gray-900">{companies.length}</p>
-                </div>
-                <Building2 className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Empresas Ativas</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {companies.filter(c => c.status === 'active').length}
-                  </p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Empresas Inativas</p>
-                  <p className="text-2xl font-bold text-red-600">
-                    {companies.filter(c => c.status === 'inactive').length}
-                  </p>
-                </div>
-                <XCircle className="w-8 h-8 text-red-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Pendentes</p>
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {companies.filter(c => c.status === 'pending').length}
-                  </p>
-                </div>
-                <Filter className="w-8 h-8 text-yellow-600" />
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Upload className="w-4 h-4" />
+            <span className="hidden sm:inline">Importar</span>
+          </Button>
+          <Button variant="outline" className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Exportar</span>
+          </Button>
+          <Button className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+            Nova Empresa
+          </Button>
         </div>
-
-        {/* Filters and Search */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input
-                    placeholder="Buscar por nome, CNPJ ou email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="all">Todos os Status</option>
-                  <option value="active">Ativas</option>
-                  <option value="inactive">Inativas</option>
-                  <option value="pending">Pendentes</option>
-                </select>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Filter className="w-4 h-4" />
-                  Filtros
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Companies Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Lista de Empresas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Empresa</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead>Plano</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Usuários</TableHead>
-                    <TableHead>Receita</TableHead>
-                    <TableHead>Última Atividade</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCompanies.map((company) => (
-                    <TableRow key={company.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium text-gray-900">{company.name}</div>
-                          <div className="text-sm text-gray-500">{company.email}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-mono text-sm">{company.cnpj}</TableCell>
-                      <TableCell>{getPlanBadge(company.plan)}</TableCell>
-                      <TableCell>{getStatusBadge(company.status)}</TableCell>
-                      <TableCell className="text-center">{company.users}</TableCell>
-                      <TableCell className="font-medium">
-                        R$ {company.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-500">
-                        {new Date(company.lastActivity).toLocaleDateString('pt-BR')}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="icon">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon">
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    </MainLayout>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <Card>
+          <CardContent className="p-4 lg:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Total de Empresas</p>
+                <p className="text-xl lg:text-2xl font-bold text-gray-900">{companies.length}</p>
+              </div>
+              <Building2 className="w-6 h-6 lg:w-8 lg:h-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 lg:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Empresas Ativas</p>
+                <p className="text-xl lg:text-2xl font-bold text-green-600">
+                  {companies.filter(c => c.status === 'active').length}
+                </p>
+              </div>
+              <CheckCircle className="w-6 h-6 lg:w-8 lg:h-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 lg:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Empresas Inativas</p>
+                <p className="text-xl lg:text-2xl font-bold text-red-600">
+                  {companies.filter(c => c.status === 'inactive').length}
+                </p>
+              </div>
+              <XCircle className="w-6 h-6 lg:w-8 lg:h-8 text-red-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 lg:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs lg:text-sm font-medium text-gray-600">Pendentes</p>
+                <p className="text-xl lg:text-2xl font-bold text-yellow-600">
+                  {companies.filter(c => c.status === 'pending').length}
+                </p>
+              </div>
+              <Filter className="w-6 h-6 lg:w-8 lg:h-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
+        </div>
+
+      {/* Filters and Search */}
+      <Card>
+        <CardContent className="p-4 lg:p-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  placeholder="Buscar por nome, CNPJ ou email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+              >
+                <option value="all">Todos os Status</option>
+                <option value="active">Ativas</option>
+                <option value="inactive">Inativas</option>
+                <option value="pending">Pendentes</option>
+              </select>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="w-4 h-4" />
+                <span className="hidden sm:inline">Filtros</span>
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Companies Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Lista de Empresas</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[200px]">Empresa</TableHead>
+                  <TableHead className="hidden sm:table-cell">CNPJ</TableHead>
+                  <TableHead className="hidden md:table-cell">Plano</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="hidden lg:table-cell">Usuários</TableHead>
+                  <TableHead className="hidden lg:table-cell">Receita</TableHead>
+                  <TableHead className="hidden xl:table-cell">Última Atividade</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCompanies.map((company) => (
+                  <TableRow key={company.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium text-gray-900">{company.name}</div>
+                        <div className="text-sm text-gray-500">{company.email}</div>
+                        <div className="sm:hidden text-xs text-gray-400 mt-1">{company.cnpj}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell font-mono text-sm">{company.cnpj}</TableCell>
+                    <TableCell className="hidden md:table-cell">{getPlanBadge(company.plan)}</TableCell>
+                    <TableCell>{getStatusBadge(company.status)}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-center">{company.users}</TableCell>
+                    <TableCell className="hidden lg:table-cell font-medium">
+                      R$ {company.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </TableCell>
+                    <TableCell className="hidden xl:table-cell text-sm text-gray-500">
+                      {new Date(company.lastActivity).toLocaleDateString('pt-BR')}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

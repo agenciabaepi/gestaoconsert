@@ -15,10 +15,15 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
+    <div className="space-y-4 lg:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">Dashboard</h2>
+        <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <span>Última atualização: {new Date().toLocaleString('pt-BR')}</span>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <DashboardCard
           title="Total de Empresas"
           value={<SafeNumber value={stats.totalCompanies} />}

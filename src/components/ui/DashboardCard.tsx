@@ -27,25 +27,25 @@ export function DashboardCard({
 }: DashboardCardProps) {
   return (
     <div className={cn(
-      "rounded-xl border border-gray-200 p-6 transition-all duration-200 hover:shadow-md",
+      "rounded-xl border border-gray-200 p-4 lg:p-6 transition-all duration-200 hover:shadow-md",
       bgClass
     )}>
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <h3 className={cn("text-sm font-medium", colorClass)}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0">
+          <h3 className={cn("text-sm font-medium truncate", colorClass)}>
             {title}
           </h3>
-          <div className="text-2xl font-bold text-black leading-tight">
+          <div className="text-xl lg:text-2xl font-bold text-black leading-tight mt-1">
             {value}
           </div>
           {description && (
-            <p className={cn("text-xs mt-1", descriptionColorClass)}>
+            <p className={cn("text-xs mt-1 truncate", descriptionColorClass)}>
               {description}
             </p>
           )}
         </div>
         {icon && (
-          <div className="flex-shrink-0 ml-4">
+          <div className="flex-shrink-0">
             {icon}
           </div>
         )}

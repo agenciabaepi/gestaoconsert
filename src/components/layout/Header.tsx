@@ -19,8 +19,8 @@ interface HeaderProps {
 
 export function Header({ onMenuToggle, isSidebarCollapsed }: HeaderProps) {
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-between">
+    <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4 sticky top-0 z-30">
+      <div className="flex items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex items-center gap-4">
           <Button
@@ -43,13 +43,13 @@ export function Header({ onMenuToggle, isSidebarCollapsed }: HeaderProps) {
         </div>
 
         {/* Center - Search */}
-        <div className="flex-1 max-w-md mx-8 hidden md:block">
+        <div className="flex-1 max-w-md mx-4 hidden sm:block">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="Buscar empresas, usuários..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
             />
           </div>
         </div>
