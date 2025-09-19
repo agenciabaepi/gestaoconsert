@@ -1,0 +1,19 @@
+# Supabase (já configurado)
+NEXT_PUBLIC_SUPABASE_URL=sua_url_supabase
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anonima_supabase
+SUPABASE_SERVICE_ROLE_KEY=sua_chave_service_role_supabase
+
+# Mercado Pago - PRODUÇÃO
+MERCADOPAGO_ACCESS_TOKEN=APP_USR-3752420980879882-080316-e6ea366b73ee5fcbcd2f4aeb8049886e-2502171526
+MERCADOPAGO_PUBLIC_KEY=APP_USR-1a8d35b4-3e4e-42f8-a41a-d6a7341dae7d
+MERCADOPAGO_CLIENT_ID=3752420980879882
+MERCADOPAGO_CLIENT_SECRET=6q6FGN8BctZrIVAnaTb52XTvTcXA9LVC
+
+# Ambiente
+MERCADOPAGO_ENVIRONMENT=production
+NEXT_PUBLIC_BASE_URL=https://www.consert.app
+
+# URLs de retorno para produção
+NEXT_PUBLIC_SUCCESS_URL=https://www.consert.app/pagamentos/sucesso
+NEXT_PUBLIC_FAILURE_URL=https://www.consert.app/pagamentos/falha
+NEXT_PUBLIC_PENDING_URL=https://www.consert.app/pagamentos/pendente 

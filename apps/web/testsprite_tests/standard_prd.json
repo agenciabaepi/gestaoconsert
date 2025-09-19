@@ -1,0 +1,234 @@
+{
+  "meta": {
+    "project": "Sistema Consert",
+    "date": "2025-09-13",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "Sistema Consert é uma plataforma completa para gestão de ordens de serviço (OS) destinada a assistências técnicas, facilitando o gerenciamento de clientes, técnicos, pagamentos e comunicação integrada.",
+  "core_goals": [
+    "Implementar um sistema seguro e eficiente de autenticação e autorização com níveis diferenciados de acesso (admin, técnico, atendente).",
+    "Permitir a completa gestão de ordens de serviço incluindo criação, edição, acompanhamento de status e notificações.",
+    "Prover cadastro e gerenciamento detalhado de clientes e equipamentos com histórico de serviços.",
+    "Integrar recursos financeiros como controle de pagamentos via Mercado Pago e controle financeiro interno.",
+    "Implementar comunicação integrada via WhatsApp para envio de mensagens e notificações.",
+    "Garantir alta performance, segurança e disponibilidade do sistema seguindo requisitos não funcionais especificados."
+  ],
+  "key_features": [
+    "Sistema completo de autenticação com login, cadastro, recuperação de senha e controle de sessão.",
+    "Gestão de ordens de serviço com criação, edição, visualização, acompanhamento de status e notificações automáticas.",
+    "Cadastro e gerenciamento de clientes, técnicos, fornecedores, equipamentos e comissões.",
+    "Dashboard com métricas essenciais e relatórios financeiros.",
+    "Integração com Mercado Pago para processamento de pagamentos.",
+    "Integração com WhatsApp para envio de mensagens diretas.",
+    "Controle financeiro com abertura, fechamento e movimentações de caixa.",
+    "Sistema responsivo com menu lateral e mobile para navegação intuitiva.",
+    "Mecanismos de segurança incluindo proteção contra SQL injection e validação de sessão.",
+    "Sistema de lembretes e notificações para melhorar a comunicação interna."
+  ],
+  "user_flow_summary": [
+    "Usuário realiza login com autenticação baseada em roles para acessar funcionalidades específicas.",
+    "Administrador cadastra e gerencia clientes, técnicos, fornecedores e equipamentos.",
+    "Técnico ou atendente cria e atualiza ordens de serviço, acompanhando o status e comunicando-se com o cliente via WhatsApp.",
+    "Usuário visualiza dashboard com métricas e relatórios atualizados em tempo real.",
+    "Operador gerencia movimentações de caixa e controla pagamentos realizados via Mercado Pago.",
+    "Sistema envia notificações e lembretes para usuários conforme ações possam demandar atenção.",
+    "Usuário pode recuperar senha e gerenciar sua sessão para manter acesso seguro."
+  ],
+  "validation_criteria": [
+    "Verificação de autenticação e autorização funcionando corretamente para todos os níveis de usuário.",
+    "Validação da criação, edição e atualização de ordens de serviço com alteração adequada de status e envio de notificações.",
+    "Teste da integração com Supabase, Mercado Pago e WhatsApp garantindo comunicação e pagamento sem falhas.",
+    "Medição de performance garantindo tempo de resposta menor que 2 segundos nas ações críticas.",
+    "Testes de segurança incluindo proteção contra SQL injection e validação de CORS para domínios autorizados.",
+    "Teste de disponibilidade assegurando uptime mínimo de 99.9% em ambiente de produção.",
+    "Verificação de responsividade do sistema e usabilidade em diferentes tamanhos de tela e dispositivos."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "JavaScript",
+      "Next.js 14",
+      "React 18",
+      "Supabase",
+      "PostgreSQL",
+      "Tailwind CSS",
+      "Node.js",
+      "WhatsApp Web.js",
+      "React Query",
+      "React Hook Form",
+      "Chart.js",
+      "ApexCharts",
+      "React PDF",
+      "JWT",
+      "Nodemailer",
+      "React Select",
+      "React Icons",
+      "TipTap Editor",
+      "Axios",
+      "Docker"
+    ],
+    "features": [
+      {
+        "name": "Sistema de Autenticação",
+        "description": "Sistema completo de autenticação com login, cadastro, recuperação de senha e validação de sessão",
+        "files": [
+          "src/context/AuthContext.tsx",
+          "src/app/login/LoginClient.tsx",
+          "src/components/ProtectedRoute.tsx",
+          "src/components/SessionGuard.tsx",
+          "src/hooks/useSessionValidation.ts",
+          "src/app/api/health-check/route.ts"
+        ]
+      },
+      {
+        "name": "Gestão de Ordens de Serviço",
+        "description": "Sistema completo para criação, edição, visualização e gerenciamento de ordens de serviço",
+        "files": [
+          "src/app/ordens/page.tsx",
+          "src/app/nova-os/page.tsx",
+          "src/hooks/useOrdens.ts",
+          "src/hooks/useOSPermissions.ts"
+        ]
+      },
+      {
+        "name": "Layout e Menu Principal",
+        "description": "Sistema de navegação responsivo com menu lateral e mobile",
+        "files": [
+          "src/components/MenuLayout.tsx",
+          "src/components/menu/"
+        ]
+      },
+      {
+        "name": "Dashboard e Relatórios",
+        "description": "Dashboard principal com métricas, gráficos e relatórios do sistema",
+        "files": [
+          "src/app/dashboard/",
+          "src/components/ui/DashboardCard.tsx"
+        ]
+      },
+      {
+        "name": "Gestão de Clientes",
+        "description": "Sistema para cadastro, edição e gerenciamento de clientes",
+        "files": [
+          "src/app/clientes/",
+          "src/types/cliente.ts"
+        ]
+      },
+      {
+        "name": "Sistema de Caixa",
+        "description": "Controle financeiro com abertura/fechamento de caixa e movimentações",
+        "files": [
+          "src/app/caixa/",
+          "src/components/caixa/",
+          "src/hooks/useCaixa.ts"
+        ]
+      },
+      {
+        "name": "Integração WhatsApp",
+        "description": "Sistema de integração com WhatsApp para envio de mensagens",
+        "files": [
+          "src/app/api/whatsapp/enviar/route.ts",
+          "src/app/api/whatsapp/connect/route.ts"
+        ]
+      },
+      {
+        "name": "Sistema de Pagamentos",
+        "description": "Integração com Mercado Pago e controle de pagamentos",
+        "files": [
+          "src/app/pagamentos/",
+          "src/lib/mercadopago.ts"
+        ]
+      },
+      {
+        "name": "Gestão de Técnicos",
+        "description": "Sistema para gerenciamento de técnicos e suas atribuições",
+        "files": [
+          "src/app/bancada/"
+        ]
+      },
+      {
+        "name": "Sistema de Comissões",
+        "description": "Cálculo e controle de comissões para técnicos",
+        "files": [
+          "src/app/comissoes/"
+        ]
+      },
+      {
+        "name": "Configurações do Sistema",
+        "description": "Painel de configurações gerais do sistema",
+        "files": [
+          "src/app/configuracoes/"
+        ]
+      },
+      {
+        "name": "Gestão de Equipamentos",
+        "description": "Cadastro e controle de equipamentos",
+        "files": [
+          "src/app/equipamentos/"
+        ]
+      },
+      {
+        "name": "Sistema Financeiro",
+        "description": "Controle financeiro completo com relatórios",
+        "files": [
+          "src/app/financeiro/"
+        ]
+      },
+      {
+        "name": "Gestão de Fornecedores",
+        "description": "Sistema para cadastro e gerenciamento de fornecedores",
+        "files": [
+          "src/app/fornecedores/"
+        ]
+      },
+      {
+        "name": "Sistema de Lembretes",
+        "description": "Funcionalidade para criação e gerenciamento de lembretes",
+        "files": [
+          "src/app/lembretes/"
+        ]
+      },
+      {
+        "name": "Landing Page",
+        "description": "Página inicial do sistema com apresentação e cadastro",
+        "files": [
+          "src/app/page.tsx"
+        ]
+      },
+      {
+        "name": "Sistema de Notificações",
+        "description": "Sistema de toast e notificações para o usuário",
+        "files": [
+          "src/components/Toast.tsx",
+          "src/hooks/useToast.ts"
+        ]
+      },
+      {
+        "name": "Componentes UI",
+        "description": "Biblioteca de componentes reutilizáveis da interface",
+        "files": [
+          "src/components/ui/",
+          "src/components/Button.tsx",
+          "src/components/Input.tsx",
+          "src/components/Select.tsx"
+        ]
+      },
+      {
+        "name": "Utilitários e Helpers",
+        "description": "Funções utilitárias e helpers do sistema",
+        "files": [
+          "src/utils/",
+          "src/lib/utils.ts",
+          "src/lib/supabase/"
+        ]
+      },
+      {
+        "name": "Sistema de Retry",
+        "description": "Hook para retry automático de operações",
+        "files": [
+          "src/hooks/useRetry.ts"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,341 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Markdown Preview</title>
+      <style>
+        body {
+          font-family: sans-serif;
+          padding: 40px;
+          line-height: 1.6;
+          background: #fdfdfd;
+          color: #333;
+        }
+        pre {
+          background: #f4f4f4;
+          padding: 10px;
+          border-radius: 5px;
+          overflow-x: auto;
+        }
+        code {
+          font-family: monospace;
+          background: #eee;
+          padding: 2px 4px;
+        }
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          margin-top: 20px;
+        }
+        th, td {
+          border: 1px solid #ccc;
+          padding: 8px 12px;
+          text-align: left;
+        }
+        th {
+          background-color: #f2f2f2;
+          font-weight: bold;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>TestSprite AI Testing Report (MCP)</h1>
+<hr>
+<h2>1️⃣ Document Metadata</h2>
+<ul>
+<li><strong>Project Name:</strong> Consert</li>
+<li><strong>Version:</strong> 0.1.0</li>
+<li><strong>Date:</strong> 2025-09-13</li>
+<li><strong>Prepared by:</strong> TestSprite AI Team</li>
+</ul>
+<hr>
+<h2>2️⃣ Requirement Validation Summary</h2>
+<h3>Requirement: User Authentication</h3>
+<ul>
+<li><strong>Description:</strong> Supports role-based access control for admins, technicians, and attendants with proper login validation.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC001</li>
+<li><strong>Test Name:</strong> authentication api role based access control</li>
+<li><strong>Test Code:</strong> <a href="./TC001_authentication_api_role_based_access_control.py">TC001_authentication_api_role_based_access_control.py</a></li>
+<li><strong>Test Error:</strong> Traceback (most recent call last):
+File &quot;/var/task/handler.py&quot;, line 258, in run_with_retry
+exec(code, exec_env)
+File &quot;&lt;string&gt;&quot;, line 87, in &lt;module&gt;
+File &quot;&lt;string&gt;&quot;, line 46, in test_authentication_api_role_based_access_control
+AssertionError: Login failed with status 404</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/2ed46f4f-00fd-4f5b-bfd1-d3a3ad723083">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The authentication API is returning a 404 Not Found error on login attempts. This indicates that the endpoint or the resource required for role-based access control is not found or misconfigured, preventing proper login and authorization.</li>
+</ul>
+<hr>
+<h3>Requirement: Service Order Management</h3>
+<ul>
+<li><strong>Description:</strong> Allows creation, editing, and status updates of service orders with notification capabilities.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC002</li>
+<li><strong>Test Name:</strong> service orders api create edit status update notifications</li>
+<li><strong>Test Code:</strong> <a href="./TC002_service_orders_api_create_edit_status_update_notifications.py">TC002_service_orders_api_create_edit_status_update_notifications.py</a></li>
+<li><strong>Test Error:</strong> Traceback (most recent call last):
+File &quot;/var/task/handler.py&quot;, line 258, in run_with_retry
+exec(code, exec_env)
+File &quot;&lt;string&gt;&quot;, line 95, in &lt;module&gt;
+File &quot;&lt;string&gt;&quot;, line 29, in test_service_orders_api_create_edit_status_update_notifications
+AssertionError: Create service order failed: {&quot;error&quot;:&quot;Erro ao criar a Ordem de Serviço: Could not find the 'dataPrevistaConclusao' column of 'ordens_servico' in the schema cache&quot;}</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/78fac5a6-334f-43e3-b830-a083c5249f7f">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The failure occurred because the 'dataPrevistaConclusao' column was missing from the 'ordens_servico' table schema cache when attempting to create a service order, causing the database operation to fail.</li>
+</ul>
+<hr>
+<h3>Requirement: Client Management</h3>
+<ul>
+<li><strong>Description:</strong> Provides CRUD operations for client and equipment data with search functionality.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC003</li>
+<li><strong>Test Name:</strong> client management api crud and search functionality</li>
+<li><strong>Test Code:</strong> <a href="./TC003_client_management_api_crud_and_search_functionality.py">TC003_client_management_api_crud_and_search_functionality.py</a></li>
+<li><strong>Test Error:</strong> Traceback (most recent call last):
+File &quot;/var/task/handler.py&quot;, line 258, in run_with_retry
+exec(code, exec_env)
+File &quot;&lt;string&gt;&quot;, line 189, in &lt;module&gt;
+File &quot;&lt;string&gt;&quot;, line 52, in test_client_management_api_crud_and_search
+AssertionError: Client creation failed: {&quot;error&quot;:&quot;invalid input syntax for type uuid: &quot;1&quot;&quot;}</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/b61f4d28-aacd-4293-8bc6-e829a593e34e">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The test failed during client creation due to invalid UUID input syntax; the system received '1' where a UUID was expected, causing a type conversion error in the backend.</li>
+</ul>
+<hr>
+<h3>Requirement: Payment Processing</h3>
+<ul>
+<li><strong>Description:</strong> Handles payment processing through Mercado Pago integration with status tracking and webhook handling.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC004</li>
+<li><strong>Test Name:</strong> payment processing api mercadopago integration</li>
+<li><strong>Test Code:</strong> <a href="./TC004_payment_processing_api_mercadopago_integration.py">TC004_payment_processing_api_mercadopago_integration.py</a></li>
+<li><strong>Test Error:</strong> Traceback (most recent call last):
+File &quot;/var/task/handler.py&quot;, line 258, in run_with_retry
+exec(code, exec_env)
+File &quot;&lt;string&gt;&quot;, line 90, in &lt;module&gt;
+File &quot;&lt;string&gt;&quot;, line 25, in test_payment_processing_api_mercadopago_integration
+AssertionError: Expected 201 Created, got 400</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/56f16a1e-d821-4ca3-8c8a-5c89d5ee088d">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> The payment creation request to the Mercado Pago integration endpoint returned a 400 Bad Request instead of the expected 201 Created, indicating incorrect or missing parameters in the payment creation payload.</li>
+</ul>
+<hr>
+<h3>Requirement: WhatsApp Integration</h3>
+<ul>
+<li><strong>Description:</strong> Provides API endpoints for WhatsApp message sending and connection management.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC005</li>
+<li><strong>Test Name:</strong> whatsapp integration api message sending and connection management</li>
+<li><strong>Test Code:</strong> <a href="./TC005_whatsapp_integration_api_message_sending_and_connection_management.py">TC005_whatsapp_integration_api_message_sending_and_connection_management.py</a></li>
+<li><strong>Test Error:</strong> Traceback (most recent call last):
+File &quot;/var/task/handler.py&quot;, line 258, in run_with_retry
+exec(code, exec_env)
+File &quot;&lt;string&gt;&quot;, line 52, in &lt;module&gt;
+File &quot;&lt;string&gt;&quot;, line 18, in test_whatsapp_integration_api_message_sending_and_connection_management
+AssertionError: Failed to connect WhatsApp: {&quot;error&quot;:&quot;Empresa ID é obrigatório&quot;}</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/acf0b8d3-781e-4bb3-b09a-c29886274d4c">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> Medium</li>
+<li><strong>Analysis / Findings:</strong> The WhatsApp integration API failed to connect because the required 'Empresa ID' parameter was missing, causing request validation to fail.</li>
+</ul>
+<hr>
+<h3>Requirement: Email Verification</h3>
+<ul>
+<li><strong>Description:</strong> Handles email verification with code sending, verification, and resending capabilities.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC006</li>
+<li><strong>Test Name:</strong> email verification api send verify resend codes</li>
+<li><strong>Test Code:</strong> <a href="./TC006_email_verification_api_send_verify_resend_codes.py">TC006_email_verification_api_send_verify_resend_codes.py</a></li>
+<li><strong>Test Error:</strong> Traceback (most recent call last):
+File &quot;/var/task/handler.py&quot;, line 258, in run_with_retry
+exec(code, exec_env)
+File &quot;&lt;string&gt;&quot;, line 63, in &lt;module&gt;
+File &quot;&lt;string&gt;&quot;, line 24, in test_email_verification_api_send_verify_resend_codes
+AssertionError: Send code failed: {&quot;error&quot;:&quot;Usuário não encontrado&quot;}</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/61bd33d9-7552-4ecb-886d-8c75327b1b38">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> Medium</li>
+<li><strong>Analysis / Findings:</strong> The email verification API failed to send a verification code because the specified user was not found in the system, resulting in an error response.</li>
+</ul>
+<hr>
+<h3>Requirement: Admin SaaS Management</h3>
+<ul>
+<li><strong>Description:</strong> Provides admin APIs for managing companies, subscriptions, and system metrics.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC007</li>
+<li><strong>Test Name:</strong> admin saas management api companies subscriptions metrics</li>
+<li><strong>Test Code:</strong> <a href="./TC007_admin_saas_management_api_companies_subscriptions_metrics.py">TC007_admin_saas_management_api_companies_subscriptions_metrics.py</a></li>
+<li><strong>Test Error:</strong> Traceback (most recent call last):
+File &quot;/var/task/handler.py&quot;, line 258, in run_with_retry
+exec(code, exec_env)
+File &quot;&lt;string&gt;&quot;, line 123, in &lt;module&gt;
+File &quot;&lt;string&gt;&quot;, line 30, in test_admin_saas_management_api_companies_subscriptions_metrics
+AssertionError: Company creation failed:</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/61106aa9-f3d2-4779-b3e6-dab438221b43">View Test Results</a></li>
+<li><strong>Status:</strong> ❌ Failed</li>
+<li><strong>Severity:</strong> High</li>
+<li><strong>Analysis / Findings:</strong> Company creation failed with no detailed error provided, indicating a backend failure or misconfiguration during the company creation process in the admin SaaS management API.</li>
+</ul>
+<hr>
+<h3>Requirement: System Health Monitoring</h3>
+<ul>
+<li><strong>Description:</strong> Provides health check API for system uptime monitoring and status verification.</li>
+</ul>
+<h4>Test 1</h4>
+<ul>
+<li><strong>Test ID:</strong> TC008</li>
+<li><strong>Test Name:</strong> health check api system uptime monitoring</li>
+<li><strong>Test Code:</strong> <a href="./TC008_health_check_api_system_uptime_monitoring.py">TC008_health_check_api_system_uptime_monitoring.py</a></li>
+<li><strong>Test Error:</strong> N/A</li>
+<li><strong>Test Visualization and Result:</strong> <a href="https://www.testsprite.com/dashboard/mcp/tests/b7913f8d-ad28-4937-8a66-000a2ed17bfa/ac381eff-b28d-4366-9d45-a1c8815041b8">View Test Results</a></li>
+<li><strong>Status:</strong> ✅ Passed</li>
+<li><strong>Severity:</strong> Low</li>
+<li><strong>Analysis / Findings:</strong> The health check API passed successfully, confirming that the system uptime monitoring endpoint correctly responds to health queries as expected.</li>
+</ul>
+<hr>
+<h2>3️⃣ Coverage &amp; Matching Metrics</h2>
+<ul>
+<li><strong>12.5% dos testes passaram</strong></li>
+<li><strong>87.5% dos testes falharam</strong></li>
+<li><strong>Principais lacunas/riscos:</strong>
+<ul>
+<li>Problemas críticos de autenticação com endpoint não encontrado (404)</li>
+<li>Schema do banco de dados com colunas ausentes</li>
+<li>Validação de UUID inadequada nos endpoints</li>
+<li>Integração do Mercado Pago com problemas de configuração</li>
+<li>Parâmetros obrigatórios ausentes na integração WhatsApp</li>
+<li>Usuários não encontrados no sistema de verificação de email</li>
+<li>Falhas na criação de empresas no sistema admin</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Total Tests</th>
+<th>✅ Passed</th>
+<th>⚠️ Partial</th>
+<th>❌ Failed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User Authentication</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Service Order Management</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Client Management</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Payment Processing</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>WhatsApp Integration</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Email Verification</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Admin SaaS Management</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>System Health Monitoring</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>TOTAL</strong></td>
+<td><strong>8</strong></td>
+<td><strong>1</strong></td>
+<td><strong>0</strong></td>
+<td><strong>7</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>4️⃣ Principais Problemas Identificados</h2>
+<h3>🔴 Críticos (High Severity)</h3>
+<ol>
+<li><strong>Endpoint de Autenticação</strong>: API de login retornando 404 Not Found</li>
+<li><strong>Schema do Banco</strong>: Coluna 'dataPrevistaConclusao' ausente na tabela 'ordens_servico'</li>
+<li><strong>Validação UUID</strong>: Entrada inválida de UUID causando falhas na criação de clientes</li>
+<li><strong>API Mercado Pago</strong>: Endpoint retornando 400 Bad Request por parâmetros incorretos</li>
+<li><strong>Criação de Empresas</strong>: Falha na criação de empresas sem detalhes do erro</li>
+</ol>
+<h3>🟡 Médios (Medium Severity)</h3>
+<ol>
+<li><strong>WhatsApp Integration</strong>: Parâmetro 'Empresa ID' obrigatório ausente</li>
+<li><strong>Verificação de Email</strong>: Usuários não encontrados no sistema</li>
+</ol>
+<h2>5️⃣ Próximos Passos Recomendados</h2>
+<ol>
+<li><strong>Corrigir Endpoint de Login</strong>: Investigar e corrigir a configuração de roteamento da API de autenticação</li>
+<li><strong>Atualizar Schema do Banco</strong>: Adicionar coluna 'dataPrevistaConclusao' na tabela 'ordens_servico'</li>
+<li><strong>Melhorar Validação UUID</strong>: Implementar validação adequada de UUID nos endpoints</li>
+<li><strong>Configurar Mercado Pago</strong>: Revisar payload e autenticação da integração de pagamentos</li>
+<li><strong>Corrigir WhatsApp API</strong>: Garantir que 'Empresa ID' seja obrigatório no schema da API</li>
+<li><strong>Validar Usuários</strong>: Adicionar validação de existência de usuários antes do envio de códigos</li>
+<li><strong>Investigar Admin API</strong>: Verificar logs do backend para identificar causa das falhas na criação de empresas</li>
+<li><strong>Executar Testes Novamente</strong>: Após correções, executar nova bateria de testes</li>
+</ol>
+<hr>
+<p><strong>Relatório gerado automaticamente pelo TestSprite AI Team</strong></p>
+
+    </body>
+    </html>
+  

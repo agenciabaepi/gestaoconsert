@@ -1,0 +1,569 @@
+[
+  {
+    "id": "TC001",
+    "title": "Login Success with Valid Credentials",
+    "description": "Verify that users can log in successfully with valid credentials for all roles (admin, técnico, atendente).",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid username and password for admin user."
+      },
+      {
+        "type": "action",
+        "description": "Click on the login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify successful login and redirection to admin dashboard."
+      },
+      {
+        "type": "action",
+        "description": "Logout from admin account."
+      },
+      {
+        "type": "action",
+        "description": "Repeat login with valid credentials for técnico role."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify successful login and access to técnico functionalities."
+      },
+      {
+        "type": "action",
+        "description": "Logout from técnico account."
+      },
+      {
+        "type": "action",
+        "description": "Repeat login with valid credentials for atendente role."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify successful login and access to atendente functionalities."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Login Failure with Invalid Credentials",
+    "description": "Verify that login fails when invalid username or password is entered, and proper error messages are shown.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Enter invalid username and/or password."
+      },
+      {
+        "type": "action",
+        "description": "Click the login button."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login failure with appropriate error message displayed."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Password Recovery Flow",
+    "description": "Verify that users can request password recovery and receive an email with reset instructions.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page."
+      },
+      {
+        "type": "action",
+        "description": "Click on 'Forgot Password' link."
+      },
+      {
+        "type": "action",
+        "description": "Enter registered email address."
+      },
+      {
+        "type": "action",
+        "description": "Submit the password recovery request."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify confirmation message about sent recovery email."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify receipt of password recovery email with reset link."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Authorization Role-based Access Control",
+    "description": "Verify that users only access the features allowed by their roles and receive access denied if unauthorized.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as técnico."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to access admin-only pages (e.g., user management)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access denied or redirection occurs."
+      },
+      {
+        "type": "action",
+        "description": "Login as atendente."
+      },
+      {
+        "type": "action",
+        "description": "Attempt to edit orders of service that should be restricted."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify proper access control and restrictions."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Create New Service Order",
+    "description": "Verify that a técnico or atendente can create a new order of service successfully.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as técnico."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to 'Create New Order of Service' page."
+      },
+      {
+        "type": "action",
+        "description": "Fill in valid data for client, equipment, service description, and assigned technician."
+      },
+      {
+        "type": "action",
+        "description": "Submit the new order form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the order is created and listed in orders overview."
+      },
+      {
+        "type": "assertion",
+        "description": "Check notification is sent via WhatsApp to the client."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Edit and Update Service Order Status",
+    "description": "Verify that orders of service can be edited and their status updated with corresponding notifications.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as técnico."
+      },
+      {
+        "type": "action",
+        "description": "Open an existing service order."
+      },
+      {
+        "type": "action",
+        "description": "Modify details such as description and update status to 'In Progress' or 'Completed'."
+      },
+      {
+        "type": "action",
+        "description": "Save changes."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify changes are saved and reflected in order overview."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify client receives status update notification via WhatsApp."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Client Management CRUD Operations",
+    "description": "Verify that admin users can create, read, update, and delete clients with correct data persistence.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as admin."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to client management page."
+      },
+      {
+        "type": "action",
+        "description": "Create a new client with all mandatory fields filled."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify client is added to list and data is correct."
+      },
+      {
+        "type": "action",
+        "description": "Edit the client details."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify modifications persist."
+      },
+      {
+        "type": "action",
+        "description": "Delete the client record."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify client is removed and no longer accessible."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Manage Technicians and Commissions",
+    "description": "Verify that admin users can manage technicians and view commissions correctly calculated.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as admin."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to technicians management page."
+      },
+      {
+        "type": "action",
+        "description": "Add a new technician with required details."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify technician appears in list."
+      },
+      {
+        "type": "action",
+        "description": "Check commissions page and verify commissions are calculated according to orders handled."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Payments Integration with Mercado Pago",
+    "description": "Verify payments are processed correctly via Mercado Pago and financial records updated accordingly.",
+    "category": "integration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as operador."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to payments section."
+      },
+      {
+        "type": "action",
+        "description": "Initiate a payment for an order using Mercado Pago."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify payment is completed successfully and confirmation shown."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify financial records in the internal system reflect the payment."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Send WhatsApp Notifications",
+    "description": "Verify that the system sends WhatsApp messages for notifications like order updates and reminders.",
+    "category": "integration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as técnico or atendente."
+      },
+      {
+        "type": "action",
+        "description": "Update order status triggering a notification."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify WhatsApp message is sent to the correct client phone number."
+      },
+      {
+        "type": "action",
+        "description": "Create a new reminder message."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify reminder is scheduled and WhatsApp notification is sent at the appropriate time."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Dashboard Metrics and Financial Reports Accuracy",
+    "description": "Verify that dashboard displays correct, updated metrics and financial reports reflect real data.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as admin."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to dashboard page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify key metrics such as number of orders, status distributions are accurate."
+      },
+      {
+        "type": "assertion",
+        "description": "Navigate to financial reports and verify data matches expected payment and commission info."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Session Management and Validation",
+    "description": "Verify session tokens are validated correctly and session expires after configured timeout.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login and verify session token is issued."
+      },
+      {
+        "type": "action",
+        "description": "Perform some actions to validate session is active."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access granted without re-login during active session."
+      },
+      {
+        "type": "action",
+        "description": "Simulate session timeout or manual logout."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify session becomes invalid and user is redirected to login page on next action."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Protection Against SQL Injection",
+    "description": "Verify that inputs do not allow SQL injection attacks and system handles malicious input safely.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to submit forms with SQL injection strings in client or order fields."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify inputs are sanitized or rejected and no database errors or data leakage occur."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "CORS Policy Enforcement",
+    "description": "Verify that system accepts requests only from authorized domains and denies unauthorized cross-origin requests.",
+    "category": "security",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send requests from authorized domain and verify successful response."
+      },
+      {
+        "type": "action",
+        "description": "Send requests from unauthorized domain."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify access denied or CORS error received."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "System Responsiveness and UI Navigation",
+    "description": "Verify the system's responsiveness on desktop, tablet, and mobile, including menu lateral and mobile navigation.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the system on desktop browser and check layout and menu functionality."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI elements are correctly displayed and menu lateral works as expected."
+      },
+      {
+        "type": "action",
+        "description": "Resize browser or open on tablet and mobile devices."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the responsive menu appears and navigation remains intuitive on all screen sizes."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "System Uptime and Performance",
+    "description": "Verify system uptime meets 99.9% availability in production and response times for critical actions are under 2 seconds.",
+    "category": "performance",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform login, create order, update order, and payment transactions repeatedly."
+      },
+      {
+        "type": "assertion",
+        "description": "Measure and confirm response times are within 2 seconds."
+      },
+      {
+        "type": "action",
+        "description": "Simulate production load and measure system availability."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify uptime meets the 99.9% SLA."
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Create and Manage Equipment Records",
+    "description": "Verify that equipment can be added, edited, viewed, and deleted with accurate history tracking.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as admin."
+      },
+      {
+        "type": "action",
+        "description": "Navigate to equipment management page."
+      },
+      {
+        "type": "action",
+        "description": "Add new equipment with complete details."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify equipment appears in list and data is saved correctly."
+      },
+      {
+        "type": "action",
+        "description": "Edit equipment details."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify changes persist and history of services is visible."
+      },
+      {
+        "type": "action",
+        "description": "Delete equipment and verify removal."
+      }
+    ]
+  },
+  {
+    "id": "TC018",
+    "title": "Financial Movements - Open, Close and Transactions in Cash Register",
+    "description": "Verify that the operador can open and close cash register and record financial transactions accurately.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Login as operador."
+      },
+      {
+        "type": "action",
+        "description": "Open cash register for the day with initial balance."
+      },
+      {
+        "type": "action",
+        "description": "Add financial movements including payments and withdrawals."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify movements are recorded and balances are calculated correctly."
+      },
+      {
+        "type": "action",
+        "description": "Close cash register and verify final balance and report generation."
+      }
+    ]
+  },
+  {
+    "id": "TC019",
+    "title": "Notifications and Toast Messages Verification",
+    "description": "Verify that user receives real-time toast notifications for actions such as order updates, payment confirmation, errors, and reminders.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform actions like creating an order, editing an order, or processing a payment."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify toast messages appear with correct content and disappear after timeout."
+      },
+      {
+        "type": "action",
+        "description": "Trigger error scenarios such as invalid form submission."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify error toast notifications are displayed appropriately."
+      }
+    ]
+  }
+]

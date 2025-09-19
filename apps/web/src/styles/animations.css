@@ -1,0 +1,23 @@
+/* TODAS AS ANIMAÇÕES DESABILITADAS */
+/* Arquivo de animações completamente desabilitado conforme solicitado */
+
+@keyframes fadeIn {
+  from, to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fadeIn {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Desabilitar qualquer animação neste arquivo */
+* {
+  animation: none !important;
+  transition: none !important;
+}
+  

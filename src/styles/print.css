@@ -1,0 +1,99 @@
+@media print {
+  /* Importante: não ocultar todo o documento por padrão.
+     O comportamento de imprimir somente o cupom agora é OPT-IN
+     usando a classe body.only-cupom. Assim, páginas como /catalogo
+     imprimem normalmente. */
+
+  /* Modo somente cupom (usar adicionando class="only-cupom" no body quando necessário) */
+  body.only-cupom * { visibility: hidden; }
+  body.only-cupom .cupom-impressao,
+  body.only-cupom .cupom-impressao * { visibility: visible; }
+
+  body.only-cupom .cupom-impressao {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    background: white;
+  }
+
+  /* Página de cupom em 80mm */
+  body.only-cupom @page {
+    margin: 0;
+    size: 80mm auto;
+  }
+
+  /* Utilitário genérico */
+  .no-print { display: none !important; }
+
+  /* Margens padrão para páginas comuns (ex.: catálogo) */
+  @page { size: A4; margin: 12mm 14mm; }
+
+  .print-container { max-width: 180mm; margin: 0 auto; }
+
+  /* Layout do catálogo de serviços para impressão (duas colunas) */
+  .catalogo-print {
+    column-count: 2;
+    column-gap: 16mm;
+  }
+  .catalogo-cat {
+    break-inside: avoid;
+    margin-bottom: 10mm;
+  }
+  .catalogo-cat .cat-title {
+    font-weight: 700;
+    font-size: 14pt;
+    margin-bottom: 6mm;
+    padding-bottom: 2mm;
+    border-bottom: 2px solid #16a34a; /* verde sutil */
+  }
+  .catalogo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8mm;
+    margin: 0 0 3mm 0;
+  }
+  .catalogo-item .nome {
+    font-size: 11pt;
+    font-weight: 600;
+  }
+  .catalogo-item .preco {
+    font-size: 11pt;
+    font-weight: 700;
+  }
+  .catalogo-item .desc {
+    font-size: 9pt;
+    color: #555;
+    margin-top: 1mm;
+  }
+
+  /* Tabela do catálogo - impressão */
+  .catalogo-box { border: none !important; box-shadow: none !important; }
+  .catalogo-table { width: 100% !important; border-collapse: collapse !important; }
+  .catalogo-table th, .catalogo-table td { border: 1px solid #e5e7eb; padding: 6pt; }
+  .catalogo-cat-row { background: #f0fdf4; font-weight: 700; }
+
+  .print-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8mm; }
+  .print-header .empresa { font-size: 16pt; font-weight: 800; line-height: 1.1; }
+  .print-header .subtitle { font-size: 10pt; color: #6b7280; }
+  .print-logo { width: 40mm; max-height: 20mm; object-fit: contain; }
+
+  /* Mostrar/ocultar blocos específicos */
+  .print-only { display: block !important; }
+  .screen-only { display: none !important; }
+
+  /* Cardápio em estilo menu (sem tabela) */
+  .menu-grid { column-count: 2; column-gap: 14mm; }
+  .menu-section { break-inside: avoid; margin: 0 0 10mm 0; }
+  .menu-section-title {
+    font-weight: 800; font-size: 12pt; text-transform: uppercase; color: #fff;
+    background: #f97316; /* faixa laranja sutil */
+    padding: 4pt 6pt; border-radius: 2pt; margin: 6pt 0;
+  }
+  .menu-item { display: flex; align-items: baseline; gap: 6pt; margin: 2pt 0; }
+  .menu-item-name { font-weight: 700; font-size: 11pt; }
+  .menu-item-fill { flex: 1; border-bottom: 1px dotted #cbd5e1; margin: 0 6pt; transform: translateY(-1pt); }
+  .menu-item-price { font-weight: 800; font-size: 11pt; }
+  .menu-item-desc { font-size: 8.5pt; color: #6b7280; margin-left: 2pt; }
+}

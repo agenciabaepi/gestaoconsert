@@ -1,0 +1,42 @@
+[
+  {
+    "id": "TC001",
+    "title": "authentication api role based access control",
+    "description": "Verify that the authentication API correctly enforces role-based access control for admins, technicians, and attendants, allowing access only to authorized routes and functionalities."
+  },
+  {
+    "id": "TC002",
+    "title": "service orders api create edit status update notifications",
+    "description": "Test the service orders API for creating, editing, and updating the status of service orders, and ensure notifications are sent to clients and technicians accordingly."
+  },
+  {
+    "id": "TC003",
+    "title": "client management api crud and search functionality",
+    "description": "Validate the client management API's ability to perform CRUD operations on client and equipment data, including the search functionality to retrieve accurate results."
+  },
+  {
+    "id": "TC004",
+    "title": "payment processing api mercadopago integration",
+    "description": "Test the payment processing API's integration with Mercado Pago, including payment creation, status tracking, reconciliation, and webhook handling."
+  },
+  {
+    "id": "TC005",
+    "title": "whatsapp integration api message sending and connection management",
+    "description": "Verify that the WhatsApp integration API can send messages correctly, manage connections, and handle disconnect functionality as expected."
+  },
+  {
+    "id": "TC006",
+    "title": "email verification api send verify resend codes",
+    "description": "Test the email verification API for sending verification codes, verifying them, and resending codes without errors."
+  },
+  {
+    "id": "TC007",
+    "title": "admin saas management api companies subscriptions metrics",
+    "description": "Validate the admin SaaS management APIs for handling companies, subscriptions, and providing accurate system metrics."
+  },
+  {
+    "id": "TC008",
+    "title": "health check api system uptime monitoring",
+    "description": "Test the health check API to ensure it accurately monitors system uptime and responds correctly to health queries."
+  }
+]
