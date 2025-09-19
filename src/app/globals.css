@@ -60,18 +60,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-<<<<<<< HEAD
-=======
-@layer base {
-  * {
-    @apply border-gray-200;
-  }
-  body {
-    @apply bg-white text-gray-900;
-  }
-}
-
->>>>>>> ae80de9f9e96904a86bf9fd02b9f22ffd98f1f2a
 /* Gradientes de texto no estilo Apple */
 .text-gradient-primary {
   background: linear-gradient(135deg, #ffffff 0%, #D1FE6E 50%, #B8E55A 100%);
@@ -108,7 +96,7 @@
 }
 
 .text-gradient-animated {
-  background: linear-gradient(135deg, #ffffff 0%, #D1FE6E 25%, #B8E55A 50%, #A5D44A 75%, #ffffff 100%);
+  background: linear-gradient(-45deg, #D1FE6E, #B8E55A, #A5D44A, #8BC34A);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -116,248 +104,141 @@
   animation: gradient-shift 3s ease infinite;
 }
 
-<<<<<<< HEAD
-=======
 /* Estilos para o editor TipTap */
 .ProseMirror {
   min-height: 200px;
   font-family: inherit;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #374151;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.ProseMirror:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .ProseMirror p {
-  margin-bottom: 0.75rem;
+  margin: 0 0 12px 0;
 }
 
-.ProseMirror ul, .ProseMirror ol {
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
-}
-
-.ProseMirror li {
-  margin-bottom: 0.25rem;
+.ProseMirror p:last-child {
+  margin-bottom: 0;
 }
 
 .ProseMirror h1, .ProseMirror h2, .ProseMirror h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
   font-weight: 600;
+  margin: 16px 0 8px 0;
+  color: #111827;
 }
 
 .ProseMirror h1 {
-  font-size: 1.5rem;
+  font-size: 24px;
 }
 
 .ProseMirror h2 {
-  font-size: 1.25rem;
+  font-size: 20px;
 }
 
 .ProseMirror h3 {
-  font-size: 1.125rem;
+  font-size: 18px;
 }
 
-.ProseMirror a {
-  color: #3b82f6;
-  text-decoration: underline;
+.ProseMirror ul, .ProseMirror ol {
+  margin: 12px 0;
+  padding-left: 24px;
 }
 
-.ProseMirror a:hover {
-  color: #2563eb;
+.ProseMirror li {
+  margin: 4px 0;
 }
 
-/* Estilos para o conteúdo renderizado */
-.prose {
-  max-width: none;
+.ProseMirror blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 16px;
+  margin: 16px 0;
+  color: #6b7280;
+  font-style: italic;
 }
 
-.prose p {
-  margin-bottom: 0.75rem;
+.ProseMirror code {
+  background-color: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
 }
 
-.prose ul, .prose ol {
-  margin-bottom: 0.75rem;
-  padding-left: 1.5rem;
+.ProseMirror pre {
+  background-color: #f3f4f6;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0;
 }
 
-.prose li {
-  margin-bottom: 0.25rem;
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
 }
 
-.prose h1, .prose h2, .prose h3 {
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-  font-weight: 600;
+/* Estilos para a toolbar do editor */
+.ProseMirror-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  border-radius: 8px 8px 0 0;
 }
 
-.prose h1 {
-  font-size: 1.5rem;
+.ProseMirror-toolbar button {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  background-color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
 
-.prose h2 {
-  font-size: 1.25rem;
+.ProseMirror-toolbar button:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
 }
 
-.prose h3 {
-  font-size: 1.125rem;
+.ProseMirror-toolbar button.is-active {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
 }
 
->>>>>>> ae80de9f9e96904a86bf9fd02b9f22ffd98f1f2a
-/* Animações */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+/* Estilos para o editor responsivo */
+@media (max-width: 768px) {
+  .ProseMirror {
+    min-height: 150px;
+    padding: 12px;
+    font-size: 14px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .ProseMirror-toolbar {
+    padding: 8px;
+    gap: 6px;
   }
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Animações para a tela de logout */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
+  
+  .ProseMirror-toolbar button {
+    padding: 6px 10px;
+    font-size: 12px;
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes progress-bar {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.5s ease-out;
-}
-
-.animate-progress-bar {
-  animation: progress-bar 1.5s ease-in-out;
-}
-
-/* Estilos para botões de status */
-.status-button {
-  transition: all 0.2s ease-in-out;
-}
-
-.status-button:hover {
-  transform: translateY(-1px);
 }
 
 /* Estilos para o modal */
 .modal-backdrop {
   backdrop-filter: blur(4px);
-}
-
-<<<<<<< HEAD
-=======
-/* Estilos para o editor responsivo */
-@media (max-width: 768px) {
-  .ql-editor {
-    min-height: 150px;
-    font-size: 16px; /* Evita zoom no iOS */
-  }
-  
-  .ql-toolbar {
-    padding: 8px;
-  }
-  
-  .ql-toolbar .ql-formats {
-    margin-right: 8px;
-  }
-}
-
->>>>>>> ae80de9f9e96904a86bf9fd02b9f22ffd98f1f2a
-/* ===== ANIMAÇÕES SIMPLES DE SCROLL REVEAL ===== */
-
-/* Animação básica de entrada */
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scroll-reveal.animated {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Animação de fade */
-.scroll-reveal-fade {
-  opacity: 0;
-  transition: opacity 0.6s ease-out;
-}
-
-.scroll-reveal-fade.animated {
-  opacity: 1;
-}
-
-/* Animação de slide up */
-.scroll-reveal-slide-up {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scroll-reveal-slide-up.animated {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Animação de scale */
-.scroll-reveal-scale {
-  opacity: 0;
-  transform: scale(0.9) translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.scroll-reveal-scale.animated {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-
-/* Delays */
-.delay-100 { transition-delay: 100ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-300 { transition-delay: 300ms; }
-.delay-400 { transition-delay: 400ms; }
-.delay-500 { transition-delay: 500ms; }
-.delay-600 { transition-delay: 600ms; }
-.delay-700 { transition-delay: 700ms; }
-.delay-800 { transition-delay: 800ms; }
-.delay-900 { transition-delay: 900ms; }
-.delay-1000 { transition-delay: 1000ms; }
-
-/* Responsividade para animações */
-@media (prefers-reduced-motion: reduce) {
-  .scroll-reveal,
-  .scroll-reveal-fade,
-  .scroll-reveal-slide-up,
-  .scroll-reveal-scale {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-  
-  .scroll-reveal.animated,
-  .scroll-reveal-fade.animated,
-  .scroll-reveal-slide-up.animated,
-  .scroll-reveal-scale.animated {
-    opacity: 1;
-    transform: none;
-  }
 }

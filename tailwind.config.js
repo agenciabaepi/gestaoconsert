@@ -9,8 +9,4 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-<<<<<<< HEAD
 }
-=======
-} 
->>>>>>> ae80de9f9e96904a86bf9fd02b9f22ffd98f1f2a

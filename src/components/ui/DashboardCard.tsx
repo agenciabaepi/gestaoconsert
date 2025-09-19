@@ -53,8 +53,4 @@ export function DashboardCard({
   );
 }
 
-<<<<<<< HEAD
 export default DashboardCard;
-=======
-export default DashboardCard; 
->>>>>>> ae80de9f9e96904a86bf9fd02b9f22ffd98f1f2a
