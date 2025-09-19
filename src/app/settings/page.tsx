@@ -113,8 +113,8 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Configurações do Sistema</h1>
             <p className="text-gray-600">Gerencie configurações gerais e parâmetros do sistema</p>

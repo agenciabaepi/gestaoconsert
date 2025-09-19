@@ -129,8 +129,8 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+      {/* Header */}
+      <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Gestão de Usuários</h1>
             <p className="text-gray-600">Gerencie usuários e permissões do sistema</p>
