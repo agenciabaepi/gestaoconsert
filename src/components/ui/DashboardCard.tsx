@@ -5,47 +5,68 @@ interface DashboardCardProps {
   title: string;
   value: React.ReactNode;
   icon?: React.ReactNode;
-  colorClass?: string; // ex: 'text-green-500', 'text-blue-500'
-  bgClass?: string; // ex: 'bg-green-50'
   description?: string;
-  descriptionColorClass?: string; // ex: 'text-green-500'
-  descriptionIcon?: React.ReactNode;
-  svgPolyline?: { color: string; points: string };
-  children?: React.ReactNode;
-  className?: string;
+  descriptionColorClass?: string;
+  colorClass?: string;
+  bgClass?: string;
+  svgPolyline?: {
+    color: string;
+    points: string;
+  };
 }
 
 export function DashboardCard({
   title,
   value,
   icon,
-  colorClass = 'text-black',
-  bgClass = 'bg-white',
   description,
-  descriptionColorClass = '',
-  descriptionIcon,
+  descriptionColorClass = "text-gray-600",
+  colorClass = "text-gray-700",
+  bgClass = "bg-gray-50",
   svgPolyline,
-  children,
-  className,
 }: DashboardCardProps) {
   return (
-    <div className={cn('bg-white rounded-xl shadow-md p-3 relative overflow-hidden flex flex-col gap-1', bgClass, colorClass, className)}>
-      <h3 className="text-gray-500 text-sm mb-0 font-medium flex items-center gap-2">
-        {icon}
-        {title}
-      </h3>
-      <div className="text-2xl font-bold text-black leading-tight">{value}</div>
-      {description && (
-        <div className={cn('text-xs mt-1 flex items-center gap-1', descriptionColorClass)}>
-          {descriptionIcon}
-          <span>{description}</span>
+    <div className={cn(
+      "rounded-xl border border-gray-200 p-6 transition-all duration-200 hover:shadow-md",
+      bgClass
+    )}>
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <h3 className={cn("text-sm font-medium", colorClass)}>
+            {title}
+          </h3>
+          <div className="text-2xl font-bold text-black leading-tight">
+            {value}
+          </div>
+          {description && (
+            <p className={cn("text-xs mt-1", descriptionColorClass)}>
+              {description}
+            </p>
+          )}
         </div>
-      )}
-      {children}
+        {icon && (
+          <div className="flex-shrink-0 ml-4">
+            {icon}
+          </div>
+        )}
+      </div>
+      
       {svgPolyline && (
-        <div className="absolute bottom-2 right-2 opacity-40 pointer-events-none">
-          <svg width="80" height="24">
-            <polyline fill="none" stroke={svgPolyline.color} strokeWidth="2" points={svgPolyline.points} />
+        <div className="mt-4">
+          <svg
+            className="w-full h-8"
+            viewBox="0 0 80 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polyline
+              points={svgPolyline.points}
+              stroke={svgPolyline.color}
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
       )}
@@ -53,8 +74,4 @@ export function DashboardCard({
   );
 }
 
-<<<<<<< HEAD
 export default DashboardCard;
-=======
-export default DashboardCard; 
->>>>>>> ae80de9f9e96904a86bf9fd02b9f22ffd98f1f2a
