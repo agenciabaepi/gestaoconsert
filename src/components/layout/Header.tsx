@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { 
-  Bell, 
-  Search, 
-  User, 
-  LogOut, 
+import {
+  Bell,
+  Search,
+  User,
+  LogOut,
   Settings,
   Menu,
 } from 'lucide-react';
@@ -18,6 +19,14 @@ interface HeaderProps {
 }
 
 export function Header({ onMenuToggle, isSidebarCollapsed }: HeaderProps) {
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    if (confirm('Tem certeza que deseja sair?')) {
+      logout();
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 px-4 lg:px-6 py-4 sticky top-0 z-30">
       <div className="flex items-center justify-between gap-4">
@@ -69,19 +78,25 @@ export function Header({ onMenuToggle, isSidebarCollapsed }: HeaderProps) {
             <Settings className="w-4 h-4" />
           </Button>
 
-          {/* User Menu */}
-          <div className="flex items-center gap-2 lg:gap-3 pl-2 lg:pl-3 border-l border-gray-200">
-            <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
-            </div>
-            <div className="hidden md:block">
-              <p className="text-sm font-medium text-gray-900">Admin</p>
-              <p className="text-xs text-gray-500">Super Admin</p>
-            </div>
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
+              {/* User Menu */}
+              <div className="flex items-center gap-2 lg:gap-3 pl-2 lg:pl-3 border-l border-gray-200">
+                <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <div className="hidden md:block">
+                  <p className="text-sm font-medium text-gray-900">Admin</p>
+                  <p className="text-xs text-gray-500">{user?.email}</p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-9 w-9"
+                  onClick={handleLogout}
+                  title="Sair"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
         </div>
       </div>
     </header>

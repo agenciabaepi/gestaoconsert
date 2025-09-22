@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { DashboardCard } from '@/components/ui/DashboardCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SafeNumber } from '@/components/SafeNumber';
@@ -16,6 +17,7 @@ import {
 } from 'lucide-react';
 
 export default function DashboardPage() {
+  const { user } = useAuth();
   const { data: metrics, loading, error, refetch } = useMetrics();
 
   // Dados de fallback caso a API não esteja disponível
@@ -74,7 +76,10 @@ export default function DashboardPage() {
   return (
     <div className="space-y-4 lg:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">Dashboard</h2>
+        <div>
+          <h2 className="text-2xl lg:text-3xl font-bold text-gray-800">Dashboard</h2>
+          <p className="text-sm text-gray-600 mt-1">Bem-vindo, {user?.email}</p>
+        </div>
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <span>Última atualização: <SafeDate format="datetime" /></span>
           <button

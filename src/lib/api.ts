@@ -169,3 +169,5 @@ export const apiClient = new ApiClient();
 
 // Hooks para React Query (se necessário)
 export const useApiClient = () => apiClient;
+
+
