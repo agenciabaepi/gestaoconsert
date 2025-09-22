@@ -80,6 +80,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const email = AUTHORIZED_EMAIL;
       const serverCfg = await fetchServerTwoFA(email);
       setTwoFAConfig(serverCfg);
+      if (typeof window !== 'undefined') {
+        (window as any).__twofa_enabled__ = !!(serverCfg?.enabled && serverCfg?.setupComplete);
+      }
     })();
 
     setLoading(false);

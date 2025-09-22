@@ -92,6 +92,9 @@ export default function Setup2FAPage() {
     };
 
     await updateTwoFAConfig(config);
+    if (typeof window !== 'undefined') {
+      (window as any).__twofa_enabled__ = true;
+    }
     router.push('/');
   };
 
