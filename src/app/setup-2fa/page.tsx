@@ -83,7 +83,7 @@ export default function Setup2FAPage() {
     }
   };
 
-  const handleFinishSetup = () => {
+  const handleFinishSetup = async () => {
     const config: TwoFAConfig = {
       enabled: true,
       secret,
@@ -91,7 +91,7 @@ export default function Setup2FAPage() {
       setupComplete: true,
     };
 
-    updateTwoFAConfig(config);
+    await updateTwoFAConfig(config);
     router.push('/');
   };
 

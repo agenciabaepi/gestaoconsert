@@ -13,13 +13,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
-// Cliente admin para operações do servidor
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-});
+// ATENÇÃO: Não use supabaseAdmin no cliente. Importar somente em código server (API routes).
+export const supabaseAdminKey = supabaseServiceKey;
 
 // Tipos para as tabelas principais
 export interface Empresa {

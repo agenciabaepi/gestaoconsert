@@ -280,16 +280,9 @@ export default function SettingsPage() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-gray-500">
-                        {typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config') 
-                          ? 'Habilitado' 
-                          : 'Desabilitado'
-                        }
+                        {typeof window !== 'undefined' && !!(window as any).__twofa_enabled__ ? 'Habilitado' : 'Desabilitado'}
                       </span>
-                      <div className={`w-3 h-3 rounded-full ${
-                        typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config')
-                          ? 'bg-green-500' 
-                          : 'bg-gray-300'
-                      }`} />
+                      <div className={`w-3 h-3 rounded-full ${typeof window !== 'undefined' && !!(window as any).__twofa_enabled__ ? 'bg-green-500' : 'bg-gray-300'}`} />
                     </div>
                   </div>
                   
@@ -304,19 +297,19 @@ export default function SettingsPage() {
                         onClick={() => window.open('/setup-2fa', '_blank')}
                         className="bg-green-600 hover:bg-green-700"
                       >
-                        {typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config')
+                        {typeof window !== 'undefined' && !!(window as any).__twofa_enabled__
                           ? 'Reconfigurar 2FA'
                           : 'Configurar 2FA'
                         }
                       </Button>
                       
-                      {typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config') && (
+                      {typeof window !== 'undefined' && !!(window as any).__twofa_enabled__ && (
                         <Button 
                           variant="destructive"
                           onClick={() => {
                             if (confirm('Tem certeza que deseja desabilitar o 2FA? Isso reduzirá a segurança da sua conta.')) {
-                              localStorage.removeItem('admin_2fa_config');
-                              window.location.reload();
+                              fetch('/api/2fa/config', { method: 'DELETE', headers: { 'x-admin-email': 'consertilhabela@gmail.com' } })
+                                .then(() => window.location.reload());
                             }
                           }}
                         >

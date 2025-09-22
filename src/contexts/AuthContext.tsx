@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { TwoFAStorage, TwoFAConfig } from '@/lib/twoFA';
+import { TwoFAConfig } from '@/lib/twoFA';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -37,6 +37,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const AUTHORIZED_EMAIL = 'consertilhabela@gmail.com';
   const ADMIN_PASSWORD = 'admin123'; // Em produção, use uma senha mais segura
 
+  async function fetchServerTwoFA(email: string): Promise<TwoFAConfig | null> {
+    try {
+      const res = await fetch('/api/2fa/config', {
+        headers: { 'x-admin-email': email },
+        cache: 'no-store',
+      });
+      const json = await res.json();
+      if (json?.ok && json?.data) return json.data as TwoFAConfig;
+    } catch {}
+    return null;
+  }
+
   useEffect(() => {
     // Verificar se há uma sessão salva no localStorage
     const savedAuth = localStorage.getItem('admin_auth');
@@ -63,9 +75,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
     }
 
-    // Carregar configuração 2FA
-    const config = TwoFAStorage.load();
-    setTwoFAConfig(config);
+    // Carregar configuração 2FA do servidor
+    (async () => {
+      const email = AUTHORIZED_EMAIL;
+      const serverCfg = await fetchServerTwoFA(email);
+      setTwoFAConfig(serverCfg);
+    })();
 
     setLoading(false);
   }, []);
@@ -79,8 +94,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         return { success: false, error: 'Email ou senha incorretos.' };
       }
 
-      // Verificar se 2FA está habilitado
-      const config = TwoFAStorage.load();
+      // Verificar se 2FA está habilitado (servidor)
+      const config = await fetchServerTwoFA(AUTHORIZED_EMAIL);
       const twoFAEnabled = config?.enabled && config?.setupComplete;
 
       if (twoFAEnabled) {
@@ -106,8 +121,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
           // Se código de backup foi usado, removê-lo
           if (tokenValid) {
             const updatedCodes = BackupCodes.removeUsed(twoFAToken, config.backupCodes);
-            const updatedConfig = { ...config, backupCodes: updatedCodes };
-            TwoFAStorage.save(updatedConfig);
+            const updatedConfig = { ...config, backupCodes: updatedCodes } as TwoFAConfig;
+            await fetch('/api/2fa/config', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-admin-email': AUTHORIZED_EMAIL },
+              body: JSON.stringify(updatedConfig),
+            });
             setTwoFAConfig(updatedConfig);
           }
         }
@@ -142,8 +161,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null);
   };
 
-  const updateTwoFAConfig = (config: TwoFAConfig) => {
-    TwoFAStorage.save(config);
+  const updateTwoFAConfig = async (config: TwoFAConfig) => {
+    await fetch('/api/2fa/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-email': AUTHORIZED_EMAIL },
+      body: JSON.stringify(config),
+    });
     setTwoFAConfig(config);
   };
 
