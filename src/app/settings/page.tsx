@@ -271,18 +271,62 @@ export default function SettingsPage() {
             )}
 
             {activeTab === 'security' && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="twoFactorAuth" className="text-sm font-medium text-gray-700">Autenticação de Dois Fatores (2FA)</label>
-                  <input
-                    id="twoFactorAuth"
-                    name="twoFactorAuth"
-                    type="checkbox"
-                    checked={securitySettings.twoFactorAuth}
-                    onChange={handleSecurityChange}
-                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                  />
+              <div className="space-y-6">
+                <div className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h4 className="text-lg font-medium text-gray-900">Autenticação em Duas Etapas</h4>
+                      <p className="text-sm text-gray-600">Adicione uma camada extra de segurança à sua conta</p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-500">
+                        {typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config') 
+                          ? 'Habilitado' 
+                          : 'Desabilitado'
+                        }
+                      </span>
+                      <div className={`w-3 h-3 rounded-full ${
+                        typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config')
+                          ? 'bg-green-500' 
+                          : 'bg-gray-300'
+                      }`} />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-600">
+                      Configure a autenticação em duas etapas usando aplicativos como Duo Mobile, 
+                      Google Authenticator ou Microsoft Authenticator.
+                    </p>
+                    
+                    <div className="flex space-x-3">
+                      <Button 
+                        onClick={() => window.open('/setup-2fa', '_blank')}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        {typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config')
+                          ? 'Reconfigurar 2FA'
+                          : 'Configurar 2FA'
+                        }
+                      </Button>
+                      
+                      {typeof window !== 'undefined' && localStorage.getItem('admin_2fa_config') && (
+                        <Button 
+                          variant="destructive"
+                          onClick={() => {
+                            if (confirm('Tem certeza que deseja desabilitar o 2FA? Isso reduzirá a segurança da sua conta.')) {
+                              localStorage.removeItem('admin_2fa_config');
+                              window.location.reload();
+                            }
+                          }}
+                        >
+                          Desabilitar 2FA
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </div>
+
                 <div>
                   <label htmlFor="passwordExpiration" className="block text-sm font-medium text-gray-700">Expiração de Senha (dias)</label>
                   <Input

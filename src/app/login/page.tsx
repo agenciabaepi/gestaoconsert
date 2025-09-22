@@ -11,9 +11,11 @@ import { Shield, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [twoFAToken, setTwoFAToken] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [requiresTwoFA, setRequiresTwoFA] = useState(false);
   
   const { login } = useAuth();
   const router = useRouter();
@@ -24,18 +26,27 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
+      const result = await login(email, password, twoFAToken);
       
-      if (success) {
+      if (result.success) {
         router.push('/');
+      } else if (result.requiresTwoFA) {
+        setRequiresTwoFA(true);
+        setError('');
       } else {
-        setError('Email ou senha incorretos. Apenas administradores autorizados podem acessar.');
+        setError(result.error || 'Erro no login');
       }
     } catch (error) {
       setError('Erro interno. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleBack = () => {
+    setRequiresTwoFA(false);
+    setTwoFAToken('');
+    setError('');
   };
 
   return (
@@ -51,51 +62,101 @@ export default function LoginPage() {
 
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-2xl text-center">Fazer Login</CardTitle>
+            <CardTitle className="text-2xl text-center">
+              {requiresTwoFA ? 'Autenticação em Duas Etapas' : 'Fazer Login'}
+            </CardTitle>
             <p className="text-sm text-gray-600 text-center">
-              Acesso restrito a administradores
+              {requiresTwoFA 
+                ? 'Digite o código do seu aplicativo de autenticação'
+                : 'Acesso restrito a administradores'
+              }
             </p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="h-11"
-                />
-              </div>
+              {!requiresTwoFA ? (
+                <>
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                      Email
+                    </label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="h-11"
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <label htmlFor="password" className="text-sm font-medium text-gray-700">
-                  Senha
-                </label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Digite sua senha"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="h-11 pr-10"
-                  />
-                  <button
+                  <div className="space-y-2">
+                    <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                      Senha
+                    </label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Digite sua senha"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="h-11 pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-center py-4">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Shield className="w-8 h-8 text-green-600" />
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Abra seu aplicativo de autenticação<br />
+                      (Duo Mobile, Google Authenticator, etc.)
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label htmlFor="twofa" className="text-sm font-medium text-gray-700">
+                      Código de Verificação
+                    </label>
+                    <Input
+                      id="twofa"
+                      type="text"
+                      placeholder="000000"
+                      value={twoFAToken}
+                      onChange={(e) => setTwoFAToken(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      required
+                      className="h-11 text-center text-lg tracking-widest"
+                      maxLength={6}
+                      autoComplete="off"
+                    />
+                    <p className="text-xs text-gray-500 text-center">
+                      Digite o código de 6 dígitos ou use um código de backup
+                    </p>
+                  </div>
+
+                  <Button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    variant="outline"
+                    onClick={handleBack}
+                    className="w-full"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+                    Voltar
+                  </Button>
                 </div>
-              </div>
+              )}
 
               {error && (
                 <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -112,10 +173,10 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Entrando...
+                    {requiresTwoFA ? 'Verificando...' : 'Entrando...'}
                   </>
                 ) : (
-                  'Entrar'
+                  requiresTwoFA ? 'Verificar Código' : 'Entrar'
                 )}
               </Button>
             </form>

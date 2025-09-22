@@ -1,13 +1,16 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { TwoFAStorage, TwoFAConfig } from '@/lib/twoFA';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: { email: string } | null;
-  login: (email: string, password: string) => Promise<boolean>;
+  login: (email: string, password: string, twoFAToken?: string) => Promise<{ success: boolean; requiresTwoFA?: boolean; error?: string }>;
   logout: () => void;
   loading: boolean;
+  twoFAConfig: TwoFAConfig | null;
+  updateTwoFAConfig: (config: TwoFAConfig) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +31,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [twoFAConfig, setTwoFAConfig] = useState<TwoFAConfig | null>(null);
 
   // Email autorizado
   const AUTHORIZED_EMAIL = 'consertilhabela@gmail.com';
@@ -58,33 +62,75 @@ export function AuthProvider({ children }: AuthProviderProps) {
         localStorage.removeItem('admin_auth');
       }
     }
+
+    // Carregar configuração 2FA
+    const config = TwoFAStorage.load();
+    setTwoFAConfig(config);
+
     setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string, twoFAToken?: string): Promise<{ success: boolean; requiresTwoFA?: boolean; error?: string }> => {
     try {
       setLoading(true);
       
-      // Verificar credenciais
-      if (email === AUTHORIZED_EMAIL && password === ADMIN_PASSWORD) {
-        const authData = {
-          email,
-          timestamp: new Date().toISOString(),
-        };
-        
-        // Salvar sessão no localStorage
-        localStorage.setItem('admin_auth', JSON.stringify(authData));
-        
-        setIsAuthenticated(true);
-        setUser({ email });
-        
-        return true;
-      } else {
-        return false;
+      // Verificar credenciais básicas
+      if (email !== AUTHORIZED_EMAIL || password !== ADMIN_PASSWORD) {
+        return { success: false, error: 'Email ou senha incorretos.' };
       }
+
+      // Verificar se 2FA está habilitado
+      const config = TwoFAStorage.load();
+      const twoFAEnabled = config?.enabled && config?.setupComplete;
+
+      if (twoFAEnabled) {
+        // Se 2FA está habilitado mas não foi fornecido token
+        if (!twoFAToken) {
+          return { success: false, requiresTwoFA: true };
+        }
+
+        // Verificar token 2FA
+        const { TwoFA, BackupCodes } = await import('@/lib/twoFA');
+        
+        let tokenValid = false;
+        
+        // Tentar verificar como token TOTP
+        if (config.secret) {
+          tokenValid = TwoFA.verifyToken(twoFAToken, config.secret);
+        }
+        
+        // Se não é token TOTP, tentar como código de backup
+        if (!tokenValid && config.backupCodes) {
+          tokenValid = BackupCodes.verify(twoFAToken, config.backupCodes);
+          
+          // Se código de backup foi usado, removê-lo
+          if (tokenValid) {
+            const updatedCodes = BackupCodes.removeUsed(twoFAToken, config.backupCodes);
+            const updatedConfig = { ...config, backupCodes: updatedCodes };
+            TwoFAStorage.save(updatedConfig);
+            setTwoFAConfig(updatedConfig);
+          }
+        }
+
+        if (!tokenValid) {
+          return { success: false, error: 'Código de autenticação inválido.' };
+        }
+      }
+
+      // Login bem-sucedido
+      const authData = {
+        email,
+        timestamp: new Date().toISOString(),
+      };
+      
+      localStorage.setItem('admin_auth', JSON.stringify(authData));
+      setIsAuthenticated(true);
+      setUser({ email });
+      
+      return { success: true };
     } catch (error) {
       console.error('Erro no login:', error);
-      return false;
+      return { success: false, error: 'Erro interno. Tente novamente.' };
     } finally {
       setLoading(false);
     }
@@ -96,12 +142,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null);
   };
 
+  const updateTwoFAConfig = (config: TwoFAConfig) => {
+    TwoFAStorage.save(config);
+    setTwoFAConfig(config);
+  };
+
   const value = {
     isAuthenticated,
     user,
     login,
     logout,
     loading,
+    twoFAConfig,
+    updateTwoFAConfig,
   };
 
   return (
